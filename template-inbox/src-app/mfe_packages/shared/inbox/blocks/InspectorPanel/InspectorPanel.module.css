@@ -1,0 +1,36 @@
+/*
+ * The panel beside a thread. Layout, plus its inline-start rule
+ * (styles-exemptions.json: the kit has no side pane).
+ */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: 19rem;
+  min-height: 0;
+  border-inline-start: var(--border-width) solid var(--border);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-3);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Below SCREEN_BREAKPOINTS_REM.chatDetails the panel gives its column back to the thread. */
+@container inbox-screen (width < 68rem) {
+  .panel {
+    display: none;
+  }
+}

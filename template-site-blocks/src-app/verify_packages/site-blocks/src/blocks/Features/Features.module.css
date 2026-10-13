@@ -1,0 +1,93 @@
+/*
+ * The groundwork rhythm on the section frame (52/56; 40/40 under 640px) with the title across the column 32px over the list, three columns 60px apart, each a 220x176 figure box 16px over the copy and the link 16px under the text; one column under 640px, 24px apart, with a 132x106 figure beside the copy and the link 12px under the text. The text's line height is a row of the exemptions ledger.
+ */
+
+.rhythm {
+  --site-section-pad-top: 52px;
+  --site-section-pad-bottom: 56px;
+  --site-heading-columns: minmax(0, 1fr);
+  --site-header-space: var(--space-8);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 60px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.figure {
+  display: block;
+  width: 220px;
+  max-width: 100%;
+  height: 176px;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.text {
+  max-width: 320px;
+  line-height: var(--site-line-height-lead);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.linkIcon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+  margin: 0;
+}
+
+@media (max-width: 75rem) {
+  .grid {
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 40rem) {
+  .rhythm {
+    --site-section-pad-top: 40px;
+    --site-section-pad-bottom: 40px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .link {
+    margin-top: var(--space-1);
+  }
+
+  .item {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .figure {
+    flex: none;
+    width: 132px;
+    height: 106px;
+  }
+}

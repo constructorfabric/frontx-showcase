@@ -1,0 +1,66 @@
+/*
+ * The intro's layout: the page's top padding and the space to what follows from the layout tokens, 16px above and below the title, the facts 24px under the lead. The title is the kit's display role with the role's tokens set to the brand's page size (a brand override of the ramp); that override, the lead size and the icons' ink are rows of the exemptions ledger.
+ */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--site-intro-pad-top) 0 var(--site-intro-pad-bottom);
+}
+
+.back {
+  font-size: var(--text-meta-size);
+  line-height: 24px;
+}
+
+.title {
+  --text-display-size: var(--site-text-page-size);
+  --text-display-line-height: var(--site-text-page-line-height);
+  --text-display-weight: var(--site-weight-page-title);
+  --text-display-tracking: var(--site-text-page-tracking);
+  margin: var(--space-4) 0;
+}
+
+.lead {
+  max-width: 41.25rem;
+  font-size: var(--text-heading-2-size);
+  line-height: var(--site-line-height-lead);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fact {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  color: var(--link-foreground);
+}
+
+.icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 40rem) {
+  .lead {
+    font-size: var(--text-body-size);
+  }
+
+  .meta {
+    gap: var(--space-2) var(--space-4);
+  }
+}

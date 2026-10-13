@@ -1,0 +1,113 @@
+/*
+ * The list half of a list and detail screen. Layout, plus the pane's
+ * inline-end rule and its header's bottom rule (styles-exemptions.json: the
+ * kit has no pane chrome).
+ */
+
+/*
+ * 22rem when there is room; narrower when the detail pane beside it would
+ * otherwise drop under its minimum (DetailPane). Between the single-pane and
+ * the inline-column widths the list takes what the screen leaves beside a
+ * 24rem detail pane; the side column never takes from it there, as it opens
+ * as a sheet over the screen (NavColumn). The widths are in screenLayout.ts.
+ */
+.pane {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 22rem;
+  min-width: 0;
+  min-height: 0;
+  border-inline-end: var(--border-width) solid var(--border);
+}
+
+/*
+ * Set by the screen, not by a container query: below the single-pane width
+ * one of the list and the detail pane is shown at a time, and which one
+ * depends on whether an item is open, which CSS cannot see.
+ */
+.singlePaneHidden {
+  display: none;
+}
+
+/* The single-pane width (SCREEN_BREAKPOINTS_REM.singlePane): the list, shown alone, fills the screen. */
+@container inbox-screen (width < 36rem) {
+  .pane {
+    flex-grow: 1;
+  }
+}
+
+.header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  height: 3.5rem;
+  padding: 0 var(--space-3);
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+/* The heading truncates rather than pushing the count and the actions off the row. */
+.heading {
+  min-width: 0;
+}
+
+.heading > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.row {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* The search field takes the whole row. */
+.search > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.toolbar {
+  justify-content: space-between;
+  padding-top: 0;
+}
+
+/* The tabs grow to fill the pane, so the rows under them have a height to scroll within. */
+.tabs {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabPanel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--space-2) var(--space-2);
+}
+
+/* Rows a step tighter than the kit's ItemGroup gap; two classes outrank the kit's single-class rule whichever stylesheet loads first. */
+.body .group {
+  gap: var(--space-1);
+}
+
+/* The list item around each row lays nothing out: the row stays the ItemGroup's flex child. */
+.listItem {
+  display: contents;
+}

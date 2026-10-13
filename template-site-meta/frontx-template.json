@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-site-meta",
+  "version": "0.1.0-alpha.0",
+  "description": "Page metadata for a FrontX site as one tooling package: from the seo block of every screen extension and a site config it generates the document head, sitemap.xml, robots.txt, llms.txt, seo-manifest.json, the web manifest and a plain-text twin of every outline page into the build output, checks them against their sources, and carries the head-sync runtime that keeps the head equal to the page the address shows. Apply onto a project that already has template-shell applied; the package lands in the shell's workspace root for template-delivered packages and contributes no screen.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/verify_packages/site-meta/",
+      ".frontx/ai/@gears-frontx/frontx-template-site-meta/"
+    ],
+    "sharedFiles": []
+  }
+}

@@ -1,0 +1,13 @@
+/* The reference keeps 57px under a foundation page's card: the page area's own 44px bottom padding and the kit's 12px step carry it (20px more on a phone, over its 32px). Layout only. */
+
+.end {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-3);
+}
+
+@media (max-width: 48rem) {
+  .end {
+    padding-bottom: var(--space-5);
+  }
+}

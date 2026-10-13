@@ -1,0 +1,98 @@
+/* The Constructor Fabric lockup: a frame holding the kit candidate Link and the optional badge beside it. The wordmark's type is set on the link through the frame (the Link inherits its line's font otherwise), its ink on the frame (the Link's inherit variant takes it). The rules keep the design's order: its narrow-screen sizes are declared after the compact variant, so between 641 and 1100px the footer's compact lockup takes the header's 15px. Every declaration that is not layout is a row of ../styles-exemptions.json. */
+
+.frame {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--site-page-foreground, var(--foreground));
+  white-space: nowrap;
+}
+
+/* A brand mark, not a link in running text: the lockup's type, and no underline at rest or on hover (the Link's inherit variant always underlines). */
+.frame .lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.55px;
+  text-decoration-line: none;
+}
+
+.frame .lockup:hover {
+  text-decoration-line: none;
+}
+
+.logo {
+  display: block;
+  width: 30px;
+  height: 30px;
+}
+
+.divider {
+  margin: 0 var(--space-1);
+  color: var(--site-lockup-divider);
+  font-size: 23px;
+  font-weight: 300;
+}
+
+.accent {
+  color: var(--link-foreground);
+}
+
+.compact {
+  gap: var(--space-2);
+}
+
+.compact .lockup {
+  font-size: 13px;
+}
+
+.compact .logo {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+@media (max-width: 68.75rem) {
+  .frame {
+    gap: var(--space-2);
+  }
+
+  .frame .lockup {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 40rem) {
+  .frame {
+    gap: var(--space-2);
+  }
+
+  .frame .lockup {
+    font-size: 12px;
+    letter-spacing: -0.3px;
+  }
+
+  .logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .divider {
+    margin: 0;
+    font-size: 17px;
+  }
+}
+
+/* On the narrowest screens the header lockup drops its badge and tightens to fit one row. */
+@media (max-width: 22.5rem) {
+  .frame:not(.compact) .lockup {
+    gap: var(--space-1);
+    font-size: 11px;
+  }
+
+  .badge {
+    display: none;
+  }
+}

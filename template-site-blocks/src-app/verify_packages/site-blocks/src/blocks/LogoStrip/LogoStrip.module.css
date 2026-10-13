@@ -1,0 +1,48 @@
+/*
+ * The logo strip on the page column with the section rhythm tokens' block padding; the title centred, 32px over a row of four equal cells in a 908px measure (two columns under 640px, 32px between rows), each centring its logo link. A logo keeps its own colours at the size its attributes give, scaling down in a narrower cell; the measure is a row of the exemptions ledger.
+ */
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  width: var(--site-column);
+  margin: 0 auto;
+  padding: var(--site-section-pad-top) 0 var(--site-section-pad-bottom);
+}
+
+.logos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  width: 100%;
+  max-width: 908px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.link {
+  display: flex;
+  max-width: 100%;
+}
+
+.logo {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 40rem) {
+  .logos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--space-8);
+  }
+}

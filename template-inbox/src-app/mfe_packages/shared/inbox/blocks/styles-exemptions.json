@@ -1,0 +1,877 @@
+{
+  "description": "Every declaration in an inbox block stylesheet that is not a layout property on a kit token, a keyword, 0, a percentage, fr or auto. Each row names what it waits for: a kit gap (a component or a prop the kit lacks), a kit defect, or a width of the screen breakpoint table (shared/inbox/ui/screenLayout.ts, SCREEN_BREAKPOINTS_REM). A row whose selector no longer exists in its file is stale and is removed with the declaration.",
+  "rows": [
+    {
+      "file": "PagePane/PagePane.module.css",
+      "selector": ".header",
+      "property": "height",
+      "value": "3.5rem",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a PaneHeader with the kit's header height); no kit token for a pane header row"
+    },
+    {
+      "file": "PagePane/PagePane.module.css",
+      "selector": ".header",
+      "property": "border-bottom",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (PaneHeader draws its rule)"
+    },
+    {
+      "file": "PagePane/PagePane.module.css",
+      "selector": ".header:has(> .search)",
+      "property": "min-height",
+      "value": "calc(3.5rem - 2 * var(--space-2))",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a wrapping PaneHeader)"
+    },
+    {
+      "file": "PagePane/PagePane.module.css",
+      "selector": ".search",
+      "property": "flex",
+      "value": "0 1 18rem",
+      "kind": "kit-gap",
+      "waitsFor": "kit InputGroup sized by its root (the kit Input with an icon takes a class only on the inner input)"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".column",
+      "property": "width",
+      "value": "12rem",
+      "kind": "breakpoint-table",
+      "waitsFor": "the side column width of SCREEN_BREAKPOINTS_REM (12rem); kit Sidebar in a bounded container"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".column",
+      "property": "background",
+      "value": "var(--sidebar)",
+      "kind": "kit-gap",
+      "waitsFor": "kit Sidebar with a static (in-flow) position and a container-driven sheet; today it is position: fixed and switches on the viewport"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".column",
+      "property": "border-inline-end",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit Sidebar with a static position"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".column",
+      "property": "transition",
+      "value": "width 300ms ease",
+      "kind": "kit-gap",
+      "waitsFor": "kit Sidebar collapsible in a bounded container"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".columnCollapsed",
+      "property": "border-inline-end-width",
+      "value": "0",
+      "kind": "kit-gap",
+      "waitsFor": "kit Sidebar collapsible in a bounded container"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".sheet > .sheetFrame",
+      "property": "background",
+      "value": "var(--sidebar)",
+      "kind": "kit-defect",
+      "waitsFor": "kit Sheet pads its direct children, so sheet content cannot run edge to edge (upstream draft kit-bugs/06); with the kit Sidebar's mobile sheet the frame goes"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".header",
+      "property": "height",
+      "value": "3.5rem",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (SidebarHeader of a static Sidebar)"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".header",
+      "property": "border-bottom",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (SidebarHeader of a static Sidebar)"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".body .row",
+      "property": "padding",
+      "value": "0 0.625rem",
+      "kind": "kit-gap",
+      "waitsFor": "an Item size step between xs and sm (the 36px row with 10px inline padding)"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".body .row.rowSelected",
+      "property": "border-color",
+      "value": "var(--border-strong)",
+      "kind": "kit-gap",
+      "waitsFor": "kit Item isActive (a selected row state)"
+    },
+    {
+      "file": "PresenceAvatar/PresenceAvatar.module.css",
+      "selector": ".presenceOnline",
+      "property": "background-color",
+      "value": "var(--success)",
+      "kind": "kit-gap",
+      "waitsFor": "a tone on the kit AvatarBadge (neutral, success, warning, danger, info), the axis AvatarFallback and StatusDot have"
+    },
+    {
+      "file": "PresenceAvatar/PresenceAvatar.module.css",
+      "selector": ".presenceAway",
+      "property": "background-color",
+      "value": "var(--warning)",
+      "kind": "kit-gap",
+      "waitsFor": "a tone on the kit AvatarBadge (neutral, success, warning, danger, info), the axis AvatarFallback and StatusDot have"
+    },
+    {
+      "file": "PresenceAvatar/PresenceAvatar.module.css",
+      "selector": ".presenceOffline",
+      "property": "background-color",
+      "value": "var(--muted-foreground)",
+      "kind": "kit-gap",
+      "waitsFor": "a tone on the kit AvatarBadge (neutral, success, warning, danger, info), the axis AvatarFallback and StatusDot have"
+    },
+    {
+      "file": "ListPane/ListPane.module.css",
+      "selector": ".pane",
+      "property": "flex",
+      "value": "0 1 22rem",
+      "kind": "breakpoint-table",
+      "waitsFor": "the list width the breakpoints of SCREEN_BREAKPOINTS_REM are made of (22rem wide, 12rem at least)"
+    },
+    {
+      "file": "ListPane/ListPane.module.css",
+      "selector": ".pane",
+      "property": "border-inline-end",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "ListPane/ListPane.module.css",
+      "selector": ".header",
+      "property": "height",
+      "value": "3.5rem",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "ListPane/ListPane.module.css",
+      "selector": ".header",
+      "property": "border-bottom",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "DetailPane/DetailPane.module.css",
+      "selector": ".detailPane",
+      "property": "min-width",
+      "value": "24rem",
+      "kind": "breakpoint-table",
+      "waitsFor": "the narrowest usable thread of SCREEN_BREAKPOINTS_REM (24rem), from the single-pane width"
+    },
+    {
+      "file": "DetailPane/DetailPane.module.css",
+      "selector": ".detailPaneWithDetails.detailPaneWithDetails",
+      "property": "min-width",
+      "value": "calc(24rem + 19rem + var(--border-width))",
+      "kind": "breakpoint-table",
+      "waitsFor": "the thread and the inspector panel widths of SCREEN_BREAKPOINTS_REM.chatDetails"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".row.row",
+      "property": "padding",
+      "value": "0.625rem",
+      "kind": "kit-gap",
+      "waitsFor": "an Item density step between xs and sm with its own title and description type"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".row.rowSelected",
+      "property": "border-color",
+      "value": "var(--border-strong)",
+      "kind": "kit-gap",
+      "waitsFor": "kit Item isActive (a selected row state)"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".line .title",
+      "property": "display, width",
+      "value": "block, auto",
+      "kind": "kit-defect",
+      "waitsFor": "kit ItemTitle width: fit-content defeats text truncation (upstream draft kit-bugs/03); with a kit truncate the rule goes"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".line .title",
+      "property": "font-size, font-weight",
+      "value": "var(--text-body-size), 600",
+      "kind": "kit-gap",
+      "waitsFor": "an Item density step between xs and sm with its own title and description type"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".line .preview",
+      "property": "font-size, line-height",
+      "value": "var(--text-meta-size), var(--text-meta-line-height)",
+      "kind": "kit-gap",
+      "waitsFor": "an Item density step between xs and sm with its own title and description type"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".read .line .title, .read .line .preview",
+      "property": "font-weight, color",
+      "value": "400, var(--muted-foreground)",
+      "kind": "kit-gap",
+      "waitsFor": "a tone on the kit ItemTitle and ItemDescription (default, muted) for a read row"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".pin",
+      "property": "color",
+      "value": "var(--muted-foreground)",
+      "kind": "kit-gap",
+      "waitsFor": "an icon slot of the kit Item line that paints its icons muted (ItemActions does it only at the row end)"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".star",
+      "property": "width, height",
+      "value": "0.875rem",
+      "kind": "kit-gap",
+      "waitsFor": "an icon size token between --icon-size-xs (12px) and --icon-size-sm (16px)"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".star",
+      "property": "color, fill",
+      "value": "var(--warning)",
+      "kind": "kit-gap",
+      "waitsFor": "an icon slot of the kit Item line with a tone (a starred mark)"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".toolbar",
+      "property": "height",
+      "value": "3.5rem",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".toolbar",
+      "property": "border-bottom",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".header",
+      "property": "border-bottom",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".toolbar",
+      "property": "min-height",
+      "value": "3.5rem",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".suggestion",
+      "property": "border-radius",
+      "value": "var(--radius-xl)",
+      "kind": "kit-gap",
+      "waitsFor": "kit Suggestions and Suggestion parts (a pill chip that truncates); today an outline Button"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".meta",
+      "property": "font-size, font-variant-numeric",
+      "value": "var(--text-meta-size), tabular-nums",
+      "kind": "kit-gap",
+      "waitsFor": "the kit Bubble growing a trailing meta slot inside the bubble (a MessageFooter inside it) with tabular time and receipt ticks"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".deliveredTick",
+      "property": "opacity",
+      "value": "0.65",
+      "kind": "kit-gap",
+      "waitsFor": "the kit Bubble growing a trailing meta slot inside the bubble (a MessageFooter inside it) with tabular time and receipt ticks"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".readTick",
+      "property": "opacity",
+      "value": "1",
+      "kind": "kit-gap",
+      "waitsFor": "the kit Bubble growing a trailing meta slot inside the bubble (a MessageFooter inside it) with tabular time and receipt ticks"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".bubble.bubble[data-align='end'] > .bubbleText",
+      "property": "border-start-end-radius, border-end-end-radius",
+      "value": "var(--radius-lg), var(--radius-xs)",
+      "kind": "kit-gap",
+      "waitsFor": "a tail side on the kit Bubble (top, the kit default, or bottom)"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".bubble.bubble[data-align='start'] > .bubbleText",
+      "property": "border-start-start-radius, border-end-start-radius",
+      "value": "var(--radius-lg), var(--radius-xs)",
+      "kind": "kit-gap",
+      "waitsFor": "a tail side on the kit Bubble (top, the kit default, or bottom)"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".imageContent",
+      "property": "width",
+      "value": "20rem",
+      "kind": "kit-gap",
+      "waitsFor": "an image media part of the kit Bubble (AttachmentMedia variant image inside a bubble) that sizes itself"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".image",
+      "property": "border-radius",
+      "value": "inherit",
+      "kind": "kit-gap",
+      "waitsFor": "an image media part of the kit Bubble"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".imageWithCaption",
+      "property": "border-bottom-left-radius, border-bottom-right-radius",
+      "value": "0",
+      "kind": "kit-gap",
+      "waitsFor": "an image media part of the kit Bubble"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".caption",
+      "property": "font-size",
+      "value": "var(--text-body-size)",
+      "kind": "kit-gap",
+      "waitsFor": "an image media part of the kit Bubble with a caption"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".metaOverlay",
+      "property": "border-radius, background-color, color",
+      "value": "var(--radius-full), var(--overlay-modal), var(--primary-foreground)",
+      "kind": "kit-gap",
+      "waitsFor": "an overlay slot on the kit AttachmentMedia (a time on a scrim over an image)"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".metaOverlay .deliveredTick, .metaOverlay .metaTime",
+      "property": "opacity",
+      "value": "0.85",
+      "kind": "kit-gap",
+      "waitsFor": "an overlay slot on the kit AttachmentMedia"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".attachment",
+      "property": "max-width",
+      "value": "min(18rem, 100%)",
+      "kind": "kit-gap",
+      "waitsFor": "a kit Attachment that caps its own width inside a bubble"
+    },
+    {
+      "file": "ReplyComposer/ReplyComposer.module.css",
+      "selector": ".composer",
+      "property": "border-top",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive"
+    },
+    {
+      "file": "ReplyComposer/ReplyComposer.module.css",
+      "selector": ".box",
+      "property": "border, border-radius",
+      "value": "var(--border-width) solid transparent, var(--radius-md)",
+      "kind": "kit-gap",
+      "waitsFor": "a tone on the kit InputGroup (default, warning) whose frame can hold the Textarea without a second border"
+    },
+    {
+      "file": "ReplyComposer/ReplyComposer.module.css",
+      "selector": ".boxNote",
+      "property": "border-color",
+      "value": "var(--warning)",
+      "kind": "kit-gap",
+      "waitsFor": "a tone on the kit InputGroup (default, warning)"
+    },
+    {
+      "file": "InspectorPanel/InspectorPanel.module.css",
+      "selector": ".panel",
+      "property": "width",
+      "value": "19rem",
+      "kind": "breakpoint-table",
+      "waitsFor": "the details panel width of SCREEN_BREAKPOINTS_REM.chatDetails"
+    },
+    {
+      "file": "InspectorPanel/InspectorPanel.module.css",
+      "selector": ".panel",
+      "property": "border-inline-start",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "kit pane chrome (a Pane with header and side variants); the kit has no pane primitive (side variant)"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".card .chartKpi > *, .card .chartHero > *, .card .chartLarge > *, .card .chartTrend > *, .card .chartTall > *, .card .chartBreakdown > *, .card .chartDonut > *",
+      "property": "aspect-ratio",
+      "value": "auto",
+      "kind": "kit-defect",
+      "waitsFor": "kit ChartContainer fixes aspect-ratio 16 / 9, so a chart cannot take its box's height (upstream draft kit-bugs/05); a size and aspect prop on ChartContainer"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartKpi",
+      "property": "height",
+      "value": "7.5rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size on kit ChartContainer (sparkline step)"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartHero",
+      "property": "height",
+      "value": "8rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size on kit ChartContainer"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartLarge",
+      "property": "height",
+      "value": "16rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size on kit ChartContainer"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartTrend",
+      "property": "height",
+      "value": "3rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size on kit ChartContainer (sparkline step)"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartTall",
+      "property": "height",
+      "value": "17rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size on kit ChartContainer"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartBreakdown",
+      "property": "height",
+      "value": "15rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size on kit ChartContainer"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartDonut",
+      "property": "width",
+      "value": "8.75rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size and a square aspect on kit ChartContainer"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".chartDonut",
+      "property": "height",
+      "value": "8.75rem",
+      "kind": "kit-gap",
+      "waitsFor": "a size and a square aspect on kit ChartContainer"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".heroValue",
+      "property": "font-size",
+      "value": "2.5rem",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role (CardTitle typography stat, or a hero ramp token in theme.css)"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".heroValue",
+      "property": "line-height",
+      "value": "2.75rem",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".heroValue",
+      "property": "font-weight",
+      "value": "500",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".heroValue",
+      "property": "font-variant-numeric",
+      "value": "tabular-nums",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role with tabular figures"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".kpiValue",
+      "property": "font-size",
+      "value": "1.75rem",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".kpiValue",
+      "property": "line-height",
+      "value": "2rem",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".kpiValue",
+      "property": "font-weight",
+      "value": "600",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".kpiValue",
+      "property": "font-variant-numeric",
+      "value": "tabular-nums",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role with tabular figures"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".footer",
+      "property": "border-top",
+      "value": "var(--border-width) solid var(--border)",
+      "kind": "kit-gap",
+      "waitsFor": "a ruled CardFooter (card.md asks the consumer to add the rule)"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".summaryValue",
+      "property": "font-size",
+      "value": "var(--text-heading-1-size)",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".summaryValue",
+      "property": "font-weight",
+      "value": "600",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".summaryValue",
+      "property": "font-variant-numeric",
+      "value": "tabular-nums",
+      "kind": "kit-gap",
+      "waitsFor": "a stat typography role with tabular figures"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendDot",
+      "property": "border-radius",
+      "value": "var(--radius-full)",
+      "kind": "kit-gap",
+      "waitsFor": "kit ChartLegendContent list layout with value and percent columns"
+    },
+    {
+      "file": "StatCard/StatCard.tsx",
+      "selector": ".legendDot (inline style)",
+      "property": "background",
+      "value": "the series colour from the chart config",
+      "kind": "kit-gap",
+      "waitsFor": "kit ChartLegendContent list layout (it paints its own swatches from the chart config)"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendCount",
+      "property": "font-weight",
+      "value": "600",
+      "kind": "kit-gap",
+      "waitsFor": "kit ChartLegendContent list layout with value columns"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendCount",
+      "property": "font-variant-numeric",
+      "value": "tabular-nums",
+      "kind": "kit-gap",
+      "waitsFor": "kit ChartLegendContent list layout with value columns"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendPercent",
+      "property": "font-variant-numeric",
+      "value": "tabular-nums",
+      "kind": "kit-gap",
+      "waitsFor": "kit ChartLegendContent list layout with value columns"
+    },
+    {
+      "file": "DataTableSection/DataTableSection.module.css",
+      "selector": ".search",
+      "property": "width",
+      "value": "14rem",
+      "kind": "kit-gap",
+      "waitsFor": "kit InputGroup sized by its root (the kit Input with an icon takes a class only on the inner input); a DataTableToolbar with a search slot"
+    },
+    {
+      "file": "DataTableSection/DataTableSection.module.css",
+      "selector": ".headerLabel svg",
+      "property": "width",
+      "value": "0.875rem",
+      "kind": "kit-gap",
+      "waitsFor": "an icon prop on kit DataTableSortButton"
+    },
+    {
+      "file": "DataTableSection/DataTableSection.module.css",
+      "selector": ".headerLabel svg",
+      "property": "height",
+      "value": "0.875rem",
+      "kind": "kit-gap",
+      "waitsFor": "an icon prop on kit DataTableSortButton"
+    },
+    {
+      "file": "DataTableSection/DataTableSection.module.css",
+      "selector": ".headerLabel svg",
+      "property": "color",
+      "value": "var(--subtle-foreground)",
+      "kind": "kit-gap",
+      "waitsFor": "an icon prop on kit DataTableSortButton"
+    },
+    {
+      "file": "ColumnsLayout/ColumnsLayout.module.css",
+      "selector": ".columns",
+      "property": "grid-template-columns",
+      "value": "18rem minmax(0, 1fr) 16rem",
+      "kind": "breakpoint-table",
+      "waitsFor": "the contact page column widths that make up SCREEN_BREAKPOINTS_REM.contactColumns (60rem)"
+    },
+    {
+      "file": "RecordList/RecordList.module.css",
+      "selector": ".line .title",
+      "property": "display, width",
+      "value": "block, auto",
+      "kind": "kit-defect",
+      "waitsFor": "kit ItemTitle width: fit-content defeats text truncation (upstream draft kit-bugs/03); with a kit truncate the rule goes"
+    },
+    {
+      "file": "ContactSummary/ContactSummary.module.css",
+      "selector": ".summary",
+      "property": "text-align",
+      "value": "center",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit candidate Text and Heading have no alignment option for a centred summary"
+    },
+    {
+      "file": "DataTableSection/DataTableSection.module.css",
+      "selector": ".truncate",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "DataTableSection/DataTableSection.module.css",
+      "selector": ".truncate",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "ListPane/ListPane.module.css",
+      "selector": ".heading > *",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "ListPane/ListPane.module.css",
+      "selector": ".heading > *",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".title",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "NavColumn/NavColumn.module.css",
+      "selector": ".title",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "PagePane/PagePane.module.css",
+      "selector": ".titles > :first-child",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "PagePane/PagePane.module.css",
+      "selector": ".titles > :first-child",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "RecordList/RecordList.module.css",
+      "selector": ".description",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "RecordList/RecordList.module.css",
+      "selector": ".description",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".pairs dd",
+      "property": "text-align",
+      "value": "end",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: ChartLegendContent has no list layout with value and percent columns, and the description list has no end-aligned figure column"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendLabel",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendLabel",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendCount",
+      "property": "text-align",
+      "value": "end",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: ChartLegendContent has no list layout with value and percent columns, and the description list has no end-aligned figure column"
+    },
+    {
+      "file": "StatCard/StatCard.module.css",
+      "selector": ".legendPercent",
+      "property": "text-align",
+      "value": "end",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: ChartLegendContent has no list layout with value and percent columns, and the description list has no end-aligned figure column"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".text",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "ThreadListItem/ThreadListItem.module.css",
+      "selector": ".text",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".titles > :first-child, .line",
+      "property": "text-overflow",
+      "value": "ellipsis",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".titles > :first-child, .line",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit text parts (the kit candidate Text, ItemTitle, ItemDescription, a table cell) have no single-line truncation option with an ellipsis"
+    },
+    {
+      "file": "ThreadPane/ThreadPane.module.css",
+      "selector": ".plainText",
+      "property": "white-space",
+      "value": "pre-wrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: the kit candidate Text has no option that keeps the authored line breaks of a plain-text message"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".meta",
+      "property": "float",
+      "value": "inline-end",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: Bubble has no trailing meta slot inside the bubble; the time floats to the end of the last line and never wraps"
+    },
+    {
+      "file": "TranscriptMessage/TranscriptMessage.module.css",
+      "selector": ".meta",
+      "property": "white-space",
+      "value": "nowrap",
+      "kind": "kit-gap",
+      "waitsFor": "Kit gap: Bubble has no trailing meta slot inside the bubble; the time floats to the end of the last line and never wraps"
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+/*
+ * The steps rhythm (80/80; 40/40 under 640px) on the page column; two equal columns 100px apart, centred on each other (40px under 900px, one column under 640px). Each row is a 128x128 figure box (104x104 under 640px), the copy 16px from it and the arrow at the end, 24px above its kit separator (every row, the last too) and 24px under the separator before it; the title link covers the row. The title is the kit display role at the brand's section size, a row of the exemptions ledger, as on the section frame.
+ */
+
+.band {
+  --site-section-pad-top: 80px;
+  --site-section-pad-bottom: 80px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 100px;
+  width: var(--site-column);
+  margin: 0 auto;
+  padding: var(--site-section-pad-top) 0 var(--site-section-pad-bottom);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.title {
+  --text-display-size: var(--site-text-section-size);
+  --text-display-line-height: var(--site-text-section-line-height);
+  --text-display-weight: var(--site-weight-title);
+  --text-display-tracking: var(--site-text-section-tracking);
+  white-space: pre-line;
+}
+
+.lead {
+  max-width: var(--site-lead-column);
+  font-size: var(--text-heading-2-size);
+  line-height: var(--site-line-height-lead);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.actionIcon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+  margin: 0;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step + .step {
+  padding-top: var(--space-6);
+}
+
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.figure {
+  display: block;
+  flex: none;
+  width: 128px;
+  height: 128px;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.stepLink {
+  text-decoration-line: none;
+}
+
+/* The title's link covers the row, so the row is one target with one name. */
+.stepLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.arrow {
+  flex: none;
+  width: 19px;
+  height: 19px;
+  margin-left: auto;
+}
+
+@media (max-width: 56.25rem) {
+  .columns {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 40rem) {
+  .band {
+    --site-section-pad-top: 40px;
+    --site-section-pad-bottom: 40px;
+  }
+
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  .title {
+    --text-display-size: 1.9375rem;
+  }
+
+  .lead {
+    font-size: var(--text-body-size);
+  }
+
+  .figure {
+    width: 104px;
+    height: 104px;
+  }
+}

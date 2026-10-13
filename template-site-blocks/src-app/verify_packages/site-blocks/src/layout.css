@@ -1,0 +1,52 @@
+/*
+ * The layout tokens the site's blocks and the shell chrome share: the page column, the header column, the header height, and the section rhythms. They are layout values, not brand values, so they live with the blocks and stay outside the brand record. Values and breakpoints as the designer site steps them.
+ */
+
+:root {
+  /* The page column: 68px gutters up to a 1480px column, 32px under 1100px and 20px under 640px. */
+  --site-column: min(calc(100% - 136px), 1480px);
+  /* The sticky site header's height with its border: a jump target scrolls clear of it. The header takes two rows on narrow screens. */
+  --site-header-height: 73px;
+  /* The header and footer run wider than the page column. */
+  --site-column-chrome: calc(100% - 112px);
+  /* A section band's block padding; a block that composes SectionFrame sets its own pair on the frame. */
+  --site-section-pad-top: 52px;
+  --site-section-pad-bottom: 64px;
+  /* A page intro's block padding, and the space between the intro's last line and the page body. */
+  --site-intro-pad-top: 56px;
+  --site-intro-pad-bottom: 38px;
+  --site-page-pad-bottom: 72px;
+  /* The section heading row: its columns (the title's, then the lead's), the lead column's width, and the gaps between the columns and between the rows when they stack. A landing-page block sets its own arrangement on an ancestor, as it does its rhythm. */
+  --site-heading-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  --site-lead-column: 420px;
+  --site-heading-gap: 100px;
+  --site-heading-row-gap: 100px;
+  /* The docs rail beside the page body. */
+  --site-rail-column: 272px;
+  --site-rail-gap: 64px;
+}
+
+@media (max-width: 68.75rem) {
+  :root {
+    --site-column: calc(100% - 64px);
+    --site-column-chrome: calc(100% - 64px);
+  }
+}
+
+@media (max-width: 48rem) {
+  :root {
+    --site-header-height: 102px;
+  }
+}
+
+@media (max-width: 40rem) {
+  :root {
+    --site-column: calc(100% - 40px);
+    --site-column-chrome: calc(100% - 32px);
+    --site-section-pad-top: 36px;
+    --site-section-pad-bottom: 40px;
+    --site-intro-pad-top: 32px;
+    --site-intro-pad-bottom: 26px;
+    --site-page-pad-bottom: 44px;
+  }
+}

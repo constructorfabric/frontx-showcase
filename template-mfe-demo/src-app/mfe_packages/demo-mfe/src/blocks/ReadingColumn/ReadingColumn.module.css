@@ -1,0 +1,8 @@
+/* Cards one gap apart, no wider than a reading measure; the measure is a row of the exemptions ledger (the kit has no width token). */
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 42rem;
+}

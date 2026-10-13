@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-kit-candidates",
+  "version": "0.1.0-alpha.0",
+  "description": "Kit candidates as one workspace package: the components two proposed @gears-frontx/ui-kit pull requests add (Heading, Text, Link, VisuallyHidden and the sr-only utility; CodeBlock, DescriptionList and render on Card, CardTitle, EmptyTitle and AlertTitle), in the kit's own folder layout and with the API those pull requests propose, so that the kit's release is an import-specifier change and this template is then deleted whole. Apply onto a project that already has template-shell applied; the package lands in the shell's workspace root for template-delivered packages and contributes no screen.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/verify_packages/kit-candidates/",
+      ".frontx/ai/@gears-frontx/frontx-template-kit-candidates/"
+    ],
+    "sharedFiles": []
+  }
+}

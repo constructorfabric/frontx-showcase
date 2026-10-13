@@ -1,0 +1,17 @@
+/* The page select row of a narrow screen: the caption at its own width, the select across the rest. Layout only. */
+
+.picker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) 0;
+}
+
+.label {
+  flex: none;
+}
+
+.select {
+  flex: 1;
+  min-width: 0;
+}

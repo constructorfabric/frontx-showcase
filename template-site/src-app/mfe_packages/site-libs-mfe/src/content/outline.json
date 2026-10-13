@@ -1,0 +1,860 @@
+{
+  "screen": "libs",
+  "strings": "src/screens/libs/i18n/en.json",
+  "data": "src/data/libraries.generated.json",
+  "pages": [
+    {
+      "route": "/",
+      "title": "t:libraries.title",
+      "lead": "t:libraries.lead",
+      "entries": [
+        {
+          "type": "package-list"
+        },
+        {
+          "type": "fineprint",
+          "text": "t:libraries.finePrint"
+        },
+        {
+          "type": "section-heading",
+          "id": "summaries",
+          "title": "t:libraries.summaries.title"
+        },
+        {
+          "type": "path-cards",
+          "items": [
+            {
+              "eyebrow": "t:libraries.card.1.eyebrow",
+              "title": "t:libraries.card.1.title",
+              "text": "t:libraries.card.1.text",
+              "href": {
+                "route": "/routing"
+              }
+            },
+            {
+              "eyebrow": "t:libraries.card.2.eyebrow",
+              "title": "t:libraries.card.2.title",
+              "text": "t:libraries.card.2.text",
+              "href": {
+                "route": "/mfes"
+              }
+            },
+            {
+              "eyebrow": "t:libraries.card.3.eyebrow",
+              "title": "t:libraries.card.3.title",
+              "text": "t:libraries.card.3.text",
+              "href": {
+                "route": "/screen-domain"
+              }
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "id": "site-templates",
+          "title": "t:libraries.siteTemplates.title",
+          "items": [
+            {
+              "title": "t:libraries.siteTemplates.site",
+              "text": "t:libraries.siteTemplates.site.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-site"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.siteMeta",
+              "text": "t:libraries.siteTemplates.siteMeta.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-site-meta"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.siteBrand",
+              "text": "t:libraries.siteTemplates.siteBrand.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-site-brand"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.kitCandidates",
+              "text": "t:libraries.siteTemplates.kitCandidates.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-kit-candidates"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.siteBlocks",
+              "text": "t:libraries.siteTemplates.siteBlocks.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-site-blocks"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.catalogue",
+              "text": "t:libraries.siteTemplates.catalogue.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-catalogue"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.inbox",
+              "text": "t:libraries.siteTemplates.inbox.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-inbox"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.mfeDemo",
+              "text": "t:libraries.siteTemplates.mfeDemo.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-mfe-demo"
+                  }
+                }
+              }
+            },
+            {
+              "title": "t:libraries.siteTemplates.calendar",
+              "text": "t:libraries.siteTemplates.calendar.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-calendar-demo"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/routing",
+      "title": "t:routing.title",
+      "lead": "t:routing.lead",
+      "entries": [
+        {
+          "type": "facts",
+          "title": "t:routing.facts.title",
+          "items": [
+            {
+              "label": "t:routing.facts.1.label",
+              "value": "t:routing.facts.1.value"
+            },
+            {
+              "label": "t:routing.facts.2.label",
+              "value": "t:routing.facts.2.value"
+            },
+            {
+              "label": "t:routing.facts.3.label",
+              "value": "t:routing.facts.3.value"
+            },
+            {
+              "label": "t:routing.facts.4.label",
+              "value": "t:routing.facts.4.value"
+            }
+          ],
+          "actions": [
+            {
+              "label": "t:routing.facts.action1",
+              "href": {
+                "url": "{routingBlobUrl}/packages/routing/README.md"
+              }
+            },
+            {
+              "label": "t:routing.facts.action2",
+              "href": {
+                "url": "{routingTanstackBlobUrl}/packages/routing-tanstack/README.md"
+              }
+            },
+            {
+              "label": "t:routing.facts.action3",
+              "href": {
+                "url": "{routingBlobUrl}/packages/routing/architecture/ADR/0003-domain-occupancy-addressing-granularity.md"
+              }
+            }
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "addressing",
+          "title": "t:routing.addressing.title",
+          "lead": "t:routing.addressing.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:routing.addressing.shape",
+            "lines": [
+              "<shell-subroute> [ ? <entry> [ & <entry> ]* ] [ # <hash> ]",
+              "entry = domain-key \"=\" extension *( \";\" param )",
+              "param = param-name [ \"=\" param-value ]"
+            ]
+          }
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:routing.addressing.example",
+            "lines": [
+              "/en?screen=dashboard;orientation=left",
+              "   &sheet=tenant-details;tenantId=456",
+              "   &sheet=user-contacts;contactId=123;view=active",
+              "   &widgets=line-a;range=7d",
+              "   &widgets=line-b;range=30d",
+              "   &widgets=pie;metric=revenue"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:routing.addressing.reading.1",
+            "t:routing.addressing.reading.2",
+            "t:routing.addressing.reading.3",
+            "t:routing.addressing.reading.4",
+            "t:routing.addressing.reading.5",
+            "t:routing.addressing.reading.6",
+            "t:routing.addressing.reading.7"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "packages",
+          "title": "t:routing.packages.title"
+        },
+        {
+          "type": "panels",
+          "items": [
+            {
+              "title": "t:routing.packages.panel.1.title",
+              "text": "t:routing.packages.panel.1.text",
+              "links": [
+                {
+                  "label": "t:routing.packages.panel.1.link1",
+                  "href": {
+                    "url": "{routingBlobUrl}/packages/routing/README.md"
+                  },
+                  "kind": "link"
+                }
+              ]
+            },
+            {
+              "title": "t:routing.packages.panel.2.title",
+              "text": "t:routing.packages.panel.2.text",
+              "links": [
+                {
+                  "label": "t:routing.packages.panel.2.link1",
+                  "href": {
+                    "url": "{routingTanstackBlobUrl}/packages/routing-tanstack/README.md"
+                  },
+                  "kind": "link"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "inside-a-screen",
+          "title": "t:routing.inside.title",
+          "lead": "t:routing.inside.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:routing.inside.example",
+            "lines": [
+              "/?screen=libs                          the router sees /",
+              "/?screen=libs;route=routing            the router sees /routing",
+              "/?screen=libs;route=routing;tab=url   the router sees /routing?tab=url"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:routing.inside.rules.1",
+            "t:routing.inside.rules.2",
+            "t:routing.inside.rules.3",
+            "t:routing.inside.rules.4"
+          ]
+        },
+        {
+          "type": "details",
+          "summary": "t:routing.inside.limits.summary",
+          "items": [
+            "t:routing.inside.limits.1",
+            "t:routing.inside.limits.2"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "extension-router",
+          "title": "t:routing.router.title",
+          "lead": "t:routing.router.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:routing.router.example",
+            "lines": [
+              "const rootRoute = createRootRoute({ component: Layout, notFoundComponent: NotFound });",
+              "export const routeTree = rootRoute.addChildren([",
+              "  createRoute({ getParentRoute: () => rootRoute, path: '/routing', component: RoutingPage }),",
+              "]);",
+              "",
+              "// in the lifecycle, with app = createFrontX().use(microfrontends({ typeSystem: gtsPlugin })).build()",
+              "const registry = app.mfeRegistry;",
+              "if (!registry) throw new Error('built without microfrontends()');",
+              "return <ExtensionRouter registry={registry} routeTree={routeTree} />;"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:routing.router.rules.1",
+            "t:routing.router.rules.2",
+            "t:routing.router.rules.3"
+          ]
+        },
+        {
+          "type": "details",
+          "summary": "t:routing.router.limits.summary",
+          "items": [
+            "t:routing.router.limits.1"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "writer",
+          "title": "t:routing.writer.title",
+          "lead": "t:routing.writer.lead"
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:routing.writer.rules.1",
+            "t:routing.writer.rules.2",
+            "t:routing.writer.rules.3"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "related",
+          "title": "t:routing.related.title"
+        },
+        {
+          "type": "card-tiles",
+          "items": [
+            {
+              "eyebrow": "t:routing.related.card.1.eyebrow",
+              "title": "t:routing.related.card.1.title",
+              "text": "t:routing.related.card.1.text",
+              "href": {
+                "route": "/mfes"
+              }
+            },
+            {
+              "eyebrow": "t:routing.related.card.2.eyebrow",
+              "title": "t:routing.related.card.2.title",
+              "text": "t:routing.related.card.2.text",
+              "href": {
+                "route": "/screen-domain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/mfes",
+      "title": "t:mfes.title",
+      "lead": "t:mfes.lead",
+      "entries": [
+        {
+          "type": "facts",
+          "title": "t:mfes.facts.title",
+          "items": [
+            {
+              "label": "t:mfes.facts.1.label",
+              "value": "t:mfes.facts.1.value"
+            },
+            {
+              "label": "t:mfes.facts.2.label",
+              "value": "t:mfes.facts.2.value"
+            },
+            {
+              "label": "t:mfes.facts.3.label",
+              "value": "t:mfes.facts.3.value"
+            },
+            {
+              "label": "t:mfes.facts.4.label",
+              "value": "t:mfes.facts.4.value"
+            },
+            {
+              "label": "t:mfes.facts.5.label",
+              "value": "t:mfes.facts.5.value"
+            }
+          ],
+          "actions": [
+            {
+              "label": "t:mfes.facts.action1",
+              "href": {
+                "url": "{mfesBlobUrl}/packages/mfes/architecture/DESIGN.md"
+              }
+            }
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "declarations",
+          "title": "t:mfes.declarations.title",
+          "lead": "t:mfes.declarations.lead"
+        },
+        {
+          "type": "panels",
+          "items": [
+            {
+              "title": "t:mfes.declarations.panel.1.title",
+              "text": "t:mfes.declarations.panel.1.text",
+              "links": []
+            },
+            {
+              "title": "t:mfes.declarations.panel.2.title",
+              "text": "t:mfes.declarations.panel.2.text",
+              "links": []
+            },
+            {
+              "title": "t:mfes.declarations.panel.3.title",
+              "text": "t:mfes.declarations.panel.3.text",
+              "links": []
+            },
+            {
+              "title": "t:mfes.declarations.panel.4.title",
+              "text": "t:mfes.declarations.panel.4.text",
+              "links": []
+            }
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "admission",
+          "title": "t:mfes.admission.title",
+          "lead": "t:mfes.admission.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:mfes.admission.registry",
+            "lines": [
+              "const app = createFrontX()",
+              "  .use(microfrontends({ typeSystem: gtsPlugin }))",
+              "  .build();",
+              "const registry = app.mfeRegistry;"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:mfes.admission.rules.1",
+            "t:mfes.admission.rules.2",
+            "t:mfes.admission.rules.3",
+            "t:mfes.admission.rules.4",
+            "t:mfes.admission.rules.5",
+            "t:mfes.admission.rules.6"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "lifecycle",
+          "title": "t:mfes.lifecycle.title",
+          "lead": "t:mfes.lifecycle.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:mfes.lifecycle.example",
+            "lines": [
+              "export class LibsLifecycle extends ThemeAwareReactLifecycle {",
+              "  constructor() { super(mfeApp); }",
+              "  protected renderContent(bridge: ChildMfeBridge): React.ReactNode { /* the screen */ }",
+              "}",
+              "export default new LibsLifecycle();"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:mfes.lifecycle.rules.1",
+            "t:mfes.lifecycle.rules.2",
+            "t:mfes.lifecycle.rules.3"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "isolation",
+          "title": "t:mfes.isolation.title",
+          "lead": "t:mfes.isolation.lead"
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:mfes.isolation.rules.1",
+            "t:mfes.isolation.rules.2",
+            "t:mfes.isolation.rules.3"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "bridge",
+          "title": "t:mfes.bridge.title",
+          "lead": "t:mfes.bridge.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:mfes.bridge.example",
+            "lines": [
+              "bridge.extDomainId                          // the domain the extension is mounted into",
+              "bridge.extensionId                          // the extension's own id",
+              "bridge.executeActionsChain(chain)           // returns nothing to await",
+              "bridge.getProperty(propertyId)              // the current value",
+              "bridge.subscribeToProperty(propertyId, cb)  // returns an unsubscribe function",
+              "bridge.registerActionHandler(actionTypeId, handler)"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:mfes.bridge.rules.1",
+            "t:mfes.bridge.rules.2",
+            "t:mfes.bridge.rules.3",
+            "t:mfes.bridge.rules.4"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "shared-properties",
+          "title": "t:mfes.properties.title",
+          "lead": "t:mfes.properties.lead"
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:mfes.properties.rules.1",
+            "t:mfes.properties.rules.2",
+            "t:mfes.properties.rules.3"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "actions",
+          "title": "t:mfes.actions.title",
+          "lead": "t:mfes.actions.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:mfes.actions.example",
+            "lines": [
+              "bridge.executeActionsChain({",
+              "  action: { type: FRONTX_ACTION_MOUNT_EXT, target: FRONTX_SCREEN_DOMAIN, payload: { subject: extensionId } },",
+              "  next: nextChain,       // runs when the action succeeds",
+              "  fallback: fallbackChain, // runs when it fails",
+              "});"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:mfes.actions.rules.1",
+            "t:mfes.actions.rules.2",
+            "t:mfes.actions.rules.3",
+            "t:mfes.actions.rules.4"
+          ]
+        },
+        {
+          "type": "details",
+          "summary": "t:mfes.nesting.summary",
+          "items": [
+            "t:mfes.nesting.1"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "related",
+          "title": "t:mfes.related.title"
+        },
+        {
+          "type": "card-tiles",
+          "items": [
+            {
+              "eyebrow": "t:mfes.related.card.1.eyebrow",
+              "title": "t:mfes.related.card.1.title",
+              "text": "t:mfes.related.card.1.text",
+              "href": {
+                "route": "/routing"
+              }
+            },
+            {
+              "eyebrow": "t:mfes.related.card.2.eyebrow",
+              "title": "t:mfes.related.card.2.title",
+              "text": "t:mfes.related.card.2.text",
+              "href": {
+                "route": "/screen-domain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/screen-domain",
+      "title": "t:domain.title",
+      "lead": "t:domain.lead",
+      "entries": [
+        {
+          "type": "facts",
+          "title": "t:domain.facts.title",
+          "items": [
+            {
+              "label": "t:domain.facts.1.label",
+              "value": "t:domain.facts.1.value"
+            },
+            {
+              "label": "t:domain.facts.2.label",
+              "value": "t:domain.facts.2.value"
+            },
+            {
+              "label": "t:domain.facts.3.label",
+              "value": "t:domain.facts.3.value"
+            },
+            {
+              "label": "t:domain.facts.4.label",
+              "value": "t:domain.facts.4.value"
+            },
+            {
+              "label": "t:domain.facts.5.label",
+              "value": "t:domain.facts.5.value"
+            },
+            {
+              "label": "t:domain.facts.6.label",
+              "value": "t:domain.facts.6.value"
+            },
+            {
+              "label": "t:domain.facts.7.label",
+              "value": "t:domain.facts.7.value"
+            },
+            {
+              "label": "t:domain.facts.8.label",
+              "value": "t:domain.facts.8.value"
+            }
+          ],
+          "actions": [
+            {
+              "label": "t:domain.facts.action1",
+              "href": {
+                "url": "{shellSourceUrl}/packages/framework/src/plugins/microfrontends/base-domains.ts"
+              }
+            },
+            {
+              "label": "t:domain.facts.action2",
+              "href": {
+                "url": "{shellSourceUrl}/src-app/app/mfe/bootstrap.ts"
+              }
+            }
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "what",
+          "title": "t:domain.what.title",
+          "lead": "t:domain.what.lead"
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:domain.what.rules.1",
+            "t:domain.what.rules.2",
+            "t:domain.what.rules.3",
+            "t:domain.what.rules.4"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "extension",
+          "title": "t:domain.extension.title",
+          "lead": "t:domain.extension.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:domain.extension.example",
+            "lines": [
+              "{",
+              "  \"id\": \"gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_libs.screens.libs.v1\",",
+              "  \"domain\": \"gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1\",",
+              "  \"entry\": \"gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_libs.mfe.libs.v1\",",
+              "  \"route\": \"/libs\",",
+              "  \"presentation\": {",
+              "    \"label\": \"Libraries\",",
+              "    \"icon\": \"lucide:library\",",
+              "    \"order\": 35",
+              "  }",
+              "}"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:domain.extension.rules.1",
+            "t:domain.extension.rules.2",
+            "t:domain.extension.rules.3"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "exclusive",
+          "title": "t:domain.exclusive.title",
+          "lead": "t:domain.exclusive.lead"
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:domain.exclusive.rules.1",
+            "t:domain.exclusive.rules.2",
+            "t:domain.exclusive.rules.3",
+            "t:domain.exclusive.rules.4"
+          ]
+        },
+        {
+          "type": "details",
+          "summary": "t:domain.exclusive.others.summary",
+          "items": [
+            "t:domain.exclusive.others.1",
+            "t:domain.exclusive.others.2"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "mount",
+          "title": "t:domain.mount.title",
+          "lead": "t:domain.mount.lead"
+        },
+        {
+          "type": "code",
+          "code": {
+            "title": "t:domain.mount.example",
+            "lines": [
+              "bridge.executeActionsChain({",
+              "  action: { type: FRONTX_ACTION_MOUNT_EXT, target: FRONTX_SCREEN_DOMAIN, payload: { subject: screenExtensionId, history: 'replace' } },",
+              "});"
+            ]
+          }
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:domain.mount.rules.1",
+            "t:domain.mount.rules.2",
+            "t:domain.mount.rules.3",
+            "t:domain.mount.rules.4"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "route-key",
+          "title": "t:domain.key.title",
+          "lead": "t:domain.key.lead"
+        },
+        {
+          "type": "checklist",
+          "items": [
+            "t:domain.key.rules.1",
+            "t:domain.key.rules.2"
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "related",
+          "title": "t:domain.related.title"
+        },
+        {
+          "type": "card-tiles",
+          "items": [
+            {
+              "eyebrow": "t:domain.related.card.1.eyebrow",
+              "title": "t:domain.related.card.1.title",
+              "text": "t:domain.related.card.1.text",
+              "href": {
+                "route": "/routing"
+              }
+            },
+            {
+              "eyebrow": "t:domain.related.card.2.eyebrow",
+              "title": "t:domain.related.card.2.title",
+              "text": "t:domain.related.card.2.text",
+              "href": {
+                "route": "/mfes"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

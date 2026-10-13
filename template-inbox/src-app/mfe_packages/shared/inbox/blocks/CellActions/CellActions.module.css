@@ -1,0 +1,7 @@
+/* A row's action buttons, aligned to the end of their cell. Layout only. */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}

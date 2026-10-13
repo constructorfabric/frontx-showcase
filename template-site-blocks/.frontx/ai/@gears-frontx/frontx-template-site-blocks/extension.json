@@ -1,0 +1,11 @@
+{
+  "id": "frontx-template-site-blocks-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "site-blocks",
+      "category": "guidelines",
+      "path": "guidelines/site-blocks.md"
+    }
+  ]
+}

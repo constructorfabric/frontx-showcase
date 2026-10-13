@@ -1,0 +1,18 @@
+Adaptation of examples/button.tsx
+Kind: mechanical
+Reason: the link-styled button is a function `render` for jsx-a11y (same DOM, the click is still prevented) and points at `#button-link` instead of a bare `#`
+--- a/examples/button.tsx
++++ b/examples/button.tsx
+@@ -180,7 +180,11 @@
+       <Section title="As link">
+         <Row>
+           <Button
+-            render={<a href="#" onClick={(event) => event.preventDefault()} />}
++            render={(props) => (
++              <a href="#button-link" {...props} onClick={(event) => { event.preventDefault(); props.onClick?.(event); }}>
++                {props.children}
++              </a>
++            )}
+             nativeButton={false}
+             variant="outline"
+           >

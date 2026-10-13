@@ -1,0 +1,11 @@
+/*
+ * A AlertTitle rendered as a heading: the user agent's margins and font
+ * sizes reset at zero specificity, so every rule of the kit's title class
+ * still wins and the element looks as the kit's `div` did.
+ */
+:where(.renderedTitle) {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+}

@@ -1,0 +1,86 @@
+/*
+ * A bordered list with a tinted header band and divided link rows. The kit's Card pads its content, while the band and the rows run edge to edge, so the frame, the band and the row look wait for a kit list card; see styles-exemptions.json. Texts are kit-candidate roles: the title `heading-2`, the count, description and meta the `meta` role (12px, the control text floor inside a link).
+ */
+
+.card {
+  overflow: hidden;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-xl);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--accent);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--accent-foreground);
+}
+
+.count {
+  margin-left: auto;
+}
+
+.entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: var(--border-width) solid var(--border);
+  color: var(--foreground);
+  font-size: var(--text-body-size);
+  line-height: normal;
+  text-decoration: none;
+}
+
+.entry:hover {
+  background-color: var(--muted);
+}
+
+.entry:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.meta {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.arrow {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+@media (max-width: 48rem) {
+  .header {
+    padding: var(--space-4);
+  }
+
+  .entry {
+    padding: var(--space-4);
+  }
+}

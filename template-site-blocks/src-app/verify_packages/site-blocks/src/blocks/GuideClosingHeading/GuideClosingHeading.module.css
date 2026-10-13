@@ -1,0 +1,25 @@
+/*
+ * A closing section opens 32px under the steps (8px here plus the column's 24px gap), then 38px under its rule; the title sits 24px above what follows. The jump target stops clear of the sticky site header; its focus ring is the kit ring.
+ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+  margin-top: var(--space-2);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  scroll-margin-top: calc(var(--site-header-height) + var(--space-6));
+}
+
+.title:focus-visible {
+  outline: var(--border-width-focus) solid var(--ring);
+  outline-offset: 4px;
+}

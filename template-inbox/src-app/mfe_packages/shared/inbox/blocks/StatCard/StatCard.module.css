@@ -1,0 +1,236 @@
+/*
+ * The dashboard's stat cards, one arrangement per component. Layout on kit
+ * tokens; the big-figure type steps, the chart boxes and the legend and
+ * footer details the kit has no part for are rows of styles-exemptions.json.
+ */
+
+/* --- Shared --- */
+
+.headline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Name and figure pairs: the figure at the end of its row. */
+.pairs {
+  flex: 1;
+}
+
+.pairs dd {
+  text-align: end;
+}
+
+/*
+ * Every chart box sizes the chart inside it. The kit's ChartContainer root
+ * fixes `aspect-ratio: 16 / 9`, so a chart as wide as its card would grow
+ * far taller than its box; two classes outrank the kit's single-class rule
+ * whichever stylesheet loads first.
+ */
+.card .chartKpi > *,
+.card .chartHero > *,
+.card .chartLarge > *,
+.card .chartTrend > *,
+.card .chartTall > *,
+.card .chartBreakdown > *,
+.card .chartDonut > * {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+/* The hero step of the big-figure scale, 40px, one above the kit's display role. */
+.heroValue {
+  font-size: 2.5rem;
+  line-height: 2.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- StatKpiCard --- */
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.kpiTop {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* The KPI step of the big-figure scale, 28px, one above the kit's display role (26px) and below the hero step. */
+.kpiValue {
+  font-size: 1.75rem;
+  line-height: 2rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Big enough to read as a chart rather than a strip of decoration. */
+.chartKpi {
+  box-sizing: border-box;
+  width: 100%;
+  height: 7.5rem;
+}
+
+.footer {
+  justify-content: space-between;
+  padding-top: var(--card-spacing);
+  border-top: var(--border-width) solid var(--border);
+}
+
+/* --- StatHeroCard --- */
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.heroHeadline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.chartHero {
+  box-sizing: border-box;
+  width: 100%;
+  height: 8rem;
+}
+
+/* --- StatChartCard --- */
+
+.chartLarge {
+  box-sizing: border-box;
+  width: 100%;
+  height: 16rem;
+}
+
+/* --- StatSummaryCard --- */
+
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* The heading-1 size on the card's own body line, so the figures stay as short as their labels. */
+.summaryValue {
+  font-size: var(--text-heading-1-size);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.chartTrend {
+  box-sizing: border-box;
+  width: 100%;
+  height: 3rem;
+}
+
+/* The one action spans the footer. */
+.actionFooter > * {
+  width: 100%;
+}
+
+/* --- StatTrendCard and StatBreakdownCard --- */
+
+.figureContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.chartTall {
+  box-sizing: border-box;
+  width: 100%;
+  height: 17rem;
+  margin-top: var(--space-2);
+}
+
+.chartBreakdown {
+  box-sizing: border-box;
+  width: 100%;
+  height: 15rem;
+  margin-top: var(--space-2);
+}
+
+/* --- StatDonutCard --- */
+
+.donutContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.chartDonut {
+  box-sizing: border-box;
+  flex: none;
+  width: 8.75rem;
+  height: 8.75rem;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.legendDot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.legendLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legendCount {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.legendPercent {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+@container inbox-screen (width < 44rem) {
+  .figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

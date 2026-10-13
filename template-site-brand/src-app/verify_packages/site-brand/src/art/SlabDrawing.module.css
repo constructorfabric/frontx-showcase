@@ -1,0 +1,100 @@
+/*
+ * Palette of the application slab (ADR 0002). The kit has no material colours, so the clay, indigo and lilac of the slab are the drawing's own: matte porcelain surfaces lit from the top left, indigo accents, pale blue bars and a lilac glow under the raised module. The slab is a product shot and keeps this palette in both site themes.
+ */
+.svg {
+  --slab-clay-top: #edf0f5;
+  --slab-clay-bottom: #cdd7e9;
+  --slab-clay-edge: #a3b6dc;
+  --slab-card-top: #f7f8fb;
+  --slab-card-bottom: #dde4ef;
+  --slab-card-rim: rgb(255 255 255 / 0.85);
+  --slab-well: #dcdff3;
+  --slab-glow: #eadeff;
+  --slab-indigo-a: #1a27a3;
+  --slab-indigo-b: #2f3cb8;
+  --slab-tile: #5258c4;
+  --slab-pill: #3f46aa;
+  --slab-on-accent: #ffffff;
+  --slab-bar: #8da9d0;
+  --slab-bar-soft: #b9c8de;
+  --slab-chip: #a9bad8;
+  --slab-search: #7f95c0;
+  --slab-shadow: rgb(40 58 120 / 0.16);
+  --slab-shadow-strong: rgb(40 58 120 / 0.22);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.clayTop { stop-color: var(--slab-clay-top); }
+.clayBottom { stop-color: var(--slab-clay-bottom); }
+.cardTop { stop-color: var(--slab-card-top); }
+.cardBottom { stop-color: var(--slab-card-bottom); }
+.indigoA { stop-color: var(--slab-indigo-a); }
+.indigoB { stop-color: var(--slab-indigo-b); }
+
+.edge { fill: var(--slab-clay-edge); }
+.slab { stroke: var(--slab-card-top); stroke-width: 2; }
+.divider { fill: var(--slab-clay-bottom); }
+.well { fill: var(--slab-well); }
+.card { stroke: var(--slab-card-rim); stroke-width: 2; }
+.glow { fill: var(--slab-glow); filter: blur(10px); }
+.lift { filter: drop-shadow(0 6px 8px var(--slab-shadow)); }
+.liftStrong { filter: drop-shadow(0 14px 18px var(--slab-shadow-strong)); }
+.tile { fill: var(--slab-tile); }
+.pill { fill: var(--slab-pill); }
+.onAccent { fill: var(--slab-on-accent); }
+.bar { fill: var(--slab-bar); }
+.barSoft { fill: var(--slab-bar-soft); }
+.chip { fill: var(--slab-chip); }
+.searchRing { fill: none; stroke: var(--slab-search); stroke-width: 4; }
+.searchHandle { fill: var(--slab-search); }
+
+/* Parts arrive from their own side and the module seats last. Without the preference the slab is simply drawn. */
+@media (prefers-reduced-motion: no-preference) {
+  .content,
+  .nav,
+  .search,
+  .side,
+  .chassis {
+    animation: assemble 0.48s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  }
+
+  .chassis { --from-y: 14px; }
+  .content { --from-y: 24px; animation-delay: 60ms; }
+  .nav { --from-x: -28px; animation-delay: 120ms; }
+  .search { --from-y: -28px; animation-delay: 180ms; }
+  .side { --from-x: 28px; animation-delay: 240ms; }
+
+  .module {
+    animation: seat 1.15s cubic-bezier(0.3, 0.05, 0.18, 1) 0.78s both;
+  }
+}
+
+@keyframes assemble {
+  from {
+    opacity: 0;
+    translate: var(--from-x, 0) var(--from-y, 0);
+  }
+}
+
+@keyframes seat {
+  0% {
+    opacity: 0;
+    translate: 0 -52px;
+  }
+  18% {
+    opacity: 1;
+  }
+  65% {
+    translate: 0 -10px;
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+  }
+}

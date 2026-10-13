@@ -1,0 +1,29 @@
+/* Title and sentence left, the action at the row's end; the action drops under the text under 640px. */
+.row {
+  --cta-rule-pad: var(--space-8);
+  --cta-rule-gap: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cta-rule-gap);
+  padding: var(--cta-rule-pad) 0;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.action {
+  flex-shrink: 0;
+}
+
+@media (max-width: 40rem) {
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+}

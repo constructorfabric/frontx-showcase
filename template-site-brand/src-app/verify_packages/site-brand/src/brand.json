@@ -1,0 +1,516 @@
+{
+  "$comment": "The brand of the FrontX site, the single source of src/tokens.css, src/theme.ts and the token table of the brand guideline (npm run brand:generate). Each row: token, our value (null: V2 value recorded, not adopted), the V2 value measured on the design reference (null: V2 has none), the reason for any difference, and the role. Pairs: background and text tokens drawn together, held at 4.5:1 by brand:check.",
+  "light": {
+    "appearance": "light",
+    "overrides": [
+      {
+        "token": "--primary",
+        "value": "#0756f5",
+        "v2": "#0756f5",
+        "role": "Brand blue: primary buttons, the hero band, active navigation"
+      },
+      {
+        "token": "--primary-hover",
+        "value": "color-mix(in oklab, var(--primary) 80%, var(--foreground))",
+        "v2": "#2668c5",
+        "reason": "V2 keeps the kit's hover shade. The site derives its hover from the brand blue (create-theme rule): mixed toward the brand ink it renders #0f4dce, a step darker than the brand blue, at 7.06:1 under white text",
+        "role": "Hover of the brand blue"
+      },
+      {
+        "token": "--primary-foreground",
+        "value": "#ffffff",
+        "v2": "#ffffff",
+        "role": "Text and icons on the brand blue"
+      },
+      {
+        "token": "--primary-ring",
+        "value": "#0756f5",
+        "v2": "#2668c5",
+        "reason": "V2 keeps the kit's ring shade on this token and rings its own controls through --ring in the brand blue; the site rings every control in the brand blue",
+        "role": "Focus ring of primary controls"
+      },
+      {
+        "token": "--ring",
+        "value": "#0756f5",
+        "v2": "#0756f5",
+        "role": "Focus ring"
+      },
+      {
+        "token": "--link-foreground",
+        "value": "#0756f5",
+        "v2": "#0756f5",
+        "role": "Inline link ink (V2 draws its links in the brand blue)"
+      },
+      {
+        "token": "--background",
+        "value": "#ffffff",
+        "v2": "#ffffff",
+        "role": "Page background"
+      },
+      {
+        "token": "--foreground",
+        "value": "#152440",
+        "v2": "#152440",
+        "role": "Ink of headings and kit component text"
+      },
+      {
+        "token": "--popover-foreground",
+        "value": "#152440",
+        "v2": "#17212d",
+        "reason": "V2 brands its page ink only inside its page wrapper, so its popups, rendered outside that wrapper, take its root ink #17212d. The site draws popup text in the same brand ink as the page, so a popup reads as part of it",
+        "role": "Text of popups and overlays: menus, listboxes, popovers, dialogs, sheets and toasts"
+      },
+      {
+        "token": "--muted",
+        "value": "#f1f5ff",
+        "v2": "#f1f5ff",
+        "role": "Pale band behind the kit showcase and muted surfaces"
+      },
+      {
+        "token": "--muted-foreground",
+        "value": "#5c6b84",
+        "v2": "#5c6b84",
+        "role": "Leads and secondary text"
+      },
+      {
+        "token": "--border",
+        "value": "#e0e7f2",
+        "v2": "#e0e7f2",
+        "role": "Card and section lines"
+      },
+      {
+        "token": "--surface",
+        "value": "#f7f9fd",
+        "v2": "#f7f9fd",
+        "role": "Info cards and quiet panels"
+      },
+      {
+        "token": "--accent",
+        "value": "#edf3ff",
+        "v2": "#edf3ff",
+        "role": "Active rail item and accent washes"
+      },
+      {
+        "token": "--accent-foreground",
+        "value": "#0546cc",
+        "v2": "#0756f5",
+        "reason": "V2 draws its active rail item in the brand blue on #edf2ff (5.16:1); the site keeps a deeper blue for a wider margin (6.85:1 on --accent)",
+        "role": "Text on the accent wash"
+      },
+      {
+        "token": "--info-soft",
+        "value": "#eef4ff",
+        "v2": "#eef4ff",
+        "role": "Call-to-action box background"
+      },
+      {
+        "token": "--secondary",
+        "value": null,
+        "v2": "#edf1f8",
+        "reason": "Not adopted: V2's product-layer value; the site keeps the kit's secondary surface, so kit secondary controls look as the kit ships them",
+        "role": "Secondary surface of kit controls"
+      },
+      {
+        "token": "--secondary-foreground",
+        "value": null,
+        "v2": "#283d60",
+        "reason": "Not adopted, with --secondary",
+        "role": "Text on the secondary surface"
+      },
+      {
+        "token": "--chart-1",
+        "value": null,
+        "v2": "#0756f5",
+        "reason": "Not adopted: V2 recolours the series on its home page only; the site's kit charts keep the kit's series colours",
+        "role": "First chart series"
+      },
+      {
+        "token": "--chart-2",
+        "value": null,
+        "v2": "#aa9af2",
+        "reason": "Not adopted, with --chart-1",
+        "role": "Second chart series"
+      },
+      {
+        "token": "--chart-3",
+        "value": null,
+        "v2": "#648de9",
+        "reason": "Not adopted, with --chart-1",
+        "role": "Third chart series"
+      }
+    ],
+    "tokens": [
+      {
+        "token": "--site-nav-foreground",
+        "value": "#283349",
+        "v2": "#283349",
+        "role": "Header navigation links"
+      },
+      {
+        "token": "--site-footer-link",
+        "value": "#63748e",
+        "v2": "#63748e",
+        "role": "Footer links"
+      },
+      {
+        "token": "--site-label-foreground",
+        "value": "#6c6aa9",
+        "v2": "#7775bb",
+        "reason": "V2's lilac reads 3.81:1 on the pale band; this is the nearest shade of the same hue that keeps 4.5:1 on --muted and on white",
+        "role": "Band and eyebrow label (lilac)"
+      },
+      {
+        "token": "--site-description-foreground",
+        "value": "#647187",
+        "v2": "#647187",
+        "role": "Card and section descriptions"
+      },
+      {
+        "token": "--site-page-foreground",
+        "value": "#162031",
+        "v2": "#162031",
+        "role": "Text colour content pages inherit and the lockup ink; kit components draw with --foreground"
+      },
+      {
+        "token": "--site-chrome-border",
+        "value": "#e6e9ef",
+        "v2": "#e6e9ef",
+        "role": "The site header's bottom rule and the footer's top rule"
+      },
+      {
+        "token": "--site-lockup-divider",
+        "value": "#9aa3b2",
+        "v2": "#9aa3b2",
+        "role": "The lockup's divider between company and product"
+      }
+    ]
+  },
+  "dark": {
+    "appearance": "dark",
+    "tokens": [
+      {
+        "token": "--site-label-foreground",
+        "value": "#9291c9",
+        "v2": null,
+        "reason": "V2 has no dark theme for the site pages; the site keeps the kit dark palette (owner decision D9) and resets this token on every dark scope; the lilac is lightened to keep 4.5:1",
+        "role": "Band label on dark surfaces"
+      },
+      {
+        "token": "--site-description-foreground",
+        "value": "var(--muted-foreground)",
+        "v2": null,
+        "reason": "V2 has no dark theme for the site pages; the site keeps the kit dark palette (owner decision D9) and resets this token on every dark scope",
+        "role": "Descriptions on dark surfaces"
+      },
+      {
+        "token": "--site-page-foreground",
+        "value": "var(--foreground)",
+        "v2": null,
+        "reason": "V2 has no dark theme for the site pages; the site keeps the kit dark palette (owner decision D9) and resets this token on every dark scope",
+        "role": "Page text on dark surfaces"
+      }
+    ]
+  },
+  "invariant": [
+    {
+      "token": "--site-text-hero-size",
+      "type": "length",
+      "value": "clamp(2.625rem, 4.55vw, 4.625rem)",
+      "v2": "clamp(42px, 4.55vw, 74px)",
+      "role": "Hero title size (the kit's display role stops at 26px)"
+    },
+    {
+      "token": "--site-text-hero-line-height",
+      "type": "number",
+      "value": "1.1",
+      "v2": "1.1",
+      "role": "Hero title line height"
+    },
+    {
+      "token": "--site-text-hero-tracking",
+      "type": "length",
+      "value": "-0.05em",
+      "v2": "-0.05em",
+      "role": "Hero title tracking"
+    },
+    {
+      "token": "--site-text-section-size",
+      "type": "length",
+      "value": "clamp(2rem, 3.2vw, 3rem)",
+      "v2": "clamp(32px, 3.2vw, 48px)",
+      "role": "Section title size"
+    },
+    {
+      "token": "--site-text-section-line-height",
+      "type": "number",
+      "value": "1.12",
+      "v2": "1.12",
+      "role": "Section title line height"
+    },
+    {
+      "token": "--site-text-section-tracking",
+      "type": "length",
+      "value": "-0.045em",
+      "v2": "-0.045em",
+      "role": "Section title tracking"
+    },
+    {
+      "token": "--site-text-page-size",
+      "type": "length",
+      "value": "clamp(2.125rem, 3.7vw, 3.375rem)",
+      "v2": "clamp(34px, 3.7vw, 54px)",
+      "role": "Inner page title size"
+    },
+    {
+      "token": "--site-text-page-line-height",
+      "type": "number",
+      "value": "1.12",
+      "v2": "1.12",
+      "role": "Inner page title line height"
+    },
+    {
+      "token": "--site-text-page-tracking",
+      "type": "length",
+      "value": "-0.045em",
+      "v2": "-0.045em",
+      "role": "Inner page title tracking"
+    },
+    {
+      "token": "--site-text-closing-size",
+      "type": "length",
+      "value": "clamp(2.4375rem, 4vw, 3.75rem)",
+      "v2": "clamp(38px, 4vw, 60px)",
+      "reason": "The site's minimum is 39px against V2's 38px; the closing block is measured against V2 at 390px wide, where the two differ",
+      "role": "Closing band title size"
+    },
+    {
+      "token": "--site-weight-nav",
+      "type": "number",
+      "value": "450",
+      "v2": "450",
+      "role": "Header navigation weight"
+    },
+    {
+      "token": "--site-weight-link",
+      "type": "number",
+      "value": "550",
+      "v2": "550",
+      "role": "Action link and call-to-action weight"
+    },
+    {
+      "token": "--site-weight-title",
+      "type": "number",
+      "value": "560",
+      "v2": "560",
+      "role": "Section and card title weight"
+    },
+    {
+      "token": "--site-weight-page-title",
+      "type": "number",
+      "value": "570",
+      "v2": "570",
+      "role": "Inner page title weight"
+    },
+    {
+      "token": "--site-weight-strong",
+      "type": "number",
+      "value": "700",
+      "v2": "700",
+      "role": "Bold card and panel titles"
+    },
+    {
+      "token": "--site-line-height-lead",
+      "type": "number",
+      "value": "1.7",
+      "v2": "1.7",
+      "role": "Line height of leads and descriptions in cards and bands (14px on 23.8px)"
+    },
+    {
+      "token": "--site-radius-block",
+      "type": "length",
+      "value": "15px",
+      "v2": "15px",
+      "role": "Radius of the architecture map's blocks"
+    },
+    {
+      "token": "--site-radius-map",
+      "type": "length",
+      "value": "20px",
+      "v2": "20px",
+      "role": "Radius of the architecture map frame"
+    },
+    {
+      "token": "--site-night",
+      "type": "color",
+      "value": "#10234b",
+      "v2": "#10234b",
+      "role": "Night band behind the closing call to action"
+    }
+  ],
+  "pairs": {
+    "light": [
+      [
+        "--primary",
+        "--primary-foreground"
+      ],
+      [
+        "--primary-hover",
+        "--primary-foreground"
+      ],
+      [
+        "--background",
+        "--foreground"
+      ],
+      [
+        "--background",
+        "--muted-foreground"
+      ],
+      [
+        "--background",
+        "--link-foreground"
+      ],
+      [
+        "--background",
+        "--site-nav-foreground"
+      ],
+      [
+        "--background",
+        "--site-footer-link"
+      ],
+      [
+        "--background",
+        "--site-label-foreground"
+      ],
+      [
+        "--background",
+        "--site-description-foreground"
+      ],
+      [
+        "--surface",
+        "--site-description-foreground"
+      ],
+      [
+        "--muted",
+        "--site-description-foreground"
+      ],
+      [
+        "--background",
+        "--site-page-foreground"
+      ],
+      [
+        "--surface",
+        "--site-page-foreground"
+      ],
+      [
+        "--muted",
+        "--foreground"
+      ],
+      [
+        "--muted",
+        "--muted-foreground"
+      ],
+      [
+        "--muted",
+        "--link-foreground"
+      ],
+      [
+        "--muted",
+        "--site-label-foreground"
+      ],
+      [
+        "--accent",
+        "--accent-foreground"
+      ],
+      [
+        "--surface",
+        "--foreground"
+      ],
+      [
+        "--surface",
+        "--muted-foreground"
+      ],
+      [
+        "--surface",
+        "--link-foreground"
+      ],
+      [
+        "--info-soft",
+        "--foreground"
+      ],
+      [
+        "--info-soft",
+        "--link-foreground"
+      ],
+      [
+        "--card",
+        "--card-foreground"
+      ],
+      [
+        "--popover",
+        "--popover-foreground"
+      ],
+      [
+        "--secondary",
+        "--secondary-foreground"
+      ],
+      [
+        "--surface",
+        "--site-label-foreground"
+      ],
+      [
+        "--muted",
+        "--site-page-foreground"
+      ]
+    ],
+    "dark": [
+      [
+        "--background",
+        "--site-label-foreground"
+      ],
+      [
+        "--surface",
+        "--site-label-foreground"
+      ],
+      [
+        "--muted",
+        "--site-label-foreground"
+      ],
+      [
+        "--background",
+        "--site-description-foreground"
+      ],
+      [
+        "--surface",
+        "--site-description-foreground"
+      ],
+      [
+        "--muted",
+        "--site-description-foreground"
+      ],
+      [
+        "--background",
+        "--site-page-foreground"
+      ],
+      [
+        "--surface",
+        "--site-page-foreground"
+      ],
+      [
+        "--muted",
+        "--site-page-foreground"
+      ]
+    ]
+  },
+  "head": {
+    "themeColor": {
+      "value": "#2852ed",
+      "v2": "#2852ed",
+      "role": "Browser chrome colour (theme-color meta and web manifest)"
+    },
+    "backgroundColor": {
+      "value": "#ffffff",
+      "v2": "#ffffff",
+      "role": "Web manifest splash background"
+    }
+  }
+}

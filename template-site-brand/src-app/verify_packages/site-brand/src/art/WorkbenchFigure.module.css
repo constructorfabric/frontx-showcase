@@ -1,0 +1,302 @@
+/*
+ * Palette of the change-story workbench (ADR 0002): its pale tints, blue and greys, light and dark. Every surface and every text of the workbench reads this palette, so the task text never lands on a tint of the other appearance. A grey of the design reference that falls under 4.5:1 is replaced by the site's description colour, and its 8 to 9px window texts are drawn at the kit's 10px floor. The task bar and the panels sit inset by the kit's minimum card padding, which the design checker requires of a bordered container.
+ */
+.story {
+  --story-surface: #ffffff;
+  --story-text: #152440;
+  --story-removed: #647187;
+  --story-line: #dbe3f1;
+  --story-tint: #f1f4fc;
+  --story-preview: #fafbff;
+  --story-heading: #48566b;
+  --story-added: #345bd2;
+  --story-added-mark: #6b7fd1;
+  --story-added-tint: #edf1ff;
+  --story-title: #325bd1;
+  --story-nav: #3863a4;
+  --story-icon: #5c70ad;
+  --story-window-border: #cfddf2;
+  --story-rail: #edf3fd;
+  --story-rail-border: #d8e3f4;
+  --story-rail-line: #c7d8f4;
+  --story-lines: #edf2fa;
+}
+
+:where([data-theme='dark']) .story {
+  --story-surface: #0f172a;
+  --story-text: #e6ebf4;
+  --story-removed: #a9b4c8;
+  --story-line: #27344d;
+  --story-tint: #16213a;
+  --story-preview: #121c33;
+  --story-heading: #a9b4c8;
+  --story-added: #9db9ff;
+  --story-added-mark: #6b86e0;
+  --story-added-tint: #1a2a4f;
+  --story-title: #9db9ff;
+  --story-nav: #a8c0f0;
+  --story-icon: #8ea2d8;
+  --story-window-border: #2d3c5a;
+  --story-rail: #16233f;
+  --story-rail-border: #2d3c5a;
+  --story-rail-line: #2e4068;
+  --story-lines: #22304b;
+}
+
+:where([data-theme='dark'] [data-theme='light']) .story {
+  --story-surface: #ffffff;
+  --story-text: #152440;
+  --story-removed: #647187;
+  --story-line: #dbe3f1;
+  --story-tint: #f1f4fc;
+  --story-preview: #fafbff;
+  --story-heading: #48566b;
+  --story-added: #345bd2;
+  --story-added-mark: #6b7fd1;
+  --story-added-tint: #edf1ff;
+  --story-title: #325bd1;
+  --story-nav: #3863a4;
+  --story-icon: #5c70ad;
+  --story-window-border: #cfddf2;
+  --story-rail: #edf3fd;
+  --story-rail-border: #d8e3f4;
+  --story-rail-line: #c7d8f4;
+  --story-lines: #edf2fa;
+}
+
+
+.story {
+  /* The kit's minimum card padding: the task bar and the panels sit inset by it, with their own radii. */
+  padding: var(--space-1);
+  border: var(--border-width) solid var(--story-line);
+  border-radius: var(--radius-xl);
+  background-color: var(--story-surface);
+  color: var(--story-text);
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px 22px 22px;
+  border-bottom: var(--border-width) solid var(--story-line);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background-color: var(--story-tint);
+}
+
+.taskIcon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--story-icon);
+}
+
+.taskText {
+  max-width: 760px;
+  margin: 0;
+  color: var(--story-text);
+  font-size: var(--text-body-size);
+  line-height: var(--site-line-height-lead);
+}
+
+.taskText strong {
+  font-weight: var(--site-weight-strong);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* Each panel is its heading row over its content, 24px apart. The paddings next to the workbench's inset edge are 4px smaller, so the contents sit where the reference design's do. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+  margin: 0;
+}
+
+.diffPanel {
+  padding: 24px 24px 24px 20px;
+  border-right: var(--border-width) solid var(--story-line);
+}
+
+.previewPanel {
+  padding: 24px 20px 20px 24px;
+  border-radius: 0 0 var(--radius-lg) 0;
+  background-color: var(--story-preview);
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 24px;
+  color: var(--story-heading);
+  font-size: var(--text-meta-size);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.taskIcon,
+.headingIcon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.headingIcon {
+  flex: none;
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.diff {
+  margin: 0;
+  /* Wraps instead of scrolling: a scrollable block would need its own keyboard stop. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: var(--font-mono);
+}
+
+.removed,
+.added {
+  display: flex;
+  gap: 14px;
+  padding-inline: var(--space-3);
+  font-size: var(--text-meta-size);
+  line-height: 2.5;
+}
+
+.removed {
+  color: var(--story-removed);
+}
+
+.added {
+  border-left: 2px solid var(--story-added-mark);
+  background-color: var(--story-added-tint);
+  color: var(--story-added);
+}
+
+.sign {
+  flex: none;
+}
+
+.window {
+  display: grid;
+  grid-template-columns: 75px minmax(0, 1fr);
+  min-height: 132px;
+  /* The kit's minimum card padding, as on the story itself. */
+  padding: var(--space-1);
+  border: var(--border-width) solid var(--story-window-border);
+  border-radius: 6px;
+  background-color: var(--story-surface);
+}
+
+.rail {
+  padding: 12px 5px;
+  border-right: var(--border-width) solid var(--story-rail-border);
+  border-radius: var(--radius-xs) 0 0 var(--radius-xs);
+  background-color: var(--story-rail);
+}
+
+.railLine {
+  display: block;
+  width: 32px;
+  height: 4px;
+  margin-bottom: var(--space-2);
+  border-radius: 2px;
+  background-color: var(--story-rail-line);
+}
+
+.navItem {
+  display: block;
+  /* Collapses with the rail line's 8px bottom margin. */
+  margin-top: 18px;
+  color: var(--story-nav);
+  font-size: var(--text-micro-size);
+  font-weight: var(--text-label-weight);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.screen {
+  min-width: 0;
+  padding: 12px 8px;
+}
+
+.screenTitle {
+  margin: 0;
+  color: var(--story-title);
+  font-size: var(--text-meta-size);
+  font-weight: var(--site-weight-link);
+  line-height: 1.5;
+}
+
+.screenText {
+  margin: 6px 0 0;
+  color: var(--story-removed);
+  font-size: var(--text-micro-size);
+  line-height: 1.2;
+}
+
+.line,
+.lineShort {
+  display: block;
+  height: 5px;
+  border-radius: 2px;
+  background-color: var(--story-lines);
+}
+
+.line {
+  width: 85%;
+  margin-top: 12px;
+}
+
+.lineShort {
+  width: 60%;
+  margin-top: 5px;
+}
+
+@media (max-width: 40rem) {
+  .task {
+    align-items: flex-start;
+    padding: 14px 14px 18px;
+  }
+
+  .taskText {
+    font-size: 0.8125rem;
+  }
+
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    gap: 20px;
+  }
+
+  .diffPanel {
+    padding: 20px 16px;
+    border-right: none;
+    border-bottom: var(--border-width) solid var(--story-line);
+  }
+
+  .previewPanel {
+    padding: 20px 16px 16px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .heading {
+    min-height: 0;
+    font-size: 0.6875rem;
+  }
+
+  .removed,
+  .added {
+    font-size: var(--text-micro-size);
+  }
+}

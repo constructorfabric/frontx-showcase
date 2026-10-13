@@ -1,0 +1,67 @@
+/*
+ * Two columns of swatches. Each swatch paints its token pair (surface and text) and carries a hairline frame, the name on the label weight and the pair in the monospace face. The kit has no swatch component, and its Text sets a colour of its own that a painted surface cannot take, so every declaration here past the grid is a row of the exemptions ledger.
+ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.name {
+  font-weight: var(--text-label-weight);
+}
+
+.pair {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-size);
+  line-height: var(--text-mono-line-height);
+  overflow-wrap: anywhere;
+}
+
+.swatch[data-token='background'] {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.swatch[data-token='foreground'] {
+  background-color: var(--foreground);
+  color: var(--background);
+}
+
+.swatch[data-token='primary'] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.swatch[data-token='secondary'] {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.swatch[data-token='muted'] {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.swatch[data-token='accent'] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.swatch[data-token='destructive'] {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}

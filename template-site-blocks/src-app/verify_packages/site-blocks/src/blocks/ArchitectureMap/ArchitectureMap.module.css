@@ -1,0 +1,24 @@
+/*
+ * The architecture rhythm on the section frame (52/64; 32/40 under 640px) under a kit separator held to the page column; the map takes the column's width and its own height.
+ */
+
+.rhythm {
+  --site-section-pad-top: 52px;
+  --site-section-pad-bottom: 64px;
+}
+
+.rule {
+  width: var(--site-column);
+  margin: 0 auto;
+}
+
+.map {
+  min-width: 0;
+}
+
+@media (max-width: 40rem) {
+  .rhythm {
+    --site-section-pad-top: var(--space-8);
+    --site-section-pad-bottom: 40px;
+  }
+}

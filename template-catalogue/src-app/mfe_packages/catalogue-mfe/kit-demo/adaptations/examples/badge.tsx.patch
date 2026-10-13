@@ -1,0 +1,14 @@
+Adaptation of examples/badge.tsx
+Kind: mechanical
+Reason: the element given through `render` becomes a function so jsx-a11y sees the link's content; the rendered DOM is the same
+--- a/examples/badge.tsx
++++ b/examples/badge.tsx
+@@ -154,7 +154,7 @@
+ 
+       <Section title="Link">
+         <Row>
+-          <Badge variant="outline" render={<a href="#plans" />}>
++          <Badge variant="outline" render={(props) => <a href="#plans" {...props}>{props.children}</a>}>
+             as a link
+           </Badge>
+         </Row>

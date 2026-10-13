@@ -1,0 +1,44 @@
+{
+  "name": "@gears-frontx/kit-candidates",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "Kit candidates: the components two proposed @gears-frontx/ui-kit pull requests add (Heading, Text, Link, VisuallyHidden and the sr-only utility; CodeBlock, DescriptionList and render on Card, CardTitle, EmptyTitle and AlertTitle), with the API those pull requests propose, so that a release is an import-specifier change. Delivered by @gears-frontx/frontx-template-kit-candidates and deleted whole when the kit releases them.",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./utilities.css": "./src/utilities.css"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "test": "npm run test:unit",
+    "test:unit": "vitest --run --passWithNoTests=false"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.6.0",
+    "@gears-frontx/ui-kit": "0.4.0",
+    "class-variance-authority": "0.7.1",
+    "lucide-react": "1.33.0"
+  },
+  "peerDependencies": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.0.3",
+    "axe-core": "4.13.0",
+    "jsdom": "26.1.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "typescript": "5.9.3",
+    "vite": "6.4.3",
+    "vitest": "4.1.4",
+    "yaml": "2.9.1"
+  }
+}

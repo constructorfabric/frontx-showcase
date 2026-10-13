@@ -1,0 +1,5 @@
+/*
+ * The blocks package's document entry: the shell loads every template package's src/document.css once, in the document, so the layout tokens reach the shell chrome and, through the head-style adoption, every screen's shadow root.
+ */
+
+@import './layout.css';

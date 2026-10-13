@@ -1,0 +1,52 @@
+/*
+ * A section opens 56px under the content before it: 32px here plus the page column's 24px gap; the first section of a column takes 24px. The jump target stops clear of the sticky site header. The lead's line height and the jump target's focus ring are rows of the exemptions ledger.
+ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-8);
+}
+
+.header:first-child {
+  padding-top: var(--space-6);
+}
+
+.labelled {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-5);
+}
+
+.title {
+  scroll-margin-top: calc(var(--site-header-height) + var(--space-6));
+}
+
+.title:focus-visible {
+  outline: var(--border-width-focus) solid var(--ring);
+  outline-offset: 4px;
+}
+
+.lead {
+  line-height: var(--site-line-height-lead);
+}
+
+@media (max-width: 56.25rem) {
+  .header {
+    padding-top: var(--space-3);
+  }
+
+  .header:first-child {
+    padding-top: var(--space-1);
+  }
+}
+
+@media (max-width: 40rem) {
+  .labelled {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

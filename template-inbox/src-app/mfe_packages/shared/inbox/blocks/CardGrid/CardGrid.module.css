@@ -1,0 +1,80 @@
+/*
+ * The dashboard's board and its row arrangements. Layout only. The steps
+ * follow the screen's own width (`@container inbox-screen`) on the widths of
+ * SCREEN_BREAKPOINTS_REM: dashboardWide (76rem) and dashboardNarrow (44rem).
+ */
+
+.board {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-6);
+}
+
+/*
+ * A row keeps its content height. A kit Card root carries `overflow: hidden`,
+ * which zeroes a flex item's automatic minimum size, so without this a card
+ * placed straight on the board could be squeezed to a sliver instead of the
+ * board scrolling.
+ */
+.board > * {
+  flex: none;
+}
+
+.rowQuad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.rowTrio {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+/* The two cards' natural heights differ a lot (a chart against a short list); stretching them would leave a dead gap in the shorter one. */
+.rowWideNarrow {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.rowNarrowWide {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+@container inbox-screen (width < 76rem) {
+  .rowQuad,
+  .strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rowTrio,
+  .rowWideNarrow,
+  .rowNarrowWide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container inbox-screen (width < 44rem) {
+  .rowQuad,
+  .strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

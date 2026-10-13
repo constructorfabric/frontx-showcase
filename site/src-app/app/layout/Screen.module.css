@@ -1,0 +1,11 @@
+.screen {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* The landmark takes focus only from the skip link, as a starting point for the keyboard; a ring around the whole screen would mark nothing. */
+.screen:focus {
+  outline: none;
+}

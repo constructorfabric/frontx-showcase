@@ -1,0 +1,1202 @@
+{
+  "$comment": "Every declaration in a block stylesheet of this package that is not layout, with the kit gap or defect it waits for. The repository's style policy reads this file; a row whose selector no longer exists fails it. Remove a row when its gap closes.",
+  "rows": [
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".label",
+      "property": "color",
+      "waitsFor": "Kit gap: Text has no label-ink tone for the brand lilac eyebrow",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".title",
+      "property": "--text-display-size",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the band steps it to 31px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".title",
+      "property": "--text-display-line-height",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".title",
+      "property": "--text-display-weight",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".title",
+      "property": "--text-display-tracking",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".title",
+      "property": "white-space",
+      "waitsFor": "Kit gap: Heading keeps no authored line breaks (the design breaks section titles)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".lead",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no lead text role (16px on a 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".lead",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16px on a 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".back",
+      "property": "font-size",
+      "waitsFor": "Kit gap: the kit candidate Link has no size option; the back-link line takes the kit meta size and the link inherits it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".back",
+      "property": "line-height",
+      "waitsFor": "Kit gap: the kit candidate Link has no size option; the back-link line takes the kit meta size and the link inherits it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".title",
+      "property": "--text-display-size",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".title",
+      "property": "--text-display-line-height",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".title",
+      "property": "--text-display-weight",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".title",
+      "property": "--text-display-tracking",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".lead",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no lead text role (16px on a 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".lead",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16px on a 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".icon",
+      "property": "color",
+      "waitsFor": "Kit gap: no icon ink token for inline fact icons (brand link ink)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionHeading/SectionHeading.module.css",
+      "selector": ".title:focus-visible",
+      "property": "outline",
+      "waitsFor": "Kit gap: Heading has no focus style for a script-focused jump target",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionHeading/SectionHeading.module.css",
+      "selector": ".title:focus-visible",
+      "property": "outline-offset",
+      "waitsFor": "Kit gap: Heading has no focus style for a script-focused jump target",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionHeading/SectionHeading.module.css",
+      "selector": ".lead",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16px on a 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrame/DocsFrame.module.css",
+      "selector": ".footer",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no footer-line text part; the line takes the kit meta size",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrame/DocsFrame.module.css",
+      "selector": ".footer",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no footer-line text part; the line takes the kit meta size",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "border",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "border-radius",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "background",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "color",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "font",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "text-align",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item",
+      "property": "cursor",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (a jump button with a current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item:hover",
+      "property": "color",
+      "waitsFor": "Kit gap: no in-page table-of-contents part",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item:focus-visible",
+      "property": "outline",
+      "waitsFor": "Kit gap: no in-page table-of-contents part",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item:focus-visible",
+      "property": "outline-offset",
+      "waitsFor": "Kit gap: no in-page table-of-contents part",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item[aria-current='location']",
+      "property": "background-color",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item[aria-current='location']",
+      "property": "box-shadow",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item[aria-current='location']",
+      "property": "color",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".item[aria-current='location']",
+      "property": "font-weight",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (current-section marker)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".index",
+      "property": "color",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (entry number)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".index",
+      "property": "font-family",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (entry number)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".index",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (entry number)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".index",
+      "property": "font-weight",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (entry number)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".index",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no in-page table-of-contents part (entry number)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".railFooter",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no footer-line text part; the line takes the kit meta size",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".railFooter",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no footer-line text part; the line takes the kit meta size",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/StartPaths/StartPaths.module.css",
+      "selector": ".row.row",
+      "property": "color",
+      "waitsFor": "kit defect: Item rendered as a link keeps the user agent's link colour (the Item root sets no colour)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/StartPaths/StartPaths.module.css",
+      "selector": ".row.row",
+      "property": "text-decoration",
+      "waitsFor": "kit defect: Item rendered as a link keeps the user agent's underline",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/StartPaths/StartPaths.module.css",
+      "selector": ".title",
+      "property": "white-space",
+      "waitsFor": "kit defect: ItemTitle is nowrap with width: fit-content, so a title cannot wrap or truncate (upstream draft kit-bugs/03)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/CtaBox/CtaBox.module.css",
+      "selector": ".box.box",
+      "property": "background-color",
+      "waitsFor": "kit gap: Card has no tinted surface variant",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/FileExplorer/FileExplorer.module.css",
+      "selector": ".tab:not([data-active])",
+      "property": "color",
+      "waitsFor": "kit defect: the inactive TabsTrigger paints 60% of the foreground, 4.08:1 on the default track and 4.2:1 on white, under 4.5:1 (W0 baseline contrast row)",
+      "gap": "none (GAPS kit-defects row to add in W4)"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".band",
+      "property": "background-color",
+      "waitsFor": "Kit gap: no full-bleed brand band surface; the band paints the brand blue (kit --primary) with its foreground, as the kit Button does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".band",
+      "property": "color",
+      "waitsFor": "Kit gap: no full-bleed brand band surface; the band paints the brand blue (kit --primary) with its foreground, as the kit Button does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".title",
+      "property": "--text-display-size",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the hero size steps to clamp(36px, 9.4vw, 50px) under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".title",
+      "property": "--text-display-line-height",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the hero size steps to clamp(36px, 9.4vw, 50px) under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".title",
+      "property": "--text-display-tracking",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the hero size steps to clamp(36px, 9.4vw, 50px) under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".lead",
+      "property": "color",
+      "waitsFor": "Kit gap: kit candidate Text tones are page tones; on the brand-blue band the lead takes the band ink",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".lead",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no lead text role (16 to 18px on a 1.6 to 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".lead",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16 to 18px on a 1.6 to 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".button",
+      "property": "--button-bg",
+      "waitsFor": "Kit gap: no inverse Button variant for a brand-coloured band; the kit's documented recolour hooks invert the default button",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".button",
+      "property": "--button-fg",
+      "waitsFor": "Kit gap: no inverse Button variant for a brand-coloured band; the kit's documented recolour hooks invert the default button",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".button",
+      "property": "--button-bg-hover",
+      "waitsFor": "Kit gap: no inverse Button variant for a brand-coloured band; the kit's documented recolour hooks invert the default button",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".button",
+      "property": "--button-focus-ring",
+      "waitsFor": "Kit gap: no inverse Button variant for a brand-coloured band; the kit's documented recolour hooks invert the default button",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".button",
+      "property": "height",
+      "waitsFor": "Kit gap: Button sizes stop at lg (40px); the band call to action is 49px high as the design draws it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Features/Features.module.css",
+      "selector": ".text",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16 to 18px on a 1.6 to 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".tile:focus-within",
+      "property": "outline",
+      "waitsFor": "Kit gap: Card has no focus ring for a card whose link covers it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".tile:focus-within",
+      "property": "outline-offset",
+      "waitsFor": "Kit gap: Card has no focus ring for a card whose link covers it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".tileLink",
+      "property": "text-decoration-line",
+      "waitsFor": "Kit gap: kit candidate Link always underlines in its inherit variant; a tile label is not inline text",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".tileLink::after",
+      "property": "content",
+      "waitsFor": "Kit gap: no whole-row or whole-tile link part (a link that covers its container while the container holds other content); the stretched pseudo-element stands in for it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".tileLink:focus-visible",
+      "property": "outline",
+      "waitsFor": "Kit gap: Card has no focus ring for a card whose link covers it; the tile draws the ring instead of the label",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".statement",
+      "property": "color",
+      "waitsFor": "Kit gap: no display figure role for a statement in a card (40px in the brand blue)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".statement",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no display figure role for a statement in a card (40px in the brand blue)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".statement",
+      "property": "font-weight",
+      "waitsFor": "Kit gap: no display figure role for a statement in a card (40px in the brand blue)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".statement",
+      "property": "letter-spacing",
+      "waitsFor": "Kit gap: no display figure role for a statement in a card (40px in the brand blue)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".statement",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no display figure role for a statement in a card (40px in the brand blue)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".explanationText",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16 to 18px on a 1.6 to 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".title",
+      "property": "--text-display-size",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the band steps it to 31px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".title",
+      "property": "--text-display-line-height",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the band steps it to 31px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".title",
+      "property": "--text-display-weight",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the band steps it to 31px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".title",
+      "property": "--text-display-tracking",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the band steps it to 31px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".lead",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no lead text role (16 to 18px on a 1.6 to 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".lead",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16 to 18px on a 1.6 to 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".stepLink",
+      "property": "text-decoration-line",
+      "waitsFor": "Kit gap: kit candidate Link always underlines in its inherit variant; a step title is not inline text",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".stepLink::after",
+      "property": "content",
+      "waitsFor": "Kit gap: no whole-row or whole-tile link part (a link that covers its container while the container holds other content); the stretched pseudo-element stands in for it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".band",
+      "property": "background-color",
+      "waitsFor": "Kit gap: no full-bleed night band surface; the band paints the brand night colour with the brand-blue foreground ink",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".band",
+      "property": "color",
+      "waitsFor": "Kit gap: no full-bleed night band surface; the band paints the brand night colour with the brand-blue foreground ink",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".title",
+      "property": "--text-display-size",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the closing size steps to 36px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".title",
+      "property": "--text-display-line-height",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the closing size steps to 36px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".title",
+      "property": "--text-display-weight",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the closing size steps to 36px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".title",
+      "property": "--text-display-tracking",
+      "waitsFor": "Kit gap: the type ramp stops at display (26px); a brand display size is a ramp override on the element (kit-candidates guideline), until the brand theme carries display sizes; the closing size steps to 36px under 640 pixels as the design does",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".button",
+      "property": "--button-focus-ring",
+      "waitsFor": "Kit gap: Button sizes stop at lg (40px) and its focus ring is drawn for a page surface; the closing call to action is 49px high with a ring in the band ink",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".button",
+      "property": "height",
+      "waitsFor": "Kit gap: Button sizes stop at lg (40px) and its focus ring is drawn for a page surface; the closing call to action is 49px high with a ring in the band ink",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GuideClosingHeading/GuideClosingHeading.module.css",
+      "selector": ".title:focus-visible",
+      "property": "outline",
+      "waitsFor": "Kit gap: Heading has no focus style for a script-focused jump target",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GuideClosingHeading/GuideClosingHeading.module.css",
+      "selector": ".title:focus-visible",
+      "property": "outline-offset",
+      "waitsFor": "Kit gap: Heading has no focus style for a script-focused jump target",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ChangeStory/ChangeStory.module.css",
+      "selector": ".lead",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no lead text role (16 to 18px on a 1.6 to 1.7 line height); kit candidate Text has none by design",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".tileLink",
+      "property": "line-height",
+      "waitsFor": "Kit gap: Card has no compact footer row; the tile label row is 38px high on a phone as the design draws it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ArchitectureMap/ArchitectureMap.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 52px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ArchitectureMap/ArchitectureMap.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-bottom",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 64px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/CardTiles/CardTiles.module.css",
+      "selector": ".grid",
+      "property": "--card-tiles-min",
+      "waitsFor": "Kit gap: no size token for 16rem (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ChangeStory/ChangeStory.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 48px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ChangeStory/ChangeStory.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-bottom",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 64px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ChangeStory/ChangeStory.module.css",
+      "selector": ".lead",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 620px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".layout",
+      "property": "grid-template-columns",
+      "waitsFor": "Kit gap: no size token for 340px, 380px, 300px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".layout",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 60px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".layout",
+      "property": "padding",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 52px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".title",
+      "property": "white-space",
+      "waitsFor": "Kit gap: Heading keeps no authored line breaks (the design breaks this title)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".link",
+      "property": "white-space",
+      "waitsFor": "Kit gap: the kit candidate Link has no option that keeps a short action label on one line",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/ClosingCta/ClosingCta.module.css",
+      "selector": ".visual",
+      "property": "height",
+      "waitsFor": "Kit gap: no viewport-relative size token (27vw, 42vw)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".side",
+      "property": "top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 71px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/DocsFrameWithRail/DocsFrameWithRail.module.css",
+      "selector": ".columns",
+      "property": "grid-template-columns",
+      "waitsFor": "Kit gap: no size token for 235px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Features/Features.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 52px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Features/Features.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-bottom",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 56px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Features/Features.module.css",
+      "selector": ".grid",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 60px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Features/Features.module.css",
+      "selector": ".figure",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 220px, 132px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Features/Features.module.css",
+      "selector": ".figure",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 176px, 106px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Features/Features.module.css",
+      "selector": ".text",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 320px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/FileExplorer/FileExplorer.module.css",
+      "selector": ".file",
+      "property": "text-align",
+      "waitsFor": "Kit gap: no file tree row part; a native button centres its label, a file row starts it",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".band",
+      "property": "--site-section-pad-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 80px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".band",
+      "property": "--site-section-pad-bottom",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 80px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".columns",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 100px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".title",
+      "property": "white-space",
+      "waitsFor": "Kit gap: Heading keeps no authored line breaks (the design breaks this title)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".figure",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 128px, 104px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".figure",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 128px, 104px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".arrow",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 19px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GetStartedSteps/GetStartedSteps.module.css",
+      "selector": ".arrow",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 19px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/GuideClosingHeading/GuideClosingHeading.module.css",
+      "selector": ".header",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 38px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".layout",
+      "property": "grid-template-columns",
+      "waitsFor": "Kit gap: no size token for 340px, 380px, 300px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".layout",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 60px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".layout",
+      "property": "padding-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 58px, 38px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".title",
+      "property": "white-space",
+      "waitsFor": "Kit gap: Heading keeps no authored line breaks (the design breaks this title)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".link",
+      "property": "white-space",
+      "waitsFor": "Kit gap: the kit candidate Link has no option that keeps a short action label on one line",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/Hero/Hero.module.css",
+      "selector": ".aside",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 500px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".band",
+      "property": "--site-heading-gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 96px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".band",
+      "property": "--site-lead-column",
+      "waitsFor": "Kit gap: no size token for 460px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".band",
+      "property": "--site-section-pad-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 58px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".band",
+      "property": "--site-section-pad-bottom",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 64px, 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".icon",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 14px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".icon",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 14px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".sample",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 158px, 146px, 132px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".stack",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 225px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/KitShowcase/KitShowcase.module.css",
+      "selector": ".lines > *",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 6px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".rhythm",
+      "property": "--site-heading-gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 96px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".rhythm",
+      "property": "--site-lead-column",
+      "waitsFor": "Kit gap: no size token for 460px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 70px, 42px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".rhythm",
+      "property": "--site-section-pad-bottom",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 70px, 42px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".card.card",
+      "property": "grid-template-rows",
+      "waitsFor": "Kit gap: no size token for 44px, 56px, 104px, 64px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".unit",
+      "property": "white-space",
+      "waitsFor": "Kit gap: no display figure role for a statement inside a card; the figure and its unit stay on one line",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".statement",
+      "property": "white-space",
+      "waitsFor": "Kit gap: no display figure role for a statement inside a card; the figure and its unit stay on one line",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".benefitText",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 104px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/MetricComparison/MetricComparison.module.css",
+      "selector": ".chart",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 104px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PackageList/PackageList.module.css",
+      "selector": ".grid",
+      "property": "--package-list-figure",
+      "waitsFor": "Kit gap: no size token for 112px, 96px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PackageList/PackageList.module.css",
+      "selector": ".grid",
+      "property": "--package-list-figure-height",
+      "waitsFor": "Kit gap: no size token for 90px, 77px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".lead",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 41.25rem (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".icon",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 14px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PageIntro/PageIntro.module.css",
+      "selector": ".icon",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 14px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PathCards/PathCards.module.css",
+      "selector": ".grid",
+      "property": "--path-cards-figure",
+      "waitsFor": "Kit gap: no size token for 144px, 104px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/PathCards/PathCards.module.css",
+      "selector": ".grid",
+      "property": "--path-cards-figure-height",
+      "waitsFor": "Kit gap: no size token for 132px, 104px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/SectionFrame/SectionFrame.module.css",
+      "selector": ".header",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplateDetailFrame/TemplateDetailFrame.module.css",
+      "selector": ".columns",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 55px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".frame",
+      "property": "--template-pair-figure",
+      "waitsFor": "Kit gap: no size token for 200px, 96px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".frame",
+      "property": "--template-pair-figure-height",
+      "waitsFor": "Kit gap: no size token for 160px, 77px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".frame",
+      "property": "--template-pair-body",
+      "waitsFor": "Kit gap: no size token for 350px, 200px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".frame",
+      "property": "--template-pair-gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 40px",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".frame",
+      "property": "--template-pair-join",
+      "waitsFor": "Kit gap: no size token for 34px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px); the size of the pair's '+' sign",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".frame",
+      "property": "--template-pair-min-height",
+      "waitsFor": "Kit gap: no size token for 220px, 164px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".titleIcon",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 18px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".titleIcon",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 18px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".join",
+      "property": "transform",
+      "waitsFor": "Kit gap: no connector part between two cards; the pair's '+' sign is centred on the gap between the cards and lets clicks through to them",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplatePair/TemplatePair.module.css",
+      "selector": ".join",
+      "property": "pointer-events",
+      "waitsFor": "Kit gap: no connector part between two cards; the pair's '+' sign is centred on the gap between the cards and lets clicks through to them",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplateRow/TemplateRow.module.css",
+      "selector": ".card.card",
+      "property": "--template-row-figure",
+      "waitsFor": "Kit gap: no size token for 200px, 96px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/TemplateRow/TemplateRow.module.css",
+      "selector": ".card.card",
+      "property": "--template-row-figure-height",
+      "waitsFor": "Kit gap: no size token for 160px, 77px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "src/blocks/LogoStrip/LogoStrip.module.css",
+      "selector": ".logos",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 908px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    }
+  ]
+}

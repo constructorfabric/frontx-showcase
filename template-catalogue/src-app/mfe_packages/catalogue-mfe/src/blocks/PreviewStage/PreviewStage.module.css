@@ -1,0 +1,23 @@
+/* The stage of an example: the kit's Card, scrolling an example wider than a phone (a data table, a sidebar, a carousel with its outside arrows) inside itself. Layout only. */
+
+.stage {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.content {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* A carousel example caps its width and centres itself with auto margins, which sizes it to its slides' min-content; a definite width lets it narrow to the frame below that cap. */
+.stage [aria-roledescription='carousel'] {
+  width: 100%;
+}
+
+@media (max-width: 48rem) {
+  /* The kit's carousel offsets its previous and next buttons by 3rem past its own edges. On a phone the stage gives a carousel example that much room on each side, so the carousel narrows and both buttons stay in sight. */
+  .stage:has([aria-roledescription='carousel']) .content {
+    padding-inline: calc(var(--space-8) * 1.5);
+  }
+}

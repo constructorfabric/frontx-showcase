@@ -1,0 +1,35 @@
+/*
+ * The card is the jump target and stops clear of the sticky site header. The summary row starts at the card's edge with the chevron before the text; the open body is a column with the code block stretched to the card's width.
+ */
+
+.task {
+  scroll-margin-top: calc(var(--site-header-height) + var(--space-6));
+}
+
+.collapsible {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.trigger {
+  justify-content: flex-start;
+}
+
+.chevron {
+  flex: none;
+  inline-size: var(--icon-size-sm);
+  block-size: var(--icon-size-sm);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+/* The code block is the body's only div. */
+.body > div {
+  align-self: stretch;
+}

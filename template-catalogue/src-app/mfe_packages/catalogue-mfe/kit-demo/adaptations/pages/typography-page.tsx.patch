@@ -1,0 +1,26 @@
+Adaptation of pages/typography-page.tsx
+Kind: substantive
+Reason: token values are read on an element of the page; the page's H1 names it, so its single block has no second title
+--- a/pages/typography-page.tsx
++++ b/pages/typography-page.tsx
+@@ -1,4 +1,5 @@
+ import { Section } from '../shared';
++import { useRef } from 'react';
+ import { useTokenValues } from './token-utils';
+ 
+ /*
+@@ -54,10 +55,12 @@
+ }
+ 
+ export function TypographyPage() {
+-  const values = useTokenValues(TYPE_TOKENS);
++  const anchorRef = useRef<HTMLDivElement>(null);
++  const values = useTokenValues(TYPE_TOKENS, anchorRef);
+   return (
+-    <Section title="Typography">
++    <Section>
+       <div
++        ref={anchorRef}
+         style={{
+           display: 'grid',
+           gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',

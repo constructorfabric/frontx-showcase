@@ -1,0 +1,95 @@
+# Semantic overlay for CodeBlock - the hand-written half of the contract.
+#
+# The size axis, `code`, `language`, `label` and `wrap` are read by the
+# compiler from code-block.tsx. The family is CodeBlock (root),
+# CodeBlockHeader, CodeBlockTitle and CodeBlockCopyButton; this overlay
+# describes the family through its root.
+component: code-block
+
+intent: Show a command or a file excerpt that the application places on a screen, with a title and a copy action, in a region keyboard users can scroll.
+
+typical_uses:
+  - An install or start command with a copy button
+  - A short file excerpt in a guide step
+
+dont_use_when:
+  - situation: A keyboard key or shortcut
+    instead:
+      target: Kbd
+      component: gts.frontx.uikit._.component.v1~frontx.uikit._.kbd.v1
+  - situation: Code inside rendered prose such as Markdown output
+    instead:
+      target: The kit's typeset.css
+  - situation: A single path or name inside a line of text
+    instead:
+      target: Text, with `variant="mono"`
+      component: gts.frontx.uikit._.component.v1~frontx.uikit._.text.v1
+
+accepts:
+  content: CodeBlockHeader with CodeBlockTitle and CodeBlockCopyButton
+
+invariants:
+  - id: verbatim-code
+    text: The `code` string renders verbatim inside `pre > code` and is exactly what the copy button writes.
+  - id: scroll-region-reachable
+    text: >-
+      Without `wrap` the `pre` is a region named by `label` with
+      `tabIndex={0}`, so keyboard users can scroll it; with `wrap` it
+      wraps long lines and is neither a region nor a tab stop.
+  - id: copy-announces-once
+    text: >-
+      A successful copy switches the button to `copiedLabel` for
+      `timeout` milliseconds, puts `copiedLabel` in a visually hidden
+      status region once and calls `onCopy`; a missing clipboard or a
+      refused write calls `onError` and changes nothing.
+  - id: tokens-only
+    text: >-
+      The frame paints from `--card`, `--border` and `--radius-lg`, the
+      text from `--font-mono` on the body role (`default`) or the mono
+      role (`sm`).
+
+anti_patterns:
+  - dont: Put a highlighter's output in `code`
+    do_instead: Keep `code` the plain text the copy button writes, and highlight inside the frame from `language`
+  - dont: Render CodeBlockCopyButton outside a CodeBlock
+    do_instead: Place it in the CodeBlockHeader; it reads the code from its CodeBlock and refuses to render elsewhere
+
+deprecations: {}
+
+attestations:
+  a11y:
+    outcome: passed
+    by: >-
+      code-block.test.tsx runs axe-core over a scrolling and a wrapping block
+      with no violation (including scrollable-region-focusable), and checks
+      the region name, the tab stop and the single status announcement.
+  rtl:
+    outcome: unknown
+
+unexposed_parts:
+  - part: the status region
+    reason: >-
+      CodeBlockCopyButton renders it beside the button for the copy
+      announcement; its text is `copiedLabel`.
+
+prop_statements:
+  children:
+    states: children is a React node, not a string
+    because: The compiler emits one JSON type per property; children is the header.
+
+examples:
+  good:
+    - title: A command with a copy button
+      code: |
+        <CodeBlock code={'npm install\nnpm run dev'} language="sh" label="Install and start">
+          <CodeBlockHeader>
+            <CodeBlockTitle>Terminal</CodeBlockTitle>
+            <CodeBlockCopyButton copyLabel="Copy" copiedLabel="Copied" />
+          </CodeBlockHeader>
+        </CodeBlock>
+  bad:
+    - title: The code passed as children
+      code: <CodeBlock label="Install">npm install</CodeBlock>
+      why: >-
+        `code` is required and is what renders and what the button copies;
+        children is the header.

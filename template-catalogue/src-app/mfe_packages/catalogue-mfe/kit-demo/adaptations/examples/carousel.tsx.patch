@@ -1,0 +1,20 @@
+Adaptation of examples/carousel.tsx
+Kind: substantive
+Reason: the API example reads the current slide when the API arrives (a carousel may start on another slide) and removes its `select` listener on cleanup instead of adding one more on every API change
+--- a/examples/carousel.tsx
++++ b/examples/carousel.tsx
+@@ -55,7 +55,13 @@
+ 
+   useEffect(() => {
+     if (!api) return;
+-    api.on('select', () => setCurrent(api.selectedScrollSnap()));
++    const onSelect = () => setCurrent(api.selectedScrollSnap());
++    // The carousel may start on a slide other than the first; read it before the first select event.
++    onSelect();
++    api.on('select', onSelect);
++    return () => {
++      api.off('select', onSelect);
++    };
+   }, [api]);
+ 
+   return (

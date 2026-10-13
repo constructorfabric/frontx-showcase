@@ -1,0 +1,404 @@
+{
+  "$comment": "Declarations the catalogue's blocks keep that are not layout on tokens, each waiting for a kit component, a kit-candidate option or a kit fix. src/blocks/blocks-policy.test.ts fails on a block declaration missing here and on a row whose declaration is gone.",
+  "exemptions": [
+    {
+      "block": "SectionTabs",
+      "selector": ".bar",
+      "property": "border-bottom",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The bar's bottom rule, as the reference draws it"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab",
+      "property": "border-bottom",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The reference's muted tab at the kit body size with a transparent 2px underline slot"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab",
+      "property": "color",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The reference's muted tab at the kit body size with a transparent 2px underline slot"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab",
+      "property": "font-size",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The reference's muted tab at the kit body size with a transparent 2px underline slot"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab",
+      "property": "line-height",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The reference's muted tab at the kit body size with a transparent 2px underline slot"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab",
+      "property": "text-decoration",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The reference's muted tab at the kit body size with a transparent 2px underline slot"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab:hover, .tab[aria-current]",
+      "property": "color",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "Ink on hover and on the current tab"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab[aria-current]",
+      "property": "border-bottom-color",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The current tab's underline in the primary colour"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab:focus-visible",
+      "property": "outline",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The focus ring on the ring token"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tab:focus-visible",
+      "property": "outline-offset",
+      "waitsFor": "A kit link tab bar: page links in a row on a bottom rule, the current one underlined (the kit Tabs is a tab list over panels, not navigation; NavigationMenu draws pill links)",
+      "reason": "The focus ring on the ring token"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".panel",
+      "property": "border-inline-end",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The panel's rule against the page"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".groupLabel",
+      "property": "text-transform",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "Upper-cased group labels, as the reference sets them; the kit-candidate Text roles have no overline"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row",
+      "property": "border-radius",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The reference's muted row at the kit body size on the medium radius"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row",
+      "property": "color",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The reference's muted row at the kit body size on the medium radius"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row",
+      "property": "font-size",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The reference's muted row at the kit body size on the medium radius"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row",
+      "property": "font-weight",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The reference's muted row at the kit body size on the medium radius"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row",
+      "property": "line-height",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The reference's muted row at the kit body size on the medium radius"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row",
+      "property": "text-decoration",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The reference's muted row at the kit body size on the medium radius"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row:hover",
+      "property": "background-color",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "Hover fill and ink"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row:hover",
+      "property": "color",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "Hover fill and ink"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row[data-section-current]",
+      "property": "background-color",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The open section's row filled with the accent"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row[data-section-current]",
+      "property": "color",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The open section's row filled with the accent"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row[data-section-current]",
+      "property": "font-weight",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The open section's row filled with the accent"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row[aria-current='page']:not([data-section-current])",
+      "property": "color",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The open page's row in the current ink"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row[aria-current='page']:not([data-section-current])",
+      "property": "font-weight",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The open page's row in the current ink"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row:focus-visible",
+      "property": "outline",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The focus ring on the ring token"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".row:focus-visible",
+      "property": "outline-offset",
+      "waitsFor": "A kit navigation list row: an icon and a label linking a page, a hover fill, an accent fill on the open section and the current ink on the open page (the kit SidebarMenuButton needs the whole Sidebar provider and its fixed layout)",
+      "reason": "The focus ring on the ring token"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".card",
+      "property": "border",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "The card's frame on the kit's extra-large radius"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".card",
+      "property": "border-radius",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "The card's frame on the kit's extra-large radius"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".header",
+      "property": "background-color",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "The tinted header band"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".icon",
+      "property": "color",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "The band icon in the accent ink"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry",
+      "property": "border-top",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "Divided rows with the name at the kit body size"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry",
+      "property": "color",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "Divided rows with the name at the kit body size"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry",
+      "property": "font-size",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "Divided rows with the name at the kit body size"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry",
+      "property": "line-height",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "Divided rows with the name at the kit body size"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry",
+      "property": "text-decoration",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "Divided rows with the name at the kit body size"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry:hover",
+      "property": "background-color",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "Hover fill of a row"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry:focus-visible",
+      "property": "outline",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "The focus ring inside the row, which the card clips"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".entry:focus-visible",
+      "property": "outline-offset",
+      "waitsFor": "A kit list card: a bordered list whose tinted header band and divided link rows run edge to edge (the kit Card pads its content; GAPS G34)",
+      "reason": "The focus ring inside the row, which the card clips"
+    },
+    {
+      "block": "CodeSample",
+      "selector": ".sample pre",
+      "property": "max-height",
+      "waitsFor": "A height limit on the kit-candidate CodeBlock (ui-kit PR B): a long file scrolls inside the frame",
+      "reason": "Reaches the CodeBlock's own pre element, the only element that may scroll"
+    },
+    {
+      "block": "CodeSample",
+      "selector": ".sample pre",
+      "property": "overflow-y",
+      "waitsFor": "A height limit on the kit-candidate CodeBlock (ui-kit PR B): a long file scrolls inside the frame",
+      "reason": "Reaches the CodeBlock's own pre element, the only element that may scroll"
+    },
+    {
+      "block": "CatalogueFrame",
+      "selector": ".layout",
+      "property": "grid-template-columns",
+      "waitsFor": "Kit gap: no size token for 224px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 224px minmax(0, 1fr)"
+    },
+    {
+      "block": "CatalogueFrame",
+      "selector": ".content",
+      "property": "padding",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 44px",
+      "reason": "Declared value: 25px 44px 44px | 20px var(--space-4) var(--space-8)"
+    },
+    {
+      "block": "ComponentGuide",
+      "selector": ".guide",
+      "property": "gap",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 40px",
+      "reason": "Declared value: 40px | 28px"
+    },
+    {
+      "block": "IndexIntro",
+      "selector": ".intro",
+      "property": "flex",
+      "waitsFor": "Kit gap: no size token for 266px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 0 0 266px"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".icon",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 18px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 18px"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".icon",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 18px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 18px"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".arrow",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 14px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 14px"
+    },
+    {
+      "block": "ListCard",
+      "selector": ".arrow",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 14px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 14px"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".panel",
+      "property": "--nav-top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 73px, 1px",
+      "reason": "Declared value: calc(var(--site-header-height, 73px) - 1px)"
+    },
+    {
+      "block": "NavPanel",
+      "selector": ".panel",
+      "property": "height",
+      "waitsFor": "Kit gap: no viewport-relative size token (100vh)",
+      "reason": "Declared value: calc(100vh - var(--nav-top))"
+    },
+    {
+      "block": "PageHeader",
+      "selector": ".trail",
+      "property": "min-height",
+      "waitsFor": "Kit gap: no size token for 18px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 18px"
+    },
+    {
+      "block": "PageHeader",
+      "selector": ".header",
+      "property": "min-height",
+      "waitsFor": "Kit gap: no size token for 44px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 44px"
+    },
+    {
+      "block": "PageHeader",
+      "selector": ".lead",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 48rem (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 48rem"
+    },
+    {
+      "block": "PagePlaceholder",
+      "selector": ".placeholder",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 7.5rem (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 7.5rem"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".bar",
+      "property": "padding",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for 56px",
+      "reason": "Declared value: 0 56px"
+    },
+    {
+      "block": "SectionTabs",
+      "selector": ".tabs",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 47px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "reason": "Declared value: 47px"
+    }
+  ]
+}

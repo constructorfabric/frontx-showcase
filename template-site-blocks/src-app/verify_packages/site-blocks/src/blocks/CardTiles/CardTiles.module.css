@@ -1,0 +1,19 @@
+/* As many tiles of at least 16rem as fit. Frame, colours and type come from the kit Card and its parts. */
+.grid {
+  --card-tiles-min: 16rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-tiles-min)), 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+.card {
+  width: 100%;
+}

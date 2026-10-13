@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.slot {
+  flex: 1 1 auto;
+}
+
+.fallback {
+  padding: var(--space-6);
+}

@@ -1,0 +1,16 @@
+/* A title and a line sized like the page header they stand in for; the title's width is a row of the exemptions ledger (the kit has no width token and its Skeleton no shape axis). */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.title {
+  height: var(--control-height-lg);
+  width: 16rem;
+}
+
+.line {
+  height: var(--space-4);
+}

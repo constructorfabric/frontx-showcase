@@ -1,0 +1,140 @@
+{
+  "screen": "home",
+  "strings": "src/screens/home/i18n/en.json",
+  "pages": [
+    {
+      "route": "/",
+      "title": "t:hero.title",
+      "lead": "t:hero.lead",
+      "entries": [
+        {
+          "type": "hero",
+          "actions": [
+            { "label": "t:hero.getStarted", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1" }, "primary": true },
+            { "label": "t:hero.source", "href": { "url": "https://github.com/constructorfabric/gears-frontx" } }
+          ],
+          "art": "t:hero.diagram"
+        },
+        {
+          "type": "features",
+          "id": "home-groundwork",
+          "title": "t:groundwork.title",
+          "items": [
+            { "figure": "hub", "title": "t:groundwork.shell.title", "text": "t:groundwork.shell.text", "link": { "label": "t:groundwork.shell.link", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-shell" } } } } },
+            { "figure": "riffle", "title": "t:groundwork.screens.title", "text": "t:groundwork.screens.text", "link": { "label": "t:groundwork.screens.link", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-mfe" } } } } },
+            { "figure": "turntable", "title": "t:groundwork.kit.title", "text": "t:groundwork.kit.text", "link": { "label": "t:groundwork.kit.link", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-design-guardrails" } } } } }
+          ]
+        },
+        {
+          "type": "architecture-map",
+          "id": "home-architecture",
+          "label": "t:architecture.label",
+          "title": "t:architecture.title",
+          "lead": "t:architecture.lead",
+          "map": {
+            "label": "t:architecture.map",
+            "kit": { "title": "t:architecture.kit", "note": "t:architecture.kitNote", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1" } },
+            "rules": { "title": "t:architecture.rules", "note": "t:architecture.rulesNote", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-design-guardrails" } } } },
+            "shell": { "title": "t:architecture.shell", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-shell" } } }, "templates": { "label": "t:architecture.screensLink", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-mfe" } } } } },
+            "screens": [
+              { "title": "t:architecture.screenA", "hint": "t:architecture.screenHint", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-mfe" } } } },
+              { "title": "t:architecture.screenB", "hint": "t:architecture.screenHint", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~", "payload": { "template": "template-mfe" } } } }
+            ],
+            "wires": { "kit": "t:architecture.kitWire", "rules": "t:architecture.rulesWire" }
+          }
+        },
+        {
+          "type": "change-story",
+          "id": "home-change",
+          "title": "t:change.title",
+          "lead": "t:change.lead",
+          "link": { "label": "t:change.link", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~", "payload": { "guide": "first-change" } } } },
+          "task": { "before": "t:change.prompt.before", "emphasis": "t:change.prompt.emphasis", "after": "t:change.prompt.after" },
+          "diff": { "path": "t:change.path", "removed": "t:change.before", "added": "t:change.after" },
+          "result": { "label": "t:change.result.label", "nav": "t:change.result.nav", "title": "t:change.result.title", "text": "t:change.result.text" }
+        },
+        {
+          "type": "kit-showcase",
+          "id": "home-kit",
+          "label": "t:kit.label",
+          "title": "t:kit.title",
+          "lead": "t:kit.lead",
+          "link": { "label": "t:kit.link", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1" } },
+          "groups": [
+            {
+              "title": "t:kit.group.input",
+              "tiles": [
+                { "title": "t:kit.tile.button", "sample": "button", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "button" } } } },
+                { "title": "t:kit.tile.input", "sample": "input", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "input" } } } },
+                { "title": "t:kit.tile.checkbox", "sample": "checkbox", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "checkbox" } } } },
+                { "title": "t:kit.tile.tabs", "sample": "tabs", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "tabs" } } } }
+              ]
+            },
+            {
+              "title": "t:kit.group.data",
+              "tiles": [
+                { "title": "t:kit.tile.table", "sample": "table", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "table" } } } },
+                { "title": "t:kit.tile.avatar", "sample": "avatar", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "avatar" } } } },
+                { "title": "t:kit.tile.badge", "sample": "badge", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "badge" } } } },
+                { "title": "t:kit.tile.progress", "sample": "progress", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "progress" } } } }
+              ]
+            },
+            {
+              "title": "t:kit.group.charts",
+              "tiles": [
+                { "title": "t:kit.tile.area", "sample": "area", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "chart" } } } },
+                { "title": "t:kit.tile.bar", "sample": "bar", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "chart" } } } },
+                { "title": "t:kit.tile.distribution", "sample": "distribution", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "chart" } } } },
+                { "title": "t:kit.tile.trends", "sample": "trends", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~", "payload": { "component": "chart" } } } }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "metric-comparison",
+          "id": "home-ai",
+          "title": "t:ai.title",
+          "lead": "t:ai.lead",
+          "note": "",
+          "metrics": [
+            { "title": "t:ai.delivery.title", "unit": "", "statement": "t:ai.delivery.statement", "benefit": "t:ai.delivery.benefit", "bars": [], "text": "t:ai.delivery.text" },
+            { "title": "t:ai.review.title", "unit": "", "statement": "t:ai.review.statement", "benefit": "t:ai.review.benefit", "bars": [], "text": "t:ai.review.text" },
+            { "title": "t:ai.checks.title", "unit": "", "statement": "t:ai.checks.statement", "benefit": "t:ai.checks.benefit", "bars": [], "text": "t:ai.checks.text" }
+          ]
+        },
+        {
+          "type": "logo-strip",
+          "id": "home-teams",
+          "title": "t:teams.title",
+          "logos": [
+            { "name": "Acronis", "logo": "acronis.svg", "width": 118, "height": 24, "href": { "url": "https://www.acronis.com/" } },
+            { "name": "Virtuozzo", "logo": "virtuozzo.svg", "width": 128, "height": 23, "href": { "url": "https://www.virtuozzo.com/" } },
+            { "name": "Constructor Tech", "logo": "constructor-tech.svg", "width": 194, "height": 13, "href": { "url": "https://constructor.tech/" } },
+            { "name": "Aracor", "logo": "aracor.svg", "width": 108, "height": 25, "href": { "url": "https://aracor.ai/" } }
+          ]
+        },
+        {
+          "type": "get-started-steps",
+          "id": "home-steps",
+          "title": "t:steps.title",
+          "lead": "t:steps.lead",
+          "link": { "label": "t:steps.link", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~", "payload": { "guide": "get-started" } } } },
+          "steps": [
+            { "figure": "rebuild", "title": "t:steps.1.title", "text": "t:steps.1.text", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~", "payload": { "guide": "get-started" } } } },
+            { "figure": "hub", "title": "t:steps.2.title", "text": "t:steps.2.text", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~", "payload": { "guide": "get-started" } } } },
+            { "figure": "loupe", "title": "t:steps.3.title", "text": "t:steps.3.text", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~", "payload": { "guide": "first-change" } } } }
+          ]
+        },
+        {
+          "type": "closing-cta",
+          "id": "home-cta",
+          "title": "t:cta.title",
+          "actions": [
+            { "label": "t:cta.getStarted", "href": { "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1", "action": { "type": "gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~", "payload": { "guide": "get-started" } } }, "primary": true },
+            { "label": "t:cta.source", "href": { "url": "https://github.com/constructorfabric/gears-frontx" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

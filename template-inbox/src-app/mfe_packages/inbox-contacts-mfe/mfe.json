@@ -1,0 +1,87 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.inbox_contacts.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3010/assets/remoteEntry.js"
+  },
+  "schemas": [
+    {
+      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$comment": "The contacts screen's show_contact action: shows one person's page of the contacts screen. Sent as the next step after the screen domain's mount_ext; the screen's handler replaces its own entry through its app's navigation facade. Self-contained and closed, as template-mfe's action schemas are.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "x-gts-ref": "/$id"
+        },
+        "target": {
+          "x-gts-ref": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.inbox_contacts.screens.contacts.v1",
+          "$comment": "The screen that shows the page: the only target of this action"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contact": {
+              "type": "string",
+              "minLength": 1,
+              "$comment": "The id of the person whose page to show"
+            }
+          },
+          "required": [
+            "contact"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "type",
+        "target",
+        "payload"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.inbox_contacts.mfe.contacts.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [
+        "gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~"
+      ],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.inbox_contacts.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.inbox_contacts.screens.contacts.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.inbox_contacts.mfe.contacts.v1",
+      "route": "/inbox-contacts",
+      "presentation": {
+        "label": "Inbox: contacts",
+        "icon": "lucide:users",
+        "order": 61,
+        "group": "gts.frontx.screensets.layout.nav_group.v1~frontx.site.layout.demos.v1"
+      },
+      "seo": {
+        "title": "Inbox: contacts",
+        "description": "A customer directory you can filter and sort, where each person opens a page with their details and their latest conversation.",
+        "routes": {
+          "/$contactId": {
+            "title": "Inbox: contact",
+            "description": "One customer of the inbox demo: their details and their latest conversation with the support team.",
+            "indexable": false
+          }
+        }
+      }
+    }
+  ]
+}

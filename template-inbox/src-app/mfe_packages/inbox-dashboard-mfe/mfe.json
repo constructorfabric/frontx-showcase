@@ -1,0 +1,37 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.inbox_dashboard.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3020/assets/remoteEntry.js"
+  },
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.inbox_dashboard.mfe.dashboard.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.inbox_dashboard.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.inbox_dashboard.screens.dashboard.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.inbox_dashboard.mfe.dashboard.v1",
+      "route": "/inbox-dashboard",
+      "presentation": {
+        "label": "Inbox: dashboard",
+        "icon": "lucide:layout-dashboard",
+        "order": 62,
+        "group": "gts.frontx.screensets.layout.nav_group.v1~frontx.site.layout.demos.v1"
+      },
+      "seo": {
+        "title": "Inbox: dashboard",
+        "description": "A support team dashboard: KPI cards, charts, team workload, a stage funnel, conversion by source and the latest activity."
+      }
+    }
+  ]
+}

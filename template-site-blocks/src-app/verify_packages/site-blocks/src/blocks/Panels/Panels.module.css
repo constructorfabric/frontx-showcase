@@ -1,0 +1,38 @@
+/* Panels two to a row, one column under 760px. Frame, colours and type come from the kit Card and its parts. */
+.grid {
+  --panels-gap: var(--space-6);
+  --panels-pad: var(--space-8);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--panels-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+/* The panel's padding step; the kit spaces its parts from --card-spacing. */
+.card.card {
+  --card-spacing: var(--panels-pad);
+  width: 100%;
+}
+
+/* Actions one per line, each at its own width. */
+.actions {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-top: auto;
+}
+
+@media (max-width: 47.5rem) {
+  .grid {
+    --panels-gap: var(--space-8);
+    --panels-pad: var(--space-6);
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

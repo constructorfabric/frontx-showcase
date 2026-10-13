@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-catalogue",
+  "version": "0.1.0-alpha.0",
+  "description": "The @gears-frontx/ui-kit catalogue as one screen: an index, a page per component example (64) and per design-token foundation (3), each its own route. Apply onto a project that already has template-shell, template-mfe and template-kit-candidates applied; the screens appear in the shell's menu without further wiring.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/mfe_packages/catalogue-mfe/",
+      ".frontx/ai/@gears-frontx/frontx-template-catalogue/"
+    ],
+    "sharedFiles": []
+  }
+}

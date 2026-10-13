@@ -1,0 +1,316 @@
+{
+  "$comment": "Hand-written structure of the templates screen; scripts/site-data.mjs merges it with each template's manifest and source into outline.generated.json. Texts are keys of src/screens/templates/i18n/en.json; key file paths are checked against the template's source and their content is read from it. `featured` groups make the index: the first as an illustrated pair, the rest as row cards; the other groups' pages are reachable by address and listed on the libs screen. `requires` is a key of the `requires.*` strings; `exampleLead: true` takes the example card's lead from `templates.<slug>.exampleLead` instead of the shared one. `indexName: true` titles the template's index card with `templates.<slug>.indexName`.",
+  "groups": [
+    {
+      "id": "start",
+      "templates": [
+        "template-shell",
+        "template-mfe"
+      ],
+      "featured": true
+    },
+    {
+      "id": "add",
+      "templates": [
+        "template-design-guardrails"
+      ],
+      "featured": true
+    },
+    {
+      "id": "site",
+      "templates": [
+        "template-site",
+        "template-site-meta",
+        "template-site-brand",
+        "template-kit-candidates",
+        "template-site-blocks",
+        "template-catalogue",
+        "template-inbox",
+        "template-mfe-demo",
+        "template-calendar-demo"
+      ]
+    }
+  ],
+  "templates": {
+    "template-shell": {
+      "kind": "application",
+      "requires": "new-project",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/app/main.tsx",
+        "src-app/app/mfe/bootstrap.ts",
+        "src/gts/schemas/extension_screen.v1.json",
+        "scripts/dev-all.ts",
+        "vite.config.ts"
+      ],
+      "examples": [
+        {
+          "screen": "home"
+        }
+      ],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "get-started",
+          "label": "next.getStarted"
+        }
+      ]
+    },
+    "template-mfe": {
+      "kind": "extension",
+      "requires": "shell",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/mfe_packages/_blank-mfe/mfe.json",
+        "src-app/mfe_packages/_blank-mfe/src/lifecycle.tsx",
+        "src-app/mfe_packages/_blank-mfe/src/screens/home/HomeScreen.tsx",
+        "src-app/mfe_packages/_blank-mfe/src/api/_BlankApiService.ts",
+        "src-app/mfe_packages/_blank-mfe/vite.config.ts"
+      ],
+      "examples": [
+        {
+          "screen": "mfe-hello-world"
+        },
+        {
+          "screen": "mfe-widgets"
+        }
+      ],
+      "exampleLead": true,
+      "next": [
+        {
+          "screen": "docs",
+          "route": "get-started",
+          "label": "next.getStarted"
+        },
+        {
+          "screen": "docs",
+          "route": "first-change",
+          "label": "next.firstChange"
+        }
+      ]
+    },
+    "template-design-guardrails": {
+      "kind": "rules",
+      "requires": "existing-project",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "DESIGN.md",
+        "src-app/verify_packages/design-verify/package.json",
+        ".frontx/ai/@gears-frontx/template-design-guardrails/extension.json"
+      ],
+      "examples": [],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "get-started",
+          "label": "next.otherPaths"
+        }
+      ],
+      "indexName": true
+    },
+    "template-site": {
+      "kind": "screens",
+      "requires": "shell-brand-candidates-and-site-blocks",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/mfe_packages/site-home-mfe/mfe.json",
+        "src-app/mfe_packages/site-docs-mfe/src/content/outline.json",
+        "src-app/mfe_packages/shared/site/content/outline.ts"
+      ],
+      "examples": [
+        {
+          "screen": "home"
+        },
+        {
+          "screen": "docs"
+        },
+        {
+          "screen": "libs"
+        }
+      ],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "first-change",
+          "label": "next.firstChange"
+        }
+      ]
+    },
+    "template-site-meta": {
+      "kind": "extension",
+      "requires": "shell",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/verify_packages/site-meta/package.json",
+        "src-app/verify_packages/site-meta/src/args.ts",
+        ".frontx/ai/@gears-frontx/frontx-template-site-meta/guidelines/site-meta-contract.md"
+      ],
+      "examples": [],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "get-started",
+          "label": "next.getStarted"
+        }
+      ]
+    },
+    "template-site-brand": {
+      "kind": "extension",
+      "requires": "shell",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/verify_packages/site-brand/package.json",
+        "src-app/verify_packages/site-brand/src/document.css",
+        ".frontx/ai/@gears-frontx/frontx-template-site-brand/guidelines/brand.md"
+      ],
+      "examples": [],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "get-started",
+          "label": "next.getStarted"
+        }
+      ]
+    },
+    "template-kit-candidates": {
+      "kind": "extension",
+      "requires": "shell",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/verify_packages/kit-candidates/package.json",
+        "src-app/verify_packages/kit-candidates/src/index.ts",
+        ".frontx/ai/@gears-frontx/frontx-template-kit-candidates/guidelines/kit-candidates.md"
+      ],
+      "examples": [],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "get-started",
+          "label": "next.getStarted"
+        }
+      ]
+    },
+    "template-site-blocks": {
+      "kind": "extension",
+      "requires": "shell-mfe-brand-and-kit-candidates",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/verify_packages/site-blocks/package.json",
+        "src-app/verify_packages/site-blocks/src/layout.css",
+        ".frontx/ai/@gears-frontx/frontx-template-site-blocks/guidelines/site-blocks.md"
+      ],
+      "examples": [],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "get-started",
+          "label": "next.getStarted"
+        }
+      ]
+    },
+    "template-catalogue": {
+      "kind": "screens",
+      "requires": "shell-mfe-and-kit-candidates",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/mfe_packages/catalogue-mfe/mfe.json",
+        "src-app/mfe_packages/catalogue-mfe/src/catalog.ts",
+        "src-app/mfe_packages/catalogue-mfe/src/routes.tsx"
+      ],
+      "examples": [
+        {
+          "screen": "catalogue"
+        }
+      ],
+      "next": [
+        {
+          "screen": "libs",
+          "label": "next.libraries"
+        }
+      ]
+    },
+    "template-inbox": {
+      "kind": "screens",
+      "requires": "shell-mfe-and-kit-candidates",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/mfe_packages/inbox-contacts-mfe/mfe.json",
+        "src-app/mfe_packages/shared/inbox/api/InboxApiService.ts",
+        "src-app/mfe_packages/shared/inbox/navigation/openScreen.ts"
+      ],
+      "examples": [
+        {
+          "screen": "inbox-contacts"
+        },
+        {
+          "screen": "inbox-mail"
+        }
+      ],
+      "next": [
+        {
+          "screen": "docs",
+          "route": "first-change",
+          "label": "next.firstChange"
+        }
+      ]
+    },
+    "template-mfe-demo": {
+      "kind": "screens",
+      "requires": "shell-and-kit-candidates-without-mfe",
+      "gives": 3,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/mfe_packages/demo-mfe/mfe.json",
+        "src-app/mfe_packages/demo-mfe/src/lifecycle-widgets-host.tsx",
+        "src-app/mfe_packages/widgets-fixture-a/mfe.json"
+      ],
+      "examples": [
+        {
+          "screen": "mfe-hello-world"
+        },
+        {
+          "screen": "mfe-widgets"
+        }
+      ],
+      "next": [
+        {
+          "screen": "templates",
+          "route": "template-mfe",
+          "label": "next.mfe"
+        }
+      ]
+    },
+    "template-calendar-demo": {
+      "kind": "screens",
+      "requires": "shell-mfe-and-kit-candidates",
+      "gives": 2,
+      "keyFiles": [
+        "frontx-template.json",
+        "src-app/mfe_packages/calendar-demo-mfe/mfe.json",
+        "src-app/mfe_packages/calendar-demo-mfe/src/routes.tsx",
+        "src-app/mfe_packages/calendar-demo-mfe/src/screens/calendar/CalendarPages.tsx"
+      ],
+      "examples": [
+        {
+          "screen": "calendar"
+        }
+      ],
+      "next": [
+        {
+          "screen": "libs",
+          "label": "next.libraries"
+        }
+      ]
+    }
+  }
+}

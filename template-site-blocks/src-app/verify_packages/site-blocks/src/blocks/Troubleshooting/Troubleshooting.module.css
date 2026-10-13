@@ -1,0 +1,13 @@
+/*
+ * The title over the kit's accordion rows, 24px apart. The jump target stops clear of the sticky site header.
+ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.title {
+  scroll-margin-top: calc(var(--site-header-height) + var(--space-6));
+}

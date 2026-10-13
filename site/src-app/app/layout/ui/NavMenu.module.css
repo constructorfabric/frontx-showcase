@@ -1,0 +1,165 @@
+/* Header navigation on @gears-frontx/ui-kit tokens: plain text links, the active one in the link colour with a 2px underline drawn by a shadow at the link's lower edge. The kit's NavigationMenu root centres its list and fills the row; the header aligns it. Selectors carry the list class so they outrank the kit link's own size and active rules whatever the stylesheet order. */
+
+.nav {
+  flex: 0 1 auto;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.list {
+  justify-content: flex-start;
+  gap: var(--space-4);
+}
+
+.list .link,
+.list .trigger {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 0;
+  height: auto;
+  padding: var(--space-2) 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--site-nav-foreground, var(--foreground));
+  font: inherit;
+  font-size: var(--text-body-size);
+  font-weight: var(--site-weight-nav);
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.list .link:hover,
+.list .trigger:hover,
+.list .trigger[aria-expanded='true'] {
+  background: transparent;
+  color: var(--link-foreground);
+}
+
+.list .link:focus-visible,
+.list .trigger:focus-visible,
+.groupList .groupLink:focus-visible {
+  outline: var(--border-width-focus) solid var(--ring);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+/* The active entry takes the link colour: the brand blue in the light theme and its lighter pair in the dark one, where the primary blue on the dark header falls under 4.5:1. */
+.list .link[data-active],
+.list .trigger[data-active] {
+  background: transparent;
+  color: var(--link-foreground);
+  box-shadow: 0 2px 0 var(--link-foreground);
+}
+
+.chevron {
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  transition: transform var(--duration-micro) ease;
+}
+
+.trigger[aria-expanded='true'] .chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
+.group {
+  position: relative;
+}
+
+/* The list opens under its button as a dropdown, aligned to the button's end so it stays on screen at the right edge of a narrow header. */
+.panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  inset-inline-end: 0;
+  z-index: 50;
+  border: var(--border-width) solid var(--popover-border);
+  border-radius: var(--radius-md);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--popover-shadow);
+}
+
+.groupList {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 14rem;
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+}
+
+.groupList .groupLink {
+  display: block;
+  min-height: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--popover-foreground);
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+  text-decoration: none;
+}
+
+.groupList .groupLink:hover,
+.groupList .groupLink[data-active] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  box-shadow: none;
+}
+
+/* V2's breakpoints: tighter at 1100px; from 900px down the navigation has its own row with smaller entries, kept on one line that scrolls sideways as on V2 when it outgrows the row; tighter again at 640px, where the site's seven entries fit a 390px phone row. On that row a group's list opens under the whole header instead of under its button: the row, its items and the group drop their positioning (selectors that outrank the kit's own rules whatever the stylesheet order), so the list's containing block is the header's column (HeaderBar), outside the scrolling row, which therefore does not clip it, and the list sits at the column's end within the viewport at every width. */
+@media (max-width: 68.75rem) {
+  .list {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 56.25rem) {
+  /* The row scrolls, which clips on both axes: padding inside the scroll box, taken back by the margin, keeps the focus ring and the active underline in view without moving the entries. */
+  .nav.nav {
+    position: static;
+    overflow-x: auto;
+    padding: var(--space-2);
+    margin: calc(var(--space-2) * -1);
+    max-width: calc(100% + var(--space-2) * 2);
+  }
+
+  .list {
+    flex-wrap: nowrap;
+    gap: 0 var(--space-5);
+  }
+
+  .nav .list > *,
+  .list .group {
+    position: static;
+  }
+
+  .panel {
+    top: 100%;
+    max-width: 100%;
+  }
+
+  .list .link,
+  .list .trigger {
+    min-height: var(--control-height-sm);
+    padding: var(--space-1) 0;
+    font-size: var(--text-meta-size);
+  }
+}
+
+@media (max-width: 40rem) {
+  .list {
+    gap: 0 var(--space-2);
+  }
+}

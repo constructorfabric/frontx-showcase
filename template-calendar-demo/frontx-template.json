@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-calendar-demo",
+  "version": "0.1.0-alpha.0",
+  "description": "The calendar demo screen, in development: one placeholder page built from @gears-frontx/ui-kit components that says the demo is in development, kept out of the search index. Apply onto a project that already has template-shell, template-mfe and template-kit-candidates applied; the screen appears in the shell's menu without further wiring.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/mfe_packages/calendar-demo-mfe/",
+      ".frontx/ai/@gears-frontx/frontx-template-calendar-demo/"
+    ],
+    "sharedFiles": []
+  }
+}

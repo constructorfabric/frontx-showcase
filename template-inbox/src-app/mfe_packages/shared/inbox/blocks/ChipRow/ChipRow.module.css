@@ -1,0 +1,7 @@
+/* A wrapping row of chips. Layout only. */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}

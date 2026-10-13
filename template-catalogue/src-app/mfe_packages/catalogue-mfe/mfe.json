@@ -1,0 +1,414 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.catalogue.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3060/assets/remoteEntry.js"
+  },
+  "schemas": [
+    {
+      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$comment": "The catalogue's show_component action: shows one component's page of the catalogue. Sent as the next step after the screen domain's mount_ext; the catalogue's handler replaces its own entry through its app's navigation facade. Self-contained and closed, as template-mfe's action schemas are.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "x-gts-ref": "/$id"
+        },
+        "target": {
+          "x-gts-ref": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1",
+          "$comment": "The screen that shows the page: the only target of this action"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "component": {
+              "type": "string",
+              "enum": [
+                "accordion",
+                "alert",
+                "alert-dialog",
+                "aspect-ratio",
+                "attachment",
+                "avatar",
+                "badge",
+                "breadcrumb",
+                "bubble",
+                "button",
+                "button-group",
+                "calendar",
+                "card",
+                "carousel",
+                "chart",
+                "checkbox",
+                "collapsible",
+                "combobox",
+                "command",
+                "context-menu",
+                "data-table",
+                "date-picker",
+                "dialog",
+                "direction",
+                "drawer",
+                "dropdown-menu",
+                "empty",
+                "field",
+                "hover-card",
+                "input",
+                "input-group",
+                "input-otp",
+                "item",
+                "kbd",
+                "label",
+                "marker",
+                "menubar",
+                "message",
+                "message-scroller",
+                "native-select",
+                "navigation-menu",
+                "pagination",
+                "popover",
+                "progress",
+                "questionnaire",
+                "radio-group",
+                "resizable",
+                "scroll-area",
+                "select",
+                "separator",
+                "sheet",
+                "sidebar",
+                "skeleton",
+                "slider",
+                "spinner",
+                "status-dot",
+                "switch",
+                "table",
+                "tabs",
+                "textarea",
+                "toast",
+                "toggle",
+                "toggle-group",
+                "tooltip"
+              ],
+              "$comment": "The component to show, by its slug: one of the catalogue's components"
+            }
+          },
+          "required": [
+            "component"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "type",
+        "target",
+        "payload"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.catalogue.mfe.catalogue.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [
+        "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~"
+      ],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.catalogue.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.catalogue.mfe.catalogue.v1",
+      "route": "/catalogue",
+      "presentation": {
+        "label": "UI Kit",
+        "icon": "lucide:component",
+        "order": 30
+      },
+      "seo": {
+        "title": "UI Kit",
+        "description": "Catalogue of @gears-frontx/ui-kit: live examples of all 64 components and the design token foundations, grouped and searchable.",
+        "routes": {
+          "/components/accordion": {
+            "title": "Accordion",
+            "description": "Accordion examples: stacked section headers that expand to show their content, one section at a time by default or several with multiple."
+          },
+          "/components/alert": {
+            "title": "Alert",
+            "description": "Alert examples: a page-level status message that sits in the flow of the page, with a title, a description, an optional icon and an action."
+          },
+          "/components/alert-dialog": {
+            "title": "Alert Dialog",
+            "description": "Alert Dialog examples: a modal confirmation that blocks the page until the user explicitly confirms or cancels, never closing on outside press."
+          },
+          "/components/aspect-ratio": {
+            "title": "Aspect Ratio",
+            "description": "Aspect Ratio examples: a box held at a fixed width-to-height ratio so the layout around it does not shift while its content loads."
+          },
+          "/components/attachment": {
+            "title": "Attachment",
+            "description": "Attachment examples: one file or image shown as a compact card with a preview, its name and details, its upload state and its actions."
+          },
+          "/components/avatar": {
+            "title": "Avatar",
+            "description": "Avatar examples: a person's or account's picture in a fixed-size circle with a fallback, a status badge, sizes, tones and stacked groups."
+          },
+          "/components/badge": {
+            "title": "Badge",
+            "description": "Badge examples: a short static inline label in a compact pill, such as a count, a category tag or a status word, in paint and tone variants."
+          },
+          "/components/breadcrumb": {
+            "title": "Breadcrumb",
+            "description": "Breadcrumb examples: a trail of ancestor links that shows where the current page sits in a hierarchy, ending in the current page."
+          },
+          "/components/bubble": {
+            "title": "Bubble",
+            "description": "Bubble examples: one conversational turn framed as a speech bubble, with variants and alignment that mark which side of the chat it came from."
+          },
+          "/components/button": {
+            "title": "Button",
+            "description": "Button examples: an action button in its variants and sizes, with icon-only, loading and disabled states."
+          },
+          "/components/button-group": {
+            "title": "Button Group",
+            "description": "Button Group examples: adjacent buttons and controls joined into one strip with shared outer corners and collapsed inner borders."
+          },
+          "/components/calendar": {
+            "title": "Calendar",
+            "description": "Calendar examples: inline month grids for picking one day, several days or a date range."
+          },
+          "/components/card": {
+            "title": "Card",
+            "description": "Card examples: one self-contained unit of related content and its actions on a flat bordered surface, with header, content and footer."
+          },
+          "/components/carousel": {
+            "title": "Carousel",
+            "description": "Carousel examples: a set of slides shown one viewport at a time, with previous and next controls to step through them."
+          },
+          "/components/chart": {
+            "title": "Chart",
+            "description": "Chart examples: themeable Recharts charts with a shared container, tooltip and legend, colored from a per-chart configuration."
+          },
+          "/components/checkbox": {
+            "title": "Checkbox",
+            "description": "Checkbox examples: a tick box that opts in or out of one independent option, with labels, descriptions and disabled states."
+          },
+          "/components/collapsible": {
+            "title": "Collapsible",
+            "description": "Collapsible examples: one section of content the user shows or hides in place from a trigger."
+          },
+          "/components/combobox": {
+            "title": "Combobox",
+            "description": "Combobox examples: a text field with a filterable list of items that narrows as the user types, for picking one value or several."
+          },
+          "/components/command": {
+            "title": "Command",
+            "description": "Command examples: a searchable, keyboard-navigable list of commands that filters and ranks its items by what the user types."
+          },
+          "/components/context-menu": {
+            "title": "Context Menu",
+            "description": "Context Menu examples: a menu of actions that an area of the page opens on right click or long press."
+          },
+          "/components/data-table": {
+            "title": "Data Table",
+            "description": "Data Table examples: tabular data with sorting, optional row selection and pagination, built from one columns and data pair."
+          },
+          "/components/date-picker": {
+            "title": "Date Picker",
+            "description": "Date Picker examples: picking one day or a date range from a calendar that opens in a popover from a button or a typed field."
+          },
+          "/components/dialog": {
+            "title": "Dialog",
+            "description": "Dialog examples: a centered modal popup opened from a trigger that blocks the rest of the page while it is open."
+          },
+          "/components/direction": {
+            "title": "Direction",
+            "description": "Direction examples: a provider that shares a left-to-right or right-to-left reading direction with the components below it."
+          },
+          "/components/drawer": {
+            "title": "Drawer",
+            "description": "Drawer examples: an edge-anchored panel opened from a trigger that the user can dismiss with a swipe gesture."
+          },
+          "/components/dropdown-menu": {
+            "title": "Dropdown Menu",
+            "description": "Dropdown Menu examples: a menu of actions opened from a trigger, with groups, separators, checkbox and radio items, and submenus."
+          },
+          "/components/empty": {
+            "title": "Empty",
+            "description": "Empty examples: a placeholder for a list, table or panel with nothing to show, explaining why and offering a way forward."
+          },
+          "/components/field": {
+            "title": "Field",
+            "description": "Field examples: one form control laid out with its label, its description and its validation message."
+          },
+          "/components/hover-card": {
+            "title": "Hover Card",
+            "description": "Hover Card examples: a preview card that a link shows on hover or keyboard focus."
+          },
+          "/components/input": {
+            "title": "Input",
+            "description": "Input examples: basic, in a field, disabled, invalid, file, inline and grid layouts, required, with a badge, in an input or button group, and in a form."
+          },
+          "/components/input-group": {
+            "title": "Input Group",
+            "description": "Input Group examples: one text field and its addons, such as icons, text and compact actions, framed as a single field."
+          },
+          "/components/input-otp": {
+            "title": "Input OTP",
+            "description": "Input OTP examples: a fixed-length one-time code entered one character per slot and collected as one string value."
+          },
+          "/components/item": {
+            "title": "Item",
+            "description": "Item examples: list rows that share one shape, with media, a title, a description and trailing actions, in outline and muted variants."
+          },
+          "/components/kbd": {
+            "title": "Kbd",
+            "description": "Kbd examples: key caps and keyboard shortcuts marked up so they read as keys on screen, alone or grouped."
+          },
+          "/components/label": {
+            "title": "Label",
+            "description": "Label examples: a caption that names a form control for assistive technology and drives the control when clicked."
+          },
+          "/components/marker": {
+            "title": "Marker",
+            "description": "Marker examples: status updates, system notes and labelled breaks inside a conversation thread, each as one muted full-width row."
+          },
+          "/components/menubar": {
+            "title": "Menubar",
+            "description": "Menubar examples: a persistent row of application menus such as File, Edit and View, navigated with the arrow keys."
+          },
+          "/components/message": {
+            "title": "Message",
+            "description": "Message examples: one conversation message laid out as a row, with an avatar beside its header, content surface and footer."
+          },
+          "/components/message-scroller": {
+            "title": "Message Scroller",
+            "description": "Message Scroller examples: a scrolling message transcript that follows new content and floats a jump-to-latest button over its edge."
+          },
+          "/components/native-select": {
+            "title": "Native Select",
+            "description": "Native Select examples: the browser's own select control in the kit's field styling, with the platform handling the popup."
+          },
+          "/components/navigation-menu": {
+            "title": "Navigation Menu",
+            "description": "Navigation Menu examples: a site navigation bar whose entries are plain links or triggers that expand into a shared panel of links."
+          },
+          "/components/pagination": {
+            "title": "Pagination",
+            "description": "Pagination examples: links to each page of one paged result set, with previous and next controls and an ellipsis for skipped pages."
+          },
+          "/components/popover": {
+            "title": "Popover",
+            "description": "Popover examples: a floating panel that a trigger opens beside itself, for content and controls that do not need a modal."
+          },
+          "/components/progress": {
+            "title": "Progress",
+            "description": "Progress examples: a bar that shows how far a task has progressed, or that work is still running when progress cannot be measured."
+          },
+          "/components/questionnaire": {
+            "title": "Questionnaire",
+            "description": "Questionnaire examples: a form that asks one question at a time, tracks answered and skipped items and validates each before moving on."
+          },
+          "/components/radio-group": {
+            "title": "Radio Group",
+            "description": "Radio Group examples: picking exactly one option from a small visible set, tracked as one shared value."
+          },
+          "/components/resizable": {
+            "title": "Resizable",
+            "description": "Resizable examples: split panes the user resizes by dragging a handle, nested for multi-pane layouts."
+          },
+          "/components/scroll-area": {
+            "title": "Scroll Area",
+            "description": "Scroll Area examples: a bounded region that scrolls with the kit's own scrollbar in place of the platform's native one."
+          },
+          "/components/select": {
+            "title": "Select",
+            "description": "Select examples: a pick-one field whose trigger opens a popup list of options, with groups, labels and disabled items."
+          },
+          "/components/separator": {
+            "title": "Separator",
+            "description": "Separator examples: a thin horizontal or vertical line between two sections or items of content."
+          },
+          "/components/sheet": {
+            "title": "Sheet",
+            "description": "Sheet examples: a panel anchored to one edge of the screen and opened from a trigger, on any of the four sides."
+          },
+          "/components/sidebar": {
+            "title": "Sidebar",
+            "description": "Sidebar examples: an application side panel that collapses off-canvas or to an icon rail and becomes a slide-in sheet on narrow screens."
+          },
+          "/components/skeleton": {
+            "title": "Skeleton",
+            "description": "Skeleton examples: pulsing placeholder shapes that stand in for content while it is still loading."
+          },
+          "/components/slider": {
+            "title": "Slider",
+            "description": "Slider examples: picking a number or a range of two numbers from a bounded scale by dragging, clicking the track or pressing arrow keys."
+          },
+          "/components/spinner": {
+            "title": "Spinner",
+            "description": "Spinner examples: a small spinning glyph that shows something is loading, or a loading block with a label and a description."
+          },
+          "/components/status-dot": {
+            "title": "Status Dot",
+            "description": "Status Dot examples: a small round dot with an optional label in the same tone that reports the state of something."
+          },
+          "/components/switch": {
+            "title": "Switch",
+            "description": "Switch examples: a control that turns one independent setting on or off, with the change taking effect immediately."
+          },
+          "/components/table": {
+            "title": "Table",
+            "description": "Table examples: tabular data as a styled native HTML table with a header, body, footer and caption, in density variants."
+          },
+          "/components/tabs": {
+            "title": "Tabs",
+            "description": "Tabs examples: panels that share the same screen space, switched from a list of tabs with exactly one panel shown at a time."
+          },
+          "/components/textarea": {
+            "title": "Textarea",
+            "description": "Textarea examples: a styled native multi-line text field that grows with its content."
+          },
+          "/components/toast": {
+            "title": "Toast",
+            "description": "Toast examples: brief transient notifications fired from code and stacked in a corner, with type icons and an optional action button."
+          },
+          "/components/toggle": {
+            "title": "Toggle",
+            "description": "Toggle examples: a button that flips one independent on or off state, in default and outline variants and several sizes."
+          },
+          "/components/toggle-group": {
+            "title": "Toggle Group",
+            "description": "Toggle Group examples: a small set of related toggle buttons where the user presses one option or several."
+          },
+          "/components/tooltip": {
+            "title": "Tooltip",
+            "description": "Tooltip examples: a short visual hint that a trigger shows on hover or keyboard focus."
+          },
+          "/foundations/semantic-colors": {
+            "title": "Semantic Colors",
+            "description": "Semantic color tokens of @gears-frontx/ui-kit: every color role the theme defines, shown as swatches in the current light or dark theme."
+          },
+          "/foundations/typography": {
+            "title": "Typography",
+            "description": "Type ramp tokens of @gears-frontx/ui-kit: each text role with its size, line height, weight and tracking, rendered as a specimen."
+          },
+          "/foundations/layout-elevation": {
+            "title": "Layout & Elevation",
+            "description": "Layout and elevation tokens of @gears-frontx/ui-kit: the radius scale, the spacing steps and the shadow and scrim tokens."
+          }
+        }
+      }
+    }
+  ]
+}

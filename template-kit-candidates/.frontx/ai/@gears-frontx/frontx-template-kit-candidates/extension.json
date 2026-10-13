@@ -1,0 +1,11 @@
+{
+  "id": "frontx-template-kit-candidates-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "kit-candidates",
+      "category": "guidelines",
+      "path": "guidelines/kit-candidates.md"
+    }
+  ]
+}

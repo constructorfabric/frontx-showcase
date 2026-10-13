@@ -1,0 +1,90 @@
+/*
+ * The band's layout: the page column, the band's block padding from the layout tokens, and the header's columns from the heading-row tokens (two by default; a composing block sets its own arrangement on an ancestor). The arrangement tokens let a composing block flatten the header into the column (column display, header and end-column display, the action's order and the space under the header), so its own body parts can sit between the title and the action on a phone. The title is the kit's display role with the role's tokens set to the brand's section size (a brand display size is a brand override of the ramp); that override, the lead size and the label's lilac are rows of the exemptions ledger.
+ */
+
+.band {
+  position: relative;
+}
+
+.column {
+  display: var(--site-column-display, block);
+  flex-direction: column;
+  width: var(--site-column);
+  margin: 0 auto;
+  padding: var(--site-section-pad-top) 0 var(--site-section-pad-bottom);
+}
+
+.header {
+  display: var(--site-header-display, grid);
+  grid-template-columns: var(--site-heading-columns);
+  align-items: end;
+  gap: var(--site-heading-row-gap) var(--site-heading-gap);
+  margin-bottom: var(--site-header-space, var(--space-8));
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.label {
+  color: var(--site-label-foreground);
+}
+
+.title {
+  --text-display-size: var(--site-text-section-size);
+  --text-display-line-height: var(--site-text-section-line-height);
+  --text-display-weight: var(--site-weight-title);
+  --text-display-tracking: var(--site-text-section-tracking);
+  white-space: pre-line;
+}
+
+.aside {
+  display: var(--site-aside-display, flex);
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: var(--site-lead-column);
+}
+
+.note {
+  margin-bottom: var(--space-2);
+}
+
+.lead {
+  font-size: var(--text-heading-2-size);
+  line-height: var(--site-line-height-lead);
+}
+
+.action {
+  display: flex;
+  order: var(--site-action-order, 0);
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 62.5rem) {
+  .header {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 40rem) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--site-header-space, var(--space-6));
+  }
+
+  .title {
+    --text-display-size: 1.9375rem;
+  }
+
+  .lead {
+    font-size: var(--text-body-size);
+  }
+
+  .action {
+    margin-top: var(--space-4);
+  }
+}

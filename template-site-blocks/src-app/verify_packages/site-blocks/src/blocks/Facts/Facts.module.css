@@ -1,0 +1,11 @@
+/* The card's padding step; the kit Card spaces its parts from --card-spacing. Frame, colours and type come from the kit Card and the description list. */
+.card.card {
+  --card-spacing: var(--space-6);
+}
+
+/* Actions one per line, each at its own width. */
+.actions {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}

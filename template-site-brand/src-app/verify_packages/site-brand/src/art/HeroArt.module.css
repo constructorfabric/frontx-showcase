@@ -1,0 +1,84 @@
+/*
+ * Palette of the hero art's aura (ADR 0002): the lilac and blue haze behind the slab. The slab's own palette is in the slab drawing.
+ */
+.scene {
+  --hero-art-haze-blue: rgb(188 202 255 / 0.48);
+  --hero-art-haze-lilac: rgb(171 150 255 / 0.44);
+}
+
+/* Wins over the kit's `[data-theme]` surface fill, so the band shows through around the slab. */
+.scene,
+.scene[data-theme] {
+  position: relative;
+  background: transparent;
+  color-scheme: light;
+}
+
+.aura {
+  position: absolute;
+  inset: -16% -8% -20%;
+  filter: blur(24px);
+  opacity: 0.65;
+  background: radial-gradient(at 42% 57%, var(--hero-art-haze-blue), transparent 48%), radial-gradient(at 78% 68%, var(--hero-art-haze-lilac), transparent 39%);
+  pointer-events: none;
+}
+
+/* The slab from above in a window of fixed height: the top is cropped, the bottom runs off the band. */
+.window {
+  position: relative;
+  height: clamp(280px, 28vw, 440px);
+  margin: 0 -36px;
+  overflow: hidden;
+}
+
+/* Fades the slab into the band colour at the bottom edge. */
+.window::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 92px;
+  opacity: 0.5;
+  background: linear-gradient(to top, var(--hero-band, var(--primary)) 0%, color-mix(in srgb, var(--hero-band, var(--primary)) 90%, transparent) 12%, color-mix(in srgb, var(--hero-band, var(--primary)) 32%, transparent) 56%, transparent);
+  pointer-events: none;
+}
+
+.tilt {
+  transform: perspective(1400px) rotateX(24deg);
+  transform-origin: 50% 100%;
+  translate: 0 -16%;
+}
+
+@media (max-width: 56.25rem) {
+  .window {
+    height: 34vw;
+    margin: 0 -22px;
+  }
+}
+
+@media (max-width: 40rem) {
+  .window {
+    height: 43vw;
+    margin: 0 -20px;
+  }
+
+  .window::after {
+    height: 48px;
+  }
+
+  .tilt {
+    width: 115%;
+    margin-left: -7.5%;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aura {
+    animation: haze 10s ease-in-out infinite;
+  }
+}
+
+@keyframes haze {
+  50% {
+    opacity: 0.82;
+  }
+}

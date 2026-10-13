@@ -1,0 +1,63 @@
+/* Three path cards side by side; one column under 900px. The card's own frame, colours and type come from the kit Card. */
+.grid {
+  --path-cards-figure: 144px;
+  --path-cards-figure-height: 132px;
+  --path-cards-pad-block: var(--space-6);
+  --path-cards-pad-inline: var(--space-6);
+  --path-cards-gap: var(--space-6);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--path-cards-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+/* The figure sits beside the copy; the copy runs the card's full height so the arrow closes it. The kit Card's own padding rule is outranked by the doubled class. */
+.card.card {
+  display: grid;
+  grid-template-columns: var(--path-cards-figure) minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--path-cards-gap);
+  width: 100%;
+  padding: var(--path-cards-pad-block) var(--path-cards-pad-inline);
+}
+
+.figure {
+  display: block;
+  align-self: center;
+  width: var(--path-cards-figure);
+  height: var(--path-cards-figure-height);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.text {
+  flex: 1;
+}
+
+@media (max-width: 56.25rem) {
+  .grid {
+    --path-cards-gap: var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 40rem) {
+  .grid {
+    --path-cards-figure: 104px;
+    --path-cards-figure-height: 104px;
+    --path-cards-pad-inline: var(--space-4);
+    --path-cards-pad-block: var(--space-6);
+  }
+}

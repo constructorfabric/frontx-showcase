@@ -1,0 +1,35 @@
+/*
+ * One record per row: the title truncates beside its meta note, the
+ * description truncates to one line. Layout only.
+ */
+
+.line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  min-width: 0;
+}
+
+/*
+ * The kit's ItemTitle sizes itself `width: fit-content` and is a flex
+ * container, so a long title never shrinks and never draws its ellipsis;
+ * inside the line it goes back under flex shrinking with its text in an
+ * inline formatting context (styles-exemptions.json: kit defect). Two classes
+ * outrank the kit's single-class rule whichever stylesheet loads first.
+ */
+.line .title {
+  display: block;
+  width: auto;
+}
+
+.meta {
+  flex: none;
+}
+
+.description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

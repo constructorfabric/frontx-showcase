@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-site-blocks",
+  "version": "0.1.0-alpha.0",
+  "description": "The FrontX site's blocks: section-level compositions built only from @gears-frontx/ui-kit components, kit candidates, brand art and tokens, with layout-only styles and content-only props, one block per arrangement the site draws, delivered as one workspace package; plus a showcase screen that renders every block's fixture on its own route, kept out of the search index. Apply onto a project that already has template-shell, template-mfe, template-site-brand and template-kit-candidates applied.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/verify_packages/site-blocks/",
+      "src-app/mfe_packages/site-blocks-mfe/",
+      ".frontx/ai/@gears-frontx/frontx-template-site-blocks/"
+    ],
+    "sharedFiles": []
+  }
+}

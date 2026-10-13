@@ -1,0 +1,114 @@
+/*
+ * Palette of the hairline figures (ADR 0002: an art palette lives at the top of the art that draws it). Light: V2's figure palette as measured on its home, templates, libraries and docs pages (plate #fff, accent #0756f5, edge #3569c4, mid #8cace1, low #d5e2f7, stroke 1.2). Dark: the same roles on the kit's dark surface, lightened so the outlines read on it. A light island inside a dark page takes the light palette again.
+ */
+.figure {
+  --hairline-plate: #ffffff;
+  --hairline-hi: #0756f5;
+  --hairline-edge: #3569c4;
+  --hairline-mid: #8cace1;
+  --hairline-lo: #d5e2f7;
+  --hairline-stroke: 1.2;
+}
+
+:where([data-theme='dark']) .figure {
+  --hairline-plate: #0f172a;
+  --hairline-hi: #7ea6ff;
+  --hairline-edge: #6688cf;
+  --hairline-mid: #44649f;
+  --hairline-lo: #26385f;
+}
+
+:where([data-theme='dark'] [data-theme='light']) .figure {
+  --hairline-plate: #ffffff;
+  --hairline-hi: #0756f5;
+  --hairline-edge: #3569c4;
+  --hairline-mid: #8cace1;
+  --hairline-lo: #d5e2f7;
+}
+
+.figure {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 4;
+  overflow: visible;
+}
+
+.figure path {
+  stroke-width: var(--hairline-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  fill: none;
+}
+
+.hi {
+  stroke: var(--hairline-hi);
+}
+
+.edge {
+  stroke: var(--hairline-edge);
+}
+
+.mid {
+  stroke: var(--hairline-mid);
+}
+
+.lo {
+  stroke: var(--hairline-lo);
+}
+
+.dash {
+  stroke-dasharray: 3 4;
+}
+
+.figure .face {
+  fill: var(--hairline-plate);
+}
+
+.figure .side {
+  fill: var(--hairline-lo);
+}
+
+.figure .glass {
+  fill-opacity: 0.7;
+}
+
+.figure .shade {
+  fill: var(--hairline-lo);
+  fill-opacity: 0.6;
+}
+
+/* Motion: the parts that lift on hover; the lilt of V2's figures (260ms, cubic-bezier(.5,0,.1,1)). */
+@media (prefers-reduced-motion: no-preference) {
+  .lift,
+  .liftStrong,
+  .card {
+    transition: translate 260ms cubic-bezier(0.5, 0, 0.1, 1);
+  }
+
+  .figure:hover .lift,
+  a:hover .figure .lift {
+    translate: 0 -4px;
+  }
+
+  .figure:hover .liftStrong,
+  a:hover .figure .liftStrong {
+    translate: 0 -8px;
+  }
+
+  .riffle .card:nth-child(2n),
+  .rebuild .card:nth-child(2n) {
+    transition-delay: 40ms;
+  }
+
+  .riffle .card:nth-child(3n),
+  .rebuild .card:nth-child(3n) {
+    transition-delay: 80ms;
+  }
+
+  .figure:hover .card,
+  a:hover .figure .card {
+    translate: 0 -5px;
+  }
+}

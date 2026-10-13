@@ -1,0 +1,19 @@
+/* Off screen until focused, then at the top left over the sticky header, at V2's size and ink. */
+.link {
+  position: absolute;
+  top: -100px;
+  left: var(--space-4);
+  z-index: 100;
+  padding: var(--space-3);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.link:focus {
+  top: var(--space-2);
+  outline: var(--border-width-focus) solid var(--ring);
+  outline-offset: 2px;
+}

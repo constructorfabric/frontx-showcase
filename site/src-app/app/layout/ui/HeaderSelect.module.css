@@ -1,0 +1,4 @@
+/* The kit's NativeSelect pads its text with a physical right padding for the arrow while it places the arrow with a logical inset, so in a right-to-left language the text runs under the arrow. The kit exposes only the wrapper's class name, so the select element inside it is the one hook available. */
+.select select {
+  padding-inline: var(--space-3) var(--space-8);
+}

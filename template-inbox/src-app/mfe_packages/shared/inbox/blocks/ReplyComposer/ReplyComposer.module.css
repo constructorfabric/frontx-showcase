@@ -1,0 +1,71 @@
+/*
+ * The reply area at the foot of a thread. Layout, plus the top rule, the
+ * box's radius and the note's warning frame (styles-exemptions.json).
+ */
+
+.composer {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-top: var(--border-width) solid var(--border);
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-md);
+}
+
+/* The only colour-coded difference between a reply and a note: a note is internal, and the frame says so before a word is typed. */
+.boxNote {
+  border-color: var(--warning);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.tabs {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/*
+ * Under 20rem of thread (the pane the composer sits in is its nearest size
+ * container) the composer gives back its padding, and a control wider than
+ * its line is clipped to it rather than lying across the edge.
+ */
+@container (max-width: 20rem) {
+  .composer {
+    padding: var(--space-2);
+  }
+
+  .box {
+    padding: 0;
+  }
+
+  .toolbar > * {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+}

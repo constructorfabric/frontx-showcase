@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-mfe-demo",
+  "version": "0.1.0-alpha.0",
+  "description": "The FrontX MFE mechanics demo: four screens of one package (Hello World, Profile, Current Theme, Widgets Host) and two widget packages mounted in the Widgets Host's own extension domain. Apply onto a project that already has template-shell and template-kit-candidates applied; it cannot be applied next to template-mfe 0.1.0-alpha.2, which claims the same packages. The screens appear in the shell's menu without further wiring.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/mfe_packages/demo-mfe/",
+      "src-app/mfe_packages/widgets-fixture-a/",
+      "src-app/mfe_packages/widgets-fixture-b/",
+      ".frontx/ai/@gears-frontx/frontx-template-mfe-demo/"
+    ],
+    "sharedFiles": []
+  }
+}

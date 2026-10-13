@@ -1,0 +1,44 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_blocks.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3080/assets/remoteEntry.js"
+  },
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_blocks.mfe.blocks.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_blocks.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_blocks.screens.blocks.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_blocks.mfe.blocks.v1",
+      "route": "/blocks",
+      "presentation": {
+        "label": "Blocks",
+        "icon": "lucide:blocks",
+        "order": 31
+      },
+      "seo": {
+        "title": "Blocks",
+        "description": "The section-level compositions the site's pages are built from, each shown with sample content on its own page.",
+        "indexable": false,
+        "routes": {
+          "/$block": {
+            "title": "Block",
+            "description": "One section-level composition of the site's pages, shown with sample content.",
+            "indexable": false
+          }
+        }
+      }
+    }
+  ]
+}

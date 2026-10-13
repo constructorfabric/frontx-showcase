@@ -1,0 +1,117 @@
+/*
+ * The body beside a sticky side column 272px wide, 64px apart; 235px and 32px under 1050px; one column under 900px with the side column first. The rail's jump buttons draw the current-section marker the kit has no part for; their visual declarations are rows of the exemptions ledger.
+ */
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--site-rail-column);
+  align-items: start;
+  column-gap: var(--site-rail-gap);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.side {
+  position: sticky;
+  top: calc(var(--site-header-height) + 71px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.railBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* In the two-column grid of a narrow screen an entry grows to its row's height, and the jump button with it. */
+.entry {
+  display: flex;
+}
+
+.item {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: var(--text-meta-size);
+  line-height: 18px;
+  text-align: start;
+  cursor: pointer;
+}
+
+.item:hover {
+  color: var(--link-foreground);
+}
+
+.item:focus-visible {
+  outline: var(--border-width-focus) solid var(--ring);
+  outline-offset: 2px;
+}
+
+.item[aria-current='location'] {
+  padding-inline-start: var(--space-2);
+  background-color: var(--accent);
+  box-shadow: -3px 0 var(--primary);
+  color: var(--link-foreground);
+  font-weight: var(--text-heading-1-weight);
+}
+
+.index {
+  color: var(--link-foreground);
+  font-family: var(--font-mono);
+  font-size: var(--text-label-size);
+  font-weight: var(--text-body-weight);
+  line-height: 18px;
+}
+
+.railFooter {
+  font-size: var(--text-meta-size);
+  line-height: 20px;
+}
+
+@media (max-width: 65.625rem) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr) 235px;
+    column-gap: var(--space-8);
+  }
+}
+
+@media (max-width: 56.25rem) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-8);
+  }
+
+  .side {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 35rem) {
+  .list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

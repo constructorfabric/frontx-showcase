@@ -1,0 +1,21 @@
+/* Three columns of cards, one column below the contact-columns width. Layout only. */
+
+.columns {
+  display: grid;
+  grid-template-columns: 18rem minmax(0, 1fr) 16rem;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* A contact page narrower than 60rem (`SCREEN_BREAKPOINTS_REM.contactColumns`) stacks its columns. */
+@container inbox-screen (width < 60rem) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

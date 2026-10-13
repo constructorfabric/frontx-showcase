@@ -1,0 +1,14 @@
+/* Page frame: header, the screen area that grows, footer. The document scrolls; the header stays on top. */
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.body {
+  display: flex;
+  flex: 1 0 auto;
+  min-width: 0;
+}

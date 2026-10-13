@@ -1,0 +1,43 @@
+/*
+ * Palette of the closing visual's light (ADR 0002): a pale glow on the night band behind the slab. The slab's own palette is in the slab drawing.
+ */
+.frame {
+  --closing-visual-light: rgb(150 180 255 / 0.22);
+}
+
+/* Wins over the kit's `[data-theme]` surface fill, so the night band shows through. */
+.frame,
+.frame[data-theme] {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: clamp(164px, 27vw, 340px);
+  background: transparent;
+  color-scheme: light;
+}
+
+.light {
+  position: absolute;
+  inset: 10% 20% 0;
+  filter: blur(40px);
+  background: radial-gradient(ellipse at 50% 40%, var(--closing-visual-light), transparent 70%);
+  pointer-events: none;
+}
+
+/* The slab stands at the bottom of the frame, centred, tilted back a little. */
+.stage {
+  position: absolute;
+  inset: 8% 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  perspective: 1600px;
+}
+
+.drawing.drawing {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  transform: rotateX(14deg);
+  transform-origin: 50% 100%;
+}

@@ -1,0 +1,40 @@
+/* The guide under a component's example: two columns 40px apart (1.2 to 1), 32px under the tabs; the reference ends a component page 54px above its footer, so the kit's 8px step over the page area's 44px bottom padding. One column on a phone, where the page area's 32px is already the reference's gap. Layout only. */
+
+.guide {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 40px;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-2);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.title {
+  margin-bottom: var(--space-5);
+}
+
+.noteAfterCode {
+  margin-top: var(--space-4);
+}
+
+.link {
+  margin-top: var(--space-5);
+}
+
+.linkAfterCode {
+  margin-top: var(--space-8);
+}
+
+@media (max-width: 48rem) {
+  .guide {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    margin-bottom: 0;
+  }
+}

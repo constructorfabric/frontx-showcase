@@ -1,0 +1,81 @@
+/* The site footer with the values of the designer's V2 site: as wide as the header's column, its top border included, the lockup and one row of links; from 760px down they stack, centred. The ink variant is V2's showcase footer: ink links at their natural line height, and on a phone the lockup and the links wrap into left-aligned rows. Every declaration that is not layout is a row of ../styles-exemptions.json. */
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  width: var(--site-column-chrome);
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: var(--space-8) 0;
+  border-top: var(--border-width) solid var(--site-chrome-border);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+/* The links in the footer's ink; the selectors carry the list class so they outrank the Link's own variant rules whatever the stylesheet order. */
+.links .link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--site-footer-link, var(--muted-foreground));
+}
+
+.links .link:hover {
+  color: var(--link-foreground);
+}
+
+/* Ink variant. */
+.ink .links .link {
+  color: var(--site-page-foreground, var(--foreground));
+}
+
+.ink .links .link:hover {
+  color: var(--link-foreground);
+}
+
+.ink .links {
+  line-height: normal;
+}
+
+@media (max-width: 62.5rem) {
+  .footer {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 47.5rem) {
+  .footer {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 40rem) {
+  .links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-5);
+  }
+}
+
+@media (max-width: 47.5rem) {
+  .ink {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 40rem) {
+  .ink {
+    padding-bottom: var(--space-8);
+  }
+
+  .ink .links {
+    justify-content: flex-start;
+  }
+}

@@ -1,0 +1,9 @@
+/* The screen root fills the host and centres the screen's one Empty panel; with the kit's \`data-theme\` scope on it, the kit's own rule paints its surface, text colour and typeface for the active theme. */
+.frame {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: var(--space-8) var(--space-6);
+}
