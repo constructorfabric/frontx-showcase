@@ -1,0 +1,121 @@
+/*
+ * The band's layout: the page column, the title beside a 340px end column (380px over 1500px, 300px under 1200px, one column under 900px), the art row across both (the art sets its own window height and runs past the column's sides; the band clips it). The band's brand-blue fill and its ink, the inverse button (the kit's documented recolour hooks), the brand hero size on the kit display role and the lead size are rows of the exemptions ledger.
+ */
+
+.band {
+  overflow: hidden;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  align-items: start;
+  gap: var(--space-8) 60px;
+  width: var(--site-column);
+  margin: 0 auto;
+  padding-top: 58px;
+}
+
+.title {
+  --text-display-size: var(--site-text-hero-size);
+  --text-display-line-height: var(--site-text-hero-line-height);
+  --text-display-tracking: var(--site-text-hero-tracking);
+  white-space: pre-line;
+}
+
+.lead {
+  color: inherit;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.button {
+  --button-bg: var(--primary-foreground);
+  --button-fg: var(--primary);
+  --button-bg-hover: var(--accent);
+  --button-focus-ring: var(--primary-foreground);
+  gap: var(--space-3);
+  height: 49px;
+}
+
+.buttonIcon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.linkIcon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+  margin: 0;
+}
+
+.art {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+@media (min-width: 93.75rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+}
+
+@media (max-width: 75rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    column-gap: var(--space-8);
+  }
+
+  .actions {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 56.25rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    padding-top: 38px;
+  }
+
+  .aside {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 40rem) {
+  .layout {
+    gap: var(--space-6);
+    padding-top: var(--space-8);
+  }
+
+  .title {
+    --text-display-size: clamp(2.25rem, 9.4vw, 3.125rem);
+  }
+
+  .lead {
+    font-size: var(--text-body-size);
+  }
+
+  .actions {
+    gap: var(--space-6);
+    margin-top: var(--space-5);
+  }
+}

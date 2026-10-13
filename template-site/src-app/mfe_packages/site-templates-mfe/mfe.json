@@ -1,0 +1,142 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_templates.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3051/assets/remoteEntry.js"
+  },
+  "schemas": [
+    {
+      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$comment": "The templates screen's show_template action: shows one template's page of the templates screen. Sent as the next step after the screen domain's mount_ext; the screen's handler replaces its own entry through its app's navigation facade. Self-contained and closed, as template-mfe's action schemas are.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "x-gts-ref": "/$id"
+        },
+        "target": {
+          "x-gts-ref": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+          "$comment": "The screen that shows the page: the only target of this action"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "template": {
+              "type": "string",
+              "enum": [
+                "template-shell",
+                "template-mfe",
+                "template-design-guardrails",
+                "template-site",
+                "template-site-meta",
+                "template-site-brand",
+                "template-kit-candidates",
+                "template-site-blocks",
+                "template-catalogue",
+                "template-inbox",
+                "template-mfe-demo",
+                "template-calendar-demo"
+              ],
+              "$comment": "The template whose page to show: one of the templates the screen presents"
+            }
+          },
+          "required": [
+            "template"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "type",
+        "target",
+        "payload"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_templates.mfe.templates.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [
+        "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~"
+      ],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_templates.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_templates.mfe.templates.v1",
+      "route": "/templates",
+      "presentation": {
+        "label": "Templates",
+        "icon": "lucide:layout-template",
+        "order": 20
+      },
+      "seo": {
+        "title": "Templates",
+        "description": "FrontX project templates: start an application from the shell, add the MFE workspace or design guardrails, or reuse the templates of this site.",
+        "routes": {
+          "/template-shell": {
+            "title": "Shell template",
+            "description": "The FrontX shell template: a host application that boots, routes and mounts screen microfrontends, with its key files and how to start."
+          },
+          "/template-mfe": {
+            "title": "MFE workspace template",
+            "description": "The FrontX MFE workspace template: isolated screen packages with their own build and host bridge, with its key files and next steps."
+          },
+          "/template-design-guardrails": {
+            "title": "Design guardrails template",
+            "description": "The FrontX design guardrails template: design rules, a design-defect checker and accessibility checks for people and coding agents."
+          },
+          "/template-site": {
+            "title": "Site sections template",
+            "description": "The template of this site's own sections: home, templates and docs screens with a content model that also publishes plain text."
+          },
+          "/template-site-meta": {
+            "title": "Site metadata template",
+            "description": "The site metadata template: head tags, sitemap, robots, llms.txt and plain-text twins generated from each screen's seo block."
+          },
+          "/template-site-brand": {
+            "title": "Site brand template",
+            "description": "The site brand template: brand token values over the UI kit from one record, the typeface, a document entry and a brand check."
+          },
+          "/template-kit-candidates": {
+            "title": "Kit candidates template",
+            "description": "The kit candidates template: typography, link, code block and description list components proposed to the UI kit, in its own API."
+          },
+          "/template-site-blocks": {
+            "title": "Site blocks template",
+            "description": "The site blocks template: section-level compositions of UI kit components on layout tokens, with a showcase screen for every block."
+          },
+          "/template-catalogue": {
+            "title": "UI kit catalogue template",
+            "description": "The UI kit catalogue template: a page per @gears-frontx/ui-kit component with its example, its source and how to install it."
+          },
+          "/template-inbox": {
+            "title": "Inbox template",
+            "description": "The inbox demo template: contacts, dashboard, chat and mail screens built from the UI kit with mocked API services."
+          },
+          "/template-mfe-demo": {
+            "title": "MFE mechanics demo template",
+            "description": "The MFE mechanics demo template: screens and widget packages that show the bridge, actions and a nested extension domain."
+          },
+          "/template-calendar-demo": {
+            "title": "Calendar demo template",
+            "description": "The calendar demo template: a calendar screen in the demos menu, a placeholder page built from ui-kit components while a calendar kit is in development."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# Same owners pattern as gears-frontx-templates main: a repository-wide default owner, and the template team on every template, the tooling and CI.
+
+*                          @GeraBart
+
+/template-site/            @gs-layer @itechmeat @tscbmstubp
+/template-catalogue/       @gs-layer @itechmeat @tscbmstubp
+/template-inbox/           @gs-layer @itechmeat @tscbmstubp
+/template-mfe-demo/        @gs-layer @itechmeat @tscbmstubp
+/template-calendar-demo/   @gs-layer @itechmeat @tscbmstubp
+/template-site-meta/       @gs-layer @itechmeat @tscbmstubp
+/site/                     @gs-layer @itechmeat @tscbmstubp
+/scripts/                  @gs-layer @itechmeat @tscbmstubp
+/assets/                   @gs-layer @itechmeat @tscbmstubp
+/.github/                  @gs-layer @itechmeat @tscbmstubp

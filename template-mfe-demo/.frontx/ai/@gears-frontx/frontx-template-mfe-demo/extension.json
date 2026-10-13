@@ -1,0 +1,11 @@
+{
+  "id": "frontx-template-mfe-demo-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "mfe-demo-contract",
+      "category": "guidelines",
+      "path": "guidelines/mfe-demo-contract.md"
+    }
+  ]
+}

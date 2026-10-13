@@ -1,0 +1,23 @@
+{
+  "siteName": "FrontX · Constructor Fabric",
+  "shortName": "FrontX",
+  "titleTemplate": "%s · FrontX",
+  "defaultDescription": "FrontX is an open-source kit for web applications built from a shell, screen microfrontends and a shared UI kit.",
+  "locale": "en",
+  "languages": [
+    "en"
+  ],
+  "homeScreen": "home",
+  "footerScreens": [
+    "docs"
+  ],
+  "inkFooterScreens": [
+    "catalogue"
+  ],
+  "headerHiddenGroups": [],
+  "twitterCard": "summary_large_image",
+  "ogImage": "/og-image.png",
+  "ogImageAlt": "FrontX by Constructor Fabric: build complex web applications on a shared foundation. A shell, independent screen microfrontends and a shared UI kit.",
+  "themeColor": "#2852ed",
+  "backgroundColor": "#ffffff"
+}

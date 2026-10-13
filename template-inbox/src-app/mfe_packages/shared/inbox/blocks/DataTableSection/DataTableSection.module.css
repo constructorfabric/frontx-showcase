@@ -1,0 +1,67 @@
+/*
+ * A data table with its toolbar, and the header and cell pieces of its
+ * columns. Layout on kit tokens; the header icon's size and colour are rows
+ * of styles-exemptions.json.
+ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* The kit Input with an icon takes a class only on the inner input, so the slot sizes it. */
+.search {
+  width: 14rem;
+  margin-inline-start: auto;
+}
+
+/* One child of DataTableSortButton's flex row: the icon and the label on one centre line. */
+.headerLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* 14px: between the kit's --icon-size-xs (12px) and --icon-size-sm (16px). */
+.headerLabel svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--subtle-foreground);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@container inbox-screen (width < 44rem) {
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .search {
+    width: 100%;
+    margin-inline-start: 0;
+  }
+}

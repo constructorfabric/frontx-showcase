@@ -1,0 +1,13 @@
+Adaptation of examples/data-table.tsx
+Kind: substantive
+Reason: the row-actions column has a header ("Actions"), so the table has no empty header cell (axe `empty-table-header`)
+--- a/examples/data-table.tsx
++++ b/examples/data-table.tsx
+@@ -68,6 +68,7 @@
+   columnHelper.accessor('amount', { header: 'Amount', cell: ({ getValue }) => currency(getValue()) }),
+   columnHelper.display({
+     id: 'actions',
++    header: 'Actions',
+     cell: ({ row }) => (
+       <DropdownMenu>
+         <DropdownMenuTrigger render={<Button variant="ghost" size="sm" aria-label="Row actions" />}>

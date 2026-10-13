@@ -1,0 +1,10 @@
+{
+  "index_title": "Blocks",
+  "index_lead": "The section-level compositions the site's pages are built from, each with sample content. Built only from UI Kit components, kit candidates and brand tokens.",
+  "group_section": "Landing page",
+  "group_docs": "Inner pages",
+  "back": "All blocks",
+  "not_found_title": "Block not found",
+  "not_found_lead": "The blocks showcase has no block at this address.",
+  "not_found_link": "All blocks"
+}

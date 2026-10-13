@@ -1,0 +1,6 @@
+/* The placeholder's size: the page column's width and 7.5rem, a height no kit token describes. Layout only. */
+
+.placeholder {
+  width: 100%;
+  height: 7.5rem;
+}

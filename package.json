@@ -1,0 +1,49 @@
+{
+  "name": "frontx-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The official FrontX site, the templates it is built from, its demos and the demos' templates.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24.14.0",
+    "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.9.4",
+  "scripts": {
+    "setup": "npm run site:assemble && npm ci --prefix site",
+    "site:assemble": "node scripts/site-assemble.mjs",
+    "site:data": "node scripts/site-data.mjs",
+    "site:dist": "node scripts/site-dist.mjs",
+    "shell:changes": "node scripts/shell-changes.mjs",
+    "dev": "npm run dev:all --prefix site",
+    "dev:smoke": "node scripts/dev-smoke.mjs",
+    "verify:ui": "node scripts/verify-ui.mjs",
+    "verify:ui:baseline": "node scripts/design-verify-baseline.mjs",
+    "build": "npm run site:assemble && npm run build --prefix site && npm run site:dist && npm run seo:generate",
+    "preview": "npm run preview --prefix site",
+    "type-check": "tsc --noEmit && npm run type-check --prefix site",
+    "lint": "eslint . --max-warnings 0 && npm run lint --prefix site && npm run policy:own-styles && npm run policy:text && npm run brand:check",
+    "arch:deps": "npm run arch:deps --prefix site",
+    "test:unit": "vitest --run && npm run test:unit --prefix site",
+    "templates:validate": "node scripts/validate-templates.mjs",
+    "catalogue:generate": "node template-catalogue/src-app/mfe_packages/catalogue-mfe/scripts/generate-catalogue.mjs",
+    "catalogue:check": "node template-catalogue/src-app/mfe_packages/catalogue-mfe/scripts/generate-catalogue.mjs --check",
+    "seo:generate": "node site/src-app/verify_packages/site-meta/src/cli.ts generate --config site.config.json --rasters assets/rasters.json",
+    "seo:check": "node site/src-app/verify_packages/site-meta/src/cli.ts check --config site.config.json --rasters assets/rasters.json",
+    "brand:check": "node site/src-app/verify_packages/site-brand/src/check/cli.ts check",
+    "brand:generate": "node template-site-brand/src-app/verify_packages/site-brand/src/check/cli.ts generate --kit site/node_modules/@gears-frontx/ui-kit/dist/theme.css",
+    "policy:pins": "node scripts/policy-pins.mjs",
+    "policy:own-styles": "node scripts/policy-own-styles.mjs",
+    "policy:text": "node scripts/policy-text.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.27.0",
+    "@gears-frontx/cli": "0.3.0",
+    "@types/node": "24.19.1",
+    "eslint": "9.27.0",
+    "globals": "15.12.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.4"
+  }
+}

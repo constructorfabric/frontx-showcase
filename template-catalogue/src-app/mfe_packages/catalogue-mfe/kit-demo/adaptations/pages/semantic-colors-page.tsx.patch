@@ -1,0 +1,34 @@
+Adaptation of pages/semantic-colors-page.tsx
+Kind: substantive
+Reason: token values are read on an element of the page; the page's H1 names it, so its single block has no second title; the note no longer points at the demo's own theme toggle, which the site does not have
+--- a/pages/semantic-colors-page.tsx
++++ b/pages/semantic-colors-page.tsx
+@@ -1,4 +1,5 @@
+ import { Section } from '../shared';
++import { useRef } from 'react';
+ import { useTokenValues } from './token-utils';
+ 
+ /*
+@@ -94,17 +95,15 @@
+ }
+ 
+ export function SemanticColorsPage() {
+-  const values = useTokenValues(SEMANTIC_COLOR_TOKENS);
++  const anchorRef = useRef<HTMLDivElement>(null);
++  const values = useTokenValues(SEMANTIC_COLOR_TOKENS, anchorRef);
+   return (
+-    <Section title="Semantic Colors">
+-      {/* No separate Light/Dark pages: the demo's global theme toggle
+-          (header, top of the shell) already repaints every chip below from
+-          the same tokens - flip it instead of duplicating this page. */}
++    <Section>
+       <p style={{ margin: 0, fontSize: 'var(--text-meta-size)', color: 'var(--muted-foreground)' }}>
+-        One list for both themes - use the auto/light/dark toggle above to see every chip repaint
+-        from these same tokens.
++        Every color role of the kit's theme, each chip painted from its token with the value it resolves to on this page.
+       </p>
+       <div
++        ref={anchorRef}
+         style={{
+           display: 'grid',
+           gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',

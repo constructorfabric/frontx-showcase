@@ -1,0 +1,31 @@
+/*
+ * Palette of the metric bars (ADR 0002): the purple of the reference way of working and the label grey of the metric cards, light and dark. The featured bar reads the kit's primary token.
+ */
+.chart {
+  --metric-bars-reference: #9254ed;
+  --metric-bars-label: #48566b;
+}
+
+:where([data-theme='dark']) .chart {
+  --metric-bars-reference: #b58cf5;
+  --metric-bars-label: #a9b4c8;
+}
+
+:where([data-theme='dark'] [data-theme='light']) .chart {
+  --metric-bars-reference: #9254ed;
+  --metric-bars-label: #48566b;
+}
+
+/* Recharts measures its container: a fixed height and the full width of the slot. */
+.chart {
+  width: 100%;
+  min-width: 0;
+  height: 104px;
+  aspect-ratio: auto;
+}
+
+/* Doubled, so it wins over the kit chart container's own tick colour. */
+.label.label {
+  fill: var(--metric-bars-label);
+  font-size: 0.6875rem;
+}

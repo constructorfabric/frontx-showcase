@@ -1,0 +1,111 @@
+/*
+ * The closing band's layout: the page column with 52/24 block padding (32/24 under 640px), the title beside a 340px actions column (380px over 1500px, 300px under 1200px, one column under 900px), and the visual across both, clamp(200px, 27vw, 340px) high. The night fill and its ink, the brand closing size on the kit display role and the text link size are rows of the exemptions ledger.
+ */
+
+.band {
+  background-color: var(--site-night);
+  color: var(--primary-foreground);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  align-items: start;
+  gap: var(--space-6) 60px;
+  width: var(--site-column);
+  margin: 0 auto;
+  padding: 52px 0 var(--space-6);
+}
+
+.title {
+  --text-display-size: var(--site-text-closing-size);
+  --text-display-line-height: 1.1;
+  --text-display-weight: var(--site-weight-title);
+  --text-display-tracking: -0.045em;
+  white-space: pre-line;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  padding-top: var(--space-2);
+}
+
+.button {
+  --button-focus-ring: var(--primary-foreground);
+  gap: var(--space-3);
+  height: 49px;
+}
+
+.buttonIcon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.linkIcon {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  margin: 0;
+}
+
+.visual {
+  grid-column: 1 / -1;
+  min-width: 0;
+  height: clamp(200px, 27vw, 340px);
+}
+
+@media (min-width: 93.75rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+}
+
+@media (max-width: 75rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    column-gap: var(--space-8);
+  }
+
+  .actions {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 56.25rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .actions {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 40rem) {
+  .layout {
+    gap: var(--space-6);
+    padding-top: var(--space-8);
+  }
+
+  .title {
+    --text-display-size: 2.25rem;
+  }
+
+  .actions {
+    gap: var(--space-6);
+  }
+
+  .visual {
+    height: 42vw;
+  }
+}

@@ -1,0 +1,68 @@
+# Semantic overlay for the candidate Card - only what ui-kit pull request B
+# changes: the `render` prop and the interactive state. Everything else is
+# the kit Card's own contract.
+component: card
+
+intent: Group related content in a bordered surface, and let the whole card navigate or act when its root is a link or a button.
+
+typical_uses:
+  - A catalogue tile or a "next step" card that navigates as a whole, with `render={<a href />}`
+  - A plain grouped surface, with no `render`
+
+dont_use_when:
+  - situation: A whole row of a list that navigates
+    instead:
+      target: Item, with `render`
+      component: gts.frontx.uikit._.component.v1~frontx.uikit._.item.v1
+  - situation: A link inside text
+    instead:
+      target: Link
+      component: gts.frontx.uikit._.component.v1~frontx.uikit._.link.v1
+
+accepts:
+  content: CardHeader, CardContent, CardFooter and the other kit Card parts
+
+invariants:
+  - id: unchanged-without-render
+    text: Without `render` the markup equals the kit Card's, byte for byte.
+  - id: interactive-only-when-the-root-is
+    text: >-
+      With `render`, a root that is a link or a button recolours its border
+      to `--ring` on hover and on keyboard focus draws the border recolour
+      plus the `--ring-inset` ring, with an outline in forced colours; any
+      other root gains no hover.
+  - id: no-nested-interactive-content
+    text: A card rendered as a link or a button holds no other link or button.
+
+anti_patterns:
+  - dont: Wrap a Card in an anchor
+    do_instead: Render the Card as the anchor with `render={<a href />}`, so hover and focus draw on its own border
+  - dont: Put a button inside a card rendered as a link
+    do_instead: Use a plain Card with CardAction, or an Item
+
+deprecations: {}
+
+attestations:
+  a11y:
+    outcome: passed
+    by: card.test.tsx runs axe-core over a card rendered as a link with a heading title with no violation.
+  rtl:
+    outcome: unknown
+
+prop_statements:
+  render:
+    states: render replaces the card's div with one the caller supplies
+    because: useRender's render prop takes an element or a callback, such as `render={<a href="/guides/setup" />}`.
+
+examples:
+  good:
+    - title: A card that navigates
+      code: |
+        <Card render={<a href="/guides/setup" />}>
+          <CardHeader><CardTitle render={<h3 />}>Setup guide</CardTitle></CardHeader>
+          <CardContent>From install to the first screen.</CardContent>
+        </Card>
+  bad:
+    - title: A card link holding a button
+      code: <Card render={<a href="/x" />}><CardFooter><Button>Delete</Button></CardFooter></Card>
+      why: Interactive content inside a link is invalid and unreachable for some assistive technology.

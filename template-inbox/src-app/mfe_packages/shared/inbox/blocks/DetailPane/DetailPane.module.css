@@ -1,0 +1,31 @@
+/* The detail half of a list and detail screen. Layout only, on the widths of screenLayout.ts. */
+
+.detailPane {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Set by the screen: in the single-pane layout the list and the detail pane take turns. */
+.singlePaneHidden {
+  display: none;
+}
+
+/* Beside the list (SCREEN_BREAKPOINTS_REM.singlePane and up) the detail pane keeps 24rem and the list gives way. */
+@container inbox-screen (width >= 36rem) {
+  .detailPane {
+    min-width: 24rem;
+  }
+}
+
+/*
+ * From SCREEN_BREAKPOINTS_REM.chatDetails the inspector panel's 19rem and its
+ * border sit inside the pane beside the thread, so the minimum grows by them
+ * while it is open. The doubled class outranks the rule above.
+ */
+@container inbox-screen (width >= 68rem) {
+  .detailPaneWithDetails.detailPaneWithDetails {
+    min-width: calc(24rem + 19rem + var(--border-width));
+  }
+}

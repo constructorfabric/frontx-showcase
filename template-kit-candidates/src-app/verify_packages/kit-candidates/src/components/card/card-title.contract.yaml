@@ -1,0 +1,55 @@
+# Semantic overlay for the candidate CardTitle - only what ui-kit pull request
+# B changes: the `render` prop. Everything else is the kit CardTitle's own
+# contract.
+component: card-title
+
+intent: Title a Card with the kit's title look, on the element the document outline needs.
+
+typical_uses:
+  - The title of a Card as a heading, with `render={<h3 />}` or the level the outline needs
+  - A plain title, with no `render`
+
+dont_use_when:
+  - situation: A heading between kit components, outside a Card
+    instead:
+      target: Heading
+      component: gts.frontx.uikit._.component.v1~frontx.uikit._.heading.v1
+
+accepts:
+  content: phrasing
+
+invariants:
+  - id: unchanged-without-render
+    text: Without `render` the markup equals the kit CardTitle's, byte for byte.
+  - id: kit-look-on-any-element
+    text: >-
+      With `render` the given element takes the kit's title class and a
+      zero-specificity reset of the user agent's margins and font sizes, so
+      it looks as the kit's `div` did and adds no attribute of its own.
+
+anti_patterns:
+  - dont: Give the title `role="heading"` and `aria-level`
+    do_instead: Render the heading element with `render={<h3 />}`; the role stays a fallback only where an element swap is impossible
+
+deprecations: {}
+
+attestations:
+  a11y:
+    outcome: passed
+    by: The part's test runs axe-core over the title rendered as a heading inside its Card with no violation.
+  rtl:
+    outcome: unknown
+
+prop_statements:
+  render:
+    states: render replaces the title's div with one the caller supplies
+    because: useRender's render prop takes an element or a callback, such as `render={<h3 />}`.
+
+examples:
+  good:
+    - title: A heading title
+      code: <CardTitle render={<h3 />}>Sync paused</CardTitle>
+  bad:
+    - title: A heading inside the title
+      code: <CardTitle><h3>Sync paused</h3></CardTitle>
+      why: The inner heading takes the user agent's size and margins inside the kit's title; render the title as the heading instead.

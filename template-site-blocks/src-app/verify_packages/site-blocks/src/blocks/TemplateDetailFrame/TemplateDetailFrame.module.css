@@ -1,0 +1,29 @@
+/*
+ * Two content columns under the explorer, the wider one first (1.4 to 1), 55px apart, aligned to their tops; one column under 760px, the facts after the body.
+ */
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-8) 55px;
+}
+
+.single {
+  display: flex;
+  flex-direction: column;
+}
+
+.main,
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+@media (max-width: 47.5rem) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

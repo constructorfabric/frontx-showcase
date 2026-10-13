@@ -1,0 +1,17 @@
+/*
+ * The presence dot. The kit's AvatarBadge paints itself --primary and takes no
+ * tone; presence is a three-state signal, so each state names its token here
+ * (styles-exemptions.json).
+ */
+
+.presenceOnline {
+  background-color: var(--success);
+}
+
+.presenceAway {
+  background-color: var(--warning);
+}
+
+.presenceOffline {
+  background-color: var(--muted-foreground);
+}

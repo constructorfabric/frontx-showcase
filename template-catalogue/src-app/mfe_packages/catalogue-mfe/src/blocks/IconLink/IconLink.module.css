@@ -1,0 +1,16 @@
+/* A link with icons around its text, at the start of its line: the icons centred on the text, 8px apart. Layout only. */
+
+.line {
+  display: flex;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.link > svg {
+  flex: none;
+  margin: 0;
+}

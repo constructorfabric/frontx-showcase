@@ -1,0 +1,26 @@
+/*
+ * Document-level styles of the shell, shell chrome under the repository's style policy: every declaration that is not layout on tokens has a row in layout/styles-exemptions.json. The document's colours, typeface and color-scheme come from @gears-frontx/ui-kit's theme.css (imported first in main.tsx): its `body, [data-theme]` rule paints the body and its light and dark blocks set color-scheme, and the theme registry selects the set with `data-theme` on the document element. This file adds what the kit's theme does not set: the box model, the body's margin, type size, line height and smoothing, the root's viewport height, and the pointer on a link without an address.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* A link from one screen to another opens it through actions and carries no address, so the browser gives it no pointer; the rule reaches every screen's shadow root with the head styles its lifecycle adopts. */
+a[role='link']:not([href]) {
+  cursor: pointer;
+}

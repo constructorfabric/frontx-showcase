@@ -1,0 +1,13 @@
+{
+  "$comment": "The share image under site/public/ is drawn from the SVG source in this folder. There is no rasterizer among the repository's dependencies, so the PNG is rendered by hand from its source (any SVG renderer at the listed size, with Inter available to it) and this record pins the source and the result together: npm run seo:check fails when the source or the PNG changes without the other being recorded again. Paths are relative to this folder. The icons under site/public/brand/ are the Constructor Fabric brand set, taken as published by the designer site (architecture/DESIGN.md section 4.6.2), and are not drawn here.",
+  "copies": [],
+  "rasters": [
+    {
+      "file": "../site/public/og-image.png",
+      "size": "1200x630",
+      "source": "og-image.svg",
+      "sourceSha256": "38a62768fa29e12a8fcd5c7fef2ebe78c747fadf5cb3dc5c82654f6f0b58af71",
+      "sha256": "45b02453f59c801c939447e1c829115549b24e27392e0b1b6f9207ce8f685f09"
+    }
+  ]
+}

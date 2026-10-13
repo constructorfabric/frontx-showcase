@@ -1,0 +1,32 @@
+/* The catalogue frame: a column that fills the screen, the panel column (224px, the reference's) beside the page, one column under 48rem. Layout only. */
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+  flex: 1;
+}
+
+.content {
+  display: grid;
+  /* One column no wider than the frame: an auto column would grow to the widest example's min-content and widen the page on a phone. */
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  align-content: start;
+  padding: var(--space-6) 44px 44px;
+}
+
+@media (max-width: 48rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .content {
+    padding: var(--space-5) var(--space-4) var(--space-8);
+  }
+}

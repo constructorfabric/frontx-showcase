@@ -1,0 +1,15 @@
+/* The index's family cards: two columns 32px apart, rows 24px apart, each card its own height; one column 16px apart under 48rem. Layout only. */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-6) var(--space-8);
+}
+
+@media (max-width: 48rem) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+}

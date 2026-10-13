@@ -1,0 +1,9 @@
+/* A state pane: fills its row and centres one kit state component. Layout only. */
+
+.pane {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+}

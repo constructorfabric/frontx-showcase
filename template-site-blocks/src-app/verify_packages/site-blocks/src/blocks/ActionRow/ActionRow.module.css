@@ -1,0 +1,14 @@
+/* The actions side by side with a gap, wrapping when the column is short of room; one per line at their own width under 640px. */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+@media (max-width: 40rem) {
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

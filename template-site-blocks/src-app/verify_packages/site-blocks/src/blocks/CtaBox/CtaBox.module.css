@@ -1,0 +1,11 @@
+/* The box's padding step; the kit Card spaces its parts from --card-spacing. The tint is the one visual declaration (exemption ledger: the kit Card has no tinted surface). */
+.box.box {
+  --card-spacing: var(--space-8);
+  background-color: var(--info-soft);
+}
+
+@media (max-width: 47.5rem) {
+  .box.box {
+    --card-spacing: var(--space-6);
+  }
+}

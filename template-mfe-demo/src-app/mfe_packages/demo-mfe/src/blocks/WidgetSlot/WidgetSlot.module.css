@@ -1,0 +1,8 @@
+/* The mounted widgets' hosts stack one small gap apart; the slot may shrink inside the screen's column. */
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+}

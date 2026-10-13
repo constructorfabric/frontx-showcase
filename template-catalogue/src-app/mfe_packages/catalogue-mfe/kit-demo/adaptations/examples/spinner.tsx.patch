@@ -1,0 +1,14 @@
+Adaptation of examples/spinner.tsx
+Kind: mechanical
+Reason: the read-only search input shows a neutral word instead of the company name
+--- a/examples/spinner.tsx
++++ b/examples/spinner.tsx
+@@ -81,7 +81,7 @@
+       <Section title="In an input group">
+         <Row>
+           <InputGroup style={{ maxWidth: 240 }}>
+-            <InputGroupInput placeholder="Searching…" readOnly value="constructor" />
++            <InputGroupInput placeholder="Searching…" readOnly value="invoices" />
+             <InputGroupAddon align="inline-end">
+               <Spinner style={{ width: 'var(--icon-size-xs)', height: 'var(--icon-size-xs)' }} />
+             </InputGroupAddon>

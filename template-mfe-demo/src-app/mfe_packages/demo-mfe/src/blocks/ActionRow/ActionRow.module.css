@@ -1,0 +1,13 @@
+/* Actions side by side, wrapping; each may shrink to the row's width. */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.row > * {
+  min-width: 0;
+  max-width: 100%;
+}

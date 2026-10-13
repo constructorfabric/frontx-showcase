@@ -1,0 +1,30 @@
+/* The index's intro row: the sentence in the reference's 266px column, the search across the rest; stacked under 48rem. Layout only. */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.intro {
+  flex: 0 0 266px;
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 48rem) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: var(--space-6);
+  }
+
+  .intro,
+  .search {
+    flex: none;
+  }
+}

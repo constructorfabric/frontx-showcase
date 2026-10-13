@@ -1,0 +1,7 @@
+/* Title, description and actions one small gap apart. */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}

@@ -1,0 +1,37 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.inbox_chat.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3030/assets/remoteEntry.js"
+  },
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.inbox_chat.mfe.chat.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.inbox_chat.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.inbox_chat.screens.chat.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.inbox_chat.mfe.chat.v1",
+      "route": "/inbox-chat",
+      "presentation": {
+        "label": "Inbox: chat",
+        "icon": "lucide:message-circle",
+        "order": 63,
+        "group": "gts.frontx.screensets.layout.nav_group.v1~frontx.site.layout.demos.v1"
+      },
+      "seo": {
+        "title": "Inbox: chat",
+        "description": "A support chat workspace: channels, the conversation list, a thread with replies and internal notes, and the customer at a glance."
+      }
+    }
+  ]
+}

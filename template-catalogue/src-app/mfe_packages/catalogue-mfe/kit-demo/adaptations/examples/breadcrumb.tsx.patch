@@ -1,0 +1,66 @@
+Adaptation of examples/breadcrumb.tsx
+Kind: mechanical
+Reason: the stand-in router link renders its children explicitly and an element given through `render` sees its content for jsx-a11y (same DOM); every link points at a `#` fragment instead of `/` or `/components`, which would leave the site
+--- a/examples/breadcrumb.tsx
++++ b/examples/breadcrumb.tsx
+@@ -16,8 +16,12 @@
+ import { Section } from '../shared';
+ 
+ // Stand-in for a consumer app's own routing library Link component.
+-function RouterLink({ to, ...props }: { to: string } & Omit<ComponentProps<'a'>, 'href'>) {
+-  return <a href={to} {...props} />;
++function RouterLink({ to, children, ...props }: { to: string } & Omit<ComponentProps<'a'>, 'href'>) {
++  return (
++    <a href={to} {...props}>
++      {children}
++    </a>
++  );
+ }
+ 
+ export default function BreadcrumbExample() {
+@@ -27,11 +31,11 @@
+         <Breadcrumb>
+           <BreadcrumbList>
+             <BreadcrumbItem>
+-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
++              <BreadcrumbLink href="#">Home</BreadcrumbLink>
+             </BreadcrumbItem>
+             <BreadcrumbSeparator />
+             <BreadcrumbItem>
+-              <BreadcrumbLink href="/components">Components</BreadcrumbLink>
++              <BreadcrumbLink href="#">Components</BreadcrumbLink>
+             </BreadcrumbItem>
+             <BreadcrumbSeparator />
+             <BreadcrumbItem>
+@@ -45,11 +49,11 @@
+         <Breadcrumb>
+           <BreadcrumbList>
+             <BreadcrumbItem>
+-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
++              <BreadcrumbLink href="#">Home</BreadcrumbLink>
+             </BreadcrumbItem>
+             <BreadcrumbSeparator>/</BreadcrumbSeparator>
+             <BreadcrumbItem>
+-              <BreadcrumbLink href="/components">Components</BreadcrumbLink>
++              <BreadcrumbLink href="#">Components</BreadcrumbLink>
+             </BreadcrumbItem>
+             <BreadcrumbSeparator>/</BreadcrumbSeparator>
+             <BreadcrumbItem>
+@@ -63,7 +67,7 @@
+         <Breadcrumb>
+           <BreadcrumbList>
+             <BreadcrumbItem>
+-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
++              <BreadcrumbLink href="#">Home</BreadcrumbLink>
+             </BreadcrumbItem>
+             <BreadcrumbSeparator />
+             <BreadcrumbItem>
+@@ -110,7 +114,7 @@
+         <Breadcrumb>
+           <BreadcrumbList>
+             <BreadcrumbItem>
+-              <BreadcrumbLink render={<RouterLink to="/" />}>Home</BreadcrumbLink>
++              <BreadcrumbLink render={<RouterLink to="#" />}>Home</BreadcrumbLink>
+             </BreadcrumbItem>
+             <BreadcrumbSeparator />
+             <BreadcrumbItem>

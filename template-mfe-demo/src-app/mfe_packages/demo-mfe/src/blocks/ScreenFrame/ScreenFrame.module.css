@@ -1,0 +1,10 @@
+/* A column of the screen's sections, padded from the host's edges and at least as tall as the host, so a dark scope leaves no band of the host's surface under a short screen. */
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: var(--space-8);
+}

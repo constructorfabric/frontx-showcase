@@ -1,0 +1,131 @@
+/*
+ * The comparison rhythm on the section frame (70/70; 42/42 under 640px) with the header in two equal columns 96px apart (lead 460px), and a kit separator across the band's bottom edge. Three cards 24px apart (16px under 1100px, one column under 900px); each kit card is a grid of rows 24px apart: the title row (44px), the statement row (56px), the chart (104px) and the explanation under its separator; a card without a chart has three rows sized to their content. The statement's brand-blue display figure is a row of the exemptions ledger.
+ */
+
+.rhythm {
+  --site-heading-columns: minmax(0, 1fr) minmax(0, 1fr);
+  --site-heading-gap: 96px;
+  --site-lead-column: 460px;
+  --site-section-pad-top: 70px;
+  --site-section-pad-bottom: 70px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+.card.card {
+  display: grid;
+  flex: 1;
+  grid-template-rows: 44px 56px 104px 1fr;
+  gap: var(--space-6);
+  min-width: 0;
+  padding: var(--space-6);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.unit {
+  flex: none;
+  white-space: nowrap;
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.statement {
+  color: var(--primary);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.benefitText {
+  max-width: 104px;
+}
+
+.chart {
+  min-width: 0;
+  height: 104px;
+}
+
+.explanation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.explanationText {
+  line-height: 1.6;
+}
+
+@media (max-width: 68.75rem) {
+  .grid {
+    gap: var(--space-4);
+  }
+
+  .card.card {
+    grid-template-rows: 64px 56px 104px 1fr;
+    padding: var(--space-5);
+  }
+
+  .head {
+    display: block;
+  }
+
+  .unit {
+    display: block;
+  }
+
+  .benefit {
+    gap: var(--space-2);
+  }
+}
+
+@media (max-width: 56.25rem) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card.card {
+    grid-template-rows: auto 56px 104px auto;
+    padding: var(--space-6);
+  }
+
+  .head {
+    display: flex;
+  }
+}
+
+@media (max-width: 40rem) {
+  .rhythm {
+    --site-section-pad-top: 42px;
+    --site-section-pad-bottom: 42px;
+  }
+}
+
+/* A card without a chart has no chart row, so no height is reserved for one at any width. */
+.card.card[data-has-chart='false'] {
+  grid-template-rows: auto auto 1fr;
+}

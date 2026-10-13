@@ -1,0 +1,219 @@
+name: Main CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  # The whole repository in the order a developer runs it: tooling install, template shape, composition and site install, pins, the build with its SEO outputs, then the checks over tooling, templates and site.
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [24.14.x, 25.x]
+    env:
+      # The production origin is not decided yet (architecture/DESIGN.md section 4.11); CI builds against a local preview origin.
+      SITE_ORIGIN: http://localhost:4173
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v5
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: npm
+        cache-dependency-path: |
+          package-lock.json
+          site/package-lock.json
+
+    # packageManager pins npm@10.9.4, the version the lockfiles are written with; Node 25 ships no corepack, so the pin is installed explicitly and checked.
+    - name: Install npm 10.9.4
+      run: |
+        npm install -g npm@10.9.4
+        test "$(npm --version)" = "10.9.4"
+
+    - name: Install repository tooling
+      run: npm ci
+
+    - name: Validate templates
+      run: npm run templates:validate
+
+    # The catalogue's demo files are generated from the gears-frontx commit the pinned ui-kit release was published from; the check regenerates them and fails on a hand edit or a stale pin (network access to raw.githubusercontent.com).
+    - name: Check the generated catalogue
+      run: npm run catalogue:check
+
+    - name: Compose and install the site
+      run: npm run setup
+
+    - name: Check pins
+      run: npm run policy:pins
+
+    # The templates, docs and libs screens render generated data; the official templates are read from the CLI inventory, which this step fills from the provenance source-specs (network access to the template host), and the commit each pinned FrontX release was published from is asked of the npm registry. GITHUB_TOKEN keeps those downloads off the anonymous rate limit of shared runners.
+    - name: Check generated site data
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run site:data -- --check
+
+    - name: Check the recorded shell changes
+      run: npm run shell:changes -- --check
+
+    - name: Build the site and its SEO outputs
+      run: npm run build
+
+    - name: Check page metadata
+      run: npm run seo:check
+
+    - name: Type-check
+      run: npm run type-check
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Dependency rules
+      run: npm run arch:deps
+
+    - name: Unit tests
+      run: npm run test:unit
+
+    # npm run dev as a developer starts it: the host and every remote entry must answer, with no package fetched by npx on the way.
+    - name: Smoke-test the dev run
+      run: npm run dev:smoke
+
+  # The design-defect gate: template-design-guardrails' runner (axe-core and the layout rules) over every page of the built seo-manifest.json, every block showcase route and the not-found screen, at 1440 and 390 pixels in the light theme, against npm run dev. Only a finding scripts/design-verify-baseline.json does not carry fails; every carried finding names its reason (a G34 checker false finding or a kit defect with its GAPS row). The dark theme is not gated: only the dev Studio overlay restores a stored theme, and the production build always paints light.
+  verify-ui:
+    name: Verify UI
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SITE_ORIGIN: http://localhost:4173
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        persist-credentials: false
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: 24.14.x
+        cache: npm
+        cache-dependency-path: |
+          package-lock.json
+          site/package-lock.json
+
+    - name: Install npm 10.9.4
+      run: |
+        npm install -g npm@10.9.4
+        test "$(npm --version)" = "10.9.4"
+
+    - name: Install repository tooling
+      run: npm ci
+
+    - name: Compose and install the site
+      run: npm run setup
+
+    # The routes come from the built seo-manifest.json.
+    - name: Build the site
+      run: npm run build
+
+    - name: Check the baseline's reasons
+      run: npm run verify:ui:baseline -- check
+
+    - name: Verify the UI against the baseline
+      run: npm run verify:ui
+
+  # Artifact trees (the root architecture/ and each template's <template>/architecture/), every kind in FULL traceability, and the @cpt- markers in the registered code paths, validated with the pinned Studio release. A marker binds only to its own tree's ids; a cpt-frontx-* marker binds nothing (architecture/ADR/0001-template-territory-traceability.md).
+  studio-validate:
+    name: Studio Validate Artifacts
+    runs-on: ubuntu-latest
+    env:
+      CFS_VERSION: v1.6.2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        persist-credentials: false
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+
+    - name: Install the Studio CLI
+      run: pipx install "git+https://github.com/constructorfabric/studio.git@${{ env.CFS_VERSION }}"
+
+    # .cf-studio/.core is git-ignored; materialize it before running studio.py. GITHUB_TOKEN keeps the release download off the anonymous rate limit.
+    - name: Bootstrap the Studio runtime
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: cfs update -y --no-interactive --with-kits yes --version ${{ env.CFS_VERSION }}
+
+    - name: Validate artifacts
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py validate
+
+  # @cpt- marker coverage of each system's registered code, measured with the pinned Studio release. Each floor sits just under the system's current coverage and granularity, so a change that adds code without markers, or marks it in coarser blocks, fails here. The per-file flags stay off: a file fully covered by one block scores granularity 0, and registered files without markers (types, constants, presentational components a screen's step covers where it renders them) would fail the per-file coverage.
+  studio-spec-coverage:
+    name: Studio Spec Coverage
+    runs-on: ubuntu-latest
+    env:
+      CFS_VERSION: v1.6.2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        persist-credentials: false
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+
+    - name: Install the Studio CLI
+      run: pipx install "git+https://github.com/constructorfabric/studio.git@${{ env.CFS_VERSION }}"
+
+    - name: Bootstrap the Studio runtime
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: cfs update -y --no-interactive --with-kits yes --version ${{ env.CFS_VERSION }}
+
+    - name: Coverage of site
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system site --min-coverage 57 --min-granularity 0.88
+
+    - name: Coverage of template-site
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-site --min-coverage 73 --min-granularity 0.68
+
+    - name: Coverage of template-catalogue
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-catalogue --min-coverage 50 --min-granularity 0.79
+
+    - name: Coverage of template-inbox
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-inbox --min-coverage 43 --min-granularity 0.33
+
+    - name: Coverage of template-mfe-demo
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-mfe-demo --min-coverage 73 --min-granularity 0.77
+
+    - name: Coverage of template-calendar-demo
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-calendar-demo --min-coverage 74 --min-granularity 0.90
+
+    - name: Coverage of template-site-meta
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-site-meta --min-coverage 76 --min-granularity 0.99
+
+    - name: Coverage of template-site-brand
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-site-brand --min-coverage 63 --min-granularity 0.56
+
+    - name: Coverage of template-kit-candidates
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-kit-candidates --min-coverage 46 --min-granularity 0.96
+
+    - name: Coverage of template-site-blocks
+      run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system template-site-blocks --min-coverage 56 --min-granularity 0.65

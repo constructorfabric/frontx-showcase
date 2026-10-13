@@ -1,0 +1,12 @@
+/* The code's height limit: a long example file scrolls inside its frame, which the CodeBlock's focusable `pre` region lets a keyboard user do. The kit-candidate CodeBlock has no height limit of its own; see styles-exemptions.json. */
+
+.sample {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sample pre {
+  max-height: 32rem;
+  overflow-y: auto;
+}

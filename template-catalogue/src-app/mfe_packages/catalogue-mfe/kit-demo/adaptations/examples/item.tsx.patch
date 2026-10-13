@@ -1,0 +1,21 @@
+Adaptation of examples/item.tsx
+Kind: mechanical
+Reason: the link item is a function `render` for jsx-a11y (same DOM, the click is still prevented) and points at `#notes` instead of a bare `#`
+--- a/examples/item.tsx
++++ b/examples/item.tsx
+@@ -146,7 +146,14 @@
+       </Section>
+ 
+       <Section title="Link">
+-        <Item variant="outline" render={<a href="#" onClick={(event) => event.preventDefault()} />}>
++        <Item
++          variant="outline"
++          render={(props) => (
++            <a href="#notes" {...props} onClick={(event) => { event.preventDefault(); props.onClick?.(event); }}>
++              {props.children}
++            </a>
++          )}
++        >
+           <ItemContent>
+             <ItemTitle>Notes.txt</ItemTitle>
+             <ItemDescription>Open this file</ItemDescription>

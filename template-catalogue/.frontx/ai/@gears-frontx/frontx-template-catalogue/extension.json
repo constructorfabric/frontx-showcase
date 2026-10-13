@@ -1,0 +1,16 @@
+{
+  "id": "frontx-template-catalogue-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "catalogue-contract",
+      "category": "guidelines",
+      "path": "guidelines/catalogue-contract.md"
+    },
+    {
+      "id": "catalogue-generation",
+      "category": "guidelines",
+      "path": "guidelines/catalogue-generation.md"
+    }
+  ]
+}

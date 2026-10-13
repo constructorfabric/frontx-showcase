@@ -1,0 +1,20 @@
+Adaptation of examples/marker.tsx
+Kind: mechanical
+Reason: the element given through `render` becomes a function so jsx-a11y sees the link's content; the rendered DOM is the same
+--- a/examples/marker.tsx
++++ b/examples/marker.tsx
+@@ -50,7 +50,13 @@
+       </Section>
+ 
+       <Section title="Link or button">
+-        <Marker render={<a href="#pull-request" onClick={(event) => event.preventDefault()} />}>
++        <Marker
++          render={(props) => (
++            <a href="#pull-request" {...props} onClick={(event) => { event.preventDefault(); props.onClick?.(event); }}>
++              {props.children}
++            </a>
++          )}
++        >
+           <MarkerContent>View the pull request</MarkerContent>
+         </Marker>
+       </Section>

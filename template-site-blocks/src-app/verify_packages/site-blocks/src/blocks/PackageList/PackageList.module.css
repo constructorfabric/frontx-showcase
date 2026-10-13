@@ -1,0 +1,69 @@
+/* Package cards two to a row, the cards of a row equal in height; one column under 760px. Frame, colours and type come from the kit Card, the code block and the type candidates. */
+.grid {
+  --package-list-gap: var(--space-6);
+  --package-list-pad: var(--space-8);
+  --package-list-figure: 112px;
+  --package-list-figure-height: 90px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--package-list-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+.card.card {
+  --card-spacing: var(--package-list-pad);
+  width: 100%;
+}
+
+/* The figure beside the name and title. */
+.heading.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.figure {
+  display: block;
+  flex: none;
+  width: var(--package-list-figure);
+  height: var(--package-list-figure-height);
+}
+
+.names {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.actions {
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+@media (max-width: 47.5rem) {
+  .grid {
+    --package-list-gap: var(--space-8);
+    --package-list-pad: var(--space-6);
+    --package-list-figure: 96px;
+    --package-list-figure-height: 77px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .heading.heading {
+    gap: var(--space-4);
+  }
+}

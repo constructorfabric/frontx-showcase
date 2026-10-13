@@ -1,0 +1,83 @@
+/*
+ * A conversation or mail row on the kit's Item. Layout, plus the row density,
+ * the line type and the read and selected states the kit's Item has no step
+ * or prop for (styles-exemptions.json). Two classes outrank the kit's
+ * single-class Item rules whichever stylesheet loads first.
+ */
+
+.row.row {
+  padding: 0.625rem;
+}
+
+/* The selected row also gets a border, the --border-strong idiom of the kit's pressed Toggle: the muted background alone barely reads among a dozen rows. */
+.row.rowSelected {
+  border-color: var(--border-strong);
+}
+
+.line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  min-width: 0;
+}
+
+/*
+ * The kit's ItemTitle sizes itself with `width: fit-content`, which never
+ * resolves below its own min-content, the whole string for a nowrap title, so
+ * the title grows past the row and its ellipsis cannot draw. Inside the line
+ * it goes back under flex shrinking, in an inline formatting context.
+ */
+.line .title {
+  display: block;
+  width: auto;
+  font-size: var(--text-body-size);
+  font-weight: 600;
+}
+
+.line .preview {
+  font-size: var(--text-meta-size);
+  line-height: var(--text-meta-line-height);
+}
+
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A read row steps down to the muted, regular text, which the kit defines per theme. */
+.read .line .title,
+.read .line .preview {
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+.marks {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.pin {
+  flex: none;
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+  color: var(--muted-foreground);
+}
+
+.star {
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--warning);
+  fill: var(--warning);
+}
+
+/* The unread count lines its box up with the preview's line: no block padding. Two classes outrank the kit's single-class Badge size rule. */
+.marks .unread {
+  padding-top: 0;
+  padding-bottom: 0;
+}

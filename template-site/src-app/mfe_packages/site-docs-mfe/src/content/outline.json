@@ -1,0 +1,433 @@
+{
+  "screen": "docs",
+  "strings": "src/screens/docs/i18n/en.json",
+  "data": "src/data/versions.generated.json",
+  "pages": [
+    {
+      "route": "/",
+      "title": "t:overview.title",
+      "lead": "t:overview.lead",
+      "entries": [
+        {
+          "type": "path-cards",
+          "items": [
+            {
+              "title": "t:overview.card.getStarted.title",
+              "text": "t:overview.card.getStarted.text",
+              "href": {
+                "route": "/get-started"
+              }
+            },
+            {
+              "title": "t:overview.card.firstChange.title",
+              "text": "t:overview.card.firstChange.text",
+              "href": {
+                "route": "/first-change"
+              }
+            },
+            {
+              "title": "t:overview.card.kit.title",
+              "text": "t:overview.card.kit.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1"
+              }
+            }
+          ]
+        },
+        {
+          "type": "section-heading",
+          "id": "tools",
+          "title": "t:overview.tools"
+        },
+        {
+          "type": "panels",
+          "items": [
+            {
+              "title": "t:overview.panel.templates.title",
+              "text": "t:overview.panel.templates.text",
+              "links": [
+                {
+                  "label": "t:overview.panel.templates.link",
+                  "href": {
+                    "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "t:overview.panel.agent.title",
+              "text": "t:overview.panel.agent.text",
+              "links": [
+                {
+                  "label": "t:overview.panel.agent.task",
+                  "href": {
+                    "route": "/first-change"
+                  },
+                  "kind": "link"
+                },
+                {
+                  "label": "t:overview.panel.agent.kit",
+                  "href": {
+                    "url": "{aiKitUrl}"
+                  },
+                  "kind": "link"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/get-started",
+      "title": "t:start.title",
+      "lead": "t:start.lead",
+      "meta": [
+        "t:start.meta.toolchain",
+        "t:start.meta.cli"
+      ],
+      "entries": [
+        {
+          "type": "start-paths",
+          "items": [
+            {
+              "title": "t:start.path.new.title",
+              "text": "t:start.path.new.text",
+              "href": {
+                "anchor": "workspace"
+              },
+              "current": true
+            },
+            {
+              "title": "t:start.path.existing.title",
+              "text": "t:start.path.existing.text",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_libs.screens.libs.v1"
+              }
+            }
+          ]
+        },
+        {
+          "type": "links",
+          "lead": "t:start.agent.lead",
+          "items": [
+            {
+              "label": "t:start.agent.task",
+              "href": {
+                "route": "/first-change"
+              }
+            },
+            {
+              "label": "t:start.agent.kit",
+              "href": {
+                "url": "{aiKitUrl}"
+              }
+            }
+          ]
+        },
+        {
+          "type": "status",
+          "text": "t:start.status"
+        },
+        {
+          "type": "step",
+          "id": "workspace",
+          "title": "t:start.workspace.title",
+          "lead": "t:start.workspace.lead",
+          "code": {
+            "title": "t:start.workspace.code",
+            "lines": [
+              "mkdir frontx-start && cd frontx-start",
+              "export FRONTX_INVENTORY_ROOT=\"$PWD/.frontx-inventory\""
+            ]
+          },
+          "expected": "t:start.workspace.expected"
+        },
+        {
+          "type": "step",
+          "id": "install",
+          "title": "t:start.install.title",
+          "lead": "t:start.install.lead",
+          "code": {
+            "title": "t:start.install.code",
+            "lines": [
+              "npm exec --yes --package={cliPackage}@{cliVersion} -- frontx install {shellSpec}",
+              "npm exec --yes --package={cliPackage}@{cliVersion} -- frontx install {mfeSpec}"
+            ]
+          },
+          "expected": "t:start.install.expected"
+        },
+        {
+          "type": "step",
+          "id": "assemble",
+          "title": "t:start.assemble.title",
+          "lead": "t:start.assemble.lead",
+          "code": {
+            "title": "t:start.assemble.code",
+            "lines": [
+              "npm exec --yes --package={cliPackage}@{cliVersion} -- frontx seed {shellIdentity} ./my-app",
+              "npm exec --yes --package={cliPackage}@{cliVersion} -- frontx add {mfeIdentity} ./my-app"
+            ]
+          },
+          "expected": "t:start.assemble.expected"
+        },
+        {
+          "type": "step",
+          "id": "run",
+          "title": "t:start.run.title",
+          "lead": "t:start.run.lead",
+          "code": {
+            "title": "t:start.run.code",
+            "lines": [
+              "cd my-app",
+              "npm install",
+              "FRONTX_INCLUDE_TEMPLATE_EXAMPLES=1 npm run dev:all"
+            ]
+          },
+          "expected": "t:start.run.expected",
+          "note": {
+            "title": "t:start.run.note.title",
+            "items": [
+              "t:start.run.note.text",
+              "t:start.run.note.ports"
+            ]
+          }
+        },
+        {
+          "type": "details",
+          "summary": "t:start.limits.summary",
+          "items": [
+            "t:start.limits.requirements",
+            "t:limits.cli",
+            "t:limits.templates",
+            "t:limits.toolchain",
+            "t:start.limits.registry",
+            "t:start.limits.audit",
+            "t:start.limits.bare",
+            "t:start.limits.add"
+          ]
+        },
+        {
+          "type": "guide-closing-heading",
+          "id": "other",
+          "title": "t:start.other.title"
+        },
+        {
+          "type": "panels",
+          "items": [
+            {
+              "title": "t:start.other.library.title",
+              "text": "t:start.other.library.text",
+              "links": [
+                {
+                  "label": "t:start.other.library.link",
+                  "href": {
+                    "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_libs.screens.libs.v1"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "t:start.other.agent.title",
+              "text": "t:start.other.agent.text",
+              "links": [
+                {
+                  "label": "t:start.other.agent.link",
+                  "href": {
+                    "url": "{aiKitUrl}"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "cta-box",
+          "title": "t:start.band.title",
+          "text": "t:start.band.text",
+          "action": {
+            "label": "t:start.band.action",
+            "href": {
+              "route": "/first-change"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/first-change",
+      "title": "t:change.title",
+      "lead": "t:change.lead",
+      "rail": "t:change.rail",
+      "entries": [
+        {
+          "type": "callout",
+          "title": "t:change.before.title",
+          "text": "t:change.before.text",
+          "link": {
+            "label": "t:change.before.link",
+            "href": {
+              "route": "/get-started"
+            }
+          }
+        },
+        {
+          "type": "agent-task",
+          "id": "agent-task",
+          "summary": "t:change.agent.summary",
+          "lead": "t:change.agent.lead",
+          "twin": "t:change.agent.twin",
+          "code": {
+            "title": "t:change.agent.title",
+            "lines": [
+              "t:change.agent.line1",
+              "",
+              "t:change.agent.line2",
+              "{siteOrigin}/docs/get-started.md",
+              "{siteOrigin}/docs/first-change.md",
+              "",
+              "t:change.agent.line3",
+              "",
+              "t:change.agent.line4",
+              "",
+              "t:change.agent.line5"
+            ]
+          }
+        },
+        {
+          "type": "step",
+          "id": "find",
+          "title": "t:change.find.title",
+          "lead": "t:change.find.lead",
+          "files": [
+            {
+              "path": "src-app/mfe_packages/_blank-mfe/src/screens/home/HomeScreen.tsx",
+              "text": "t:change.find.screen",
+              "href": {
+                "url": "{mfeBlobUrl}/src-app/mfe_packages/_blank-mfe/src/screens/home/HomeScreen.tsx"
+              }
+            },
+            {
+              "path": "src-app/mfe_packages/_blank-mfe/src/screens/home/i18n/en.json",
+              "name": "i18n/en.json",
+              "text": "t:change.find.strings",
+              "href": {
+                "url": "{mfeBlobUrl}/src-app/mfe_packages/_blank-mfe/src/screens/home/i18n/en.json"
+              }
+            },
+            {
+              "path": "src-app/mfe_packages/_blank-mfe/mfe.json",
+              "text": "t:change.find.manifest",
+              "href": {
+                "url": "{mfeBlobUrl}/src-app/mfe_packages/_blank-mfe/mfe.json"
+              }
+            }
+          ]
+        },
+        {
+          "type": "step",
+          "id": "edit",
+          "title": "t:change.edit.title",
+          "lead": "t:change.edit.lead",
+          "code": {
+            "title": "t:change.edit.code",
+            "lines": [
+              "{",
+              "  \"title\": \"Project overview\",",
+              "  \"description\": \"Your first change is running inside the Shell.\",",
+              "  \"bridge_info\": \"Bridge Info\",",
+              "  \"domain_id\": \"Domain ID:\",",
+              "  \"instance_id\": \"Instance ID:\",",
+              "  \"current_theme\": \"Current Theme:\",",
+              "  \"current_language\": \"Current Language:\"",
+              "}"
+            ]
+          },
+          "expected": "t:change.edit.expected"
+        },
+        {
+          "type": "step",
+          "id": "check",
+          "title": "t:change.check.title",
+          "lead": "t:change.check.lead",
+          "code": {
+            "title": "t:change.check.code",
+            "lines": [
+              "npm run type-check --workspace=@gears-frontx/blank-mfe",
+              "FRONTX_INCLUDE_TEMPLATE_EXAMPLES=1 npm run dev:all"
+            ]
+          },
+          "expected": "t:change.check.expected"
+        },
+        {
+          "type": "step",
+          "id": "open",
+          "title": "t:change.open.title",
+          "lead": "t:change.open.lead",
+          "result": {
+            "caption": "t:change.open.caption",
+            "menu": "t:change.open.menu",
+            "title": "t:change.open.screenTitle",
+            "text": "t:change.open.screenText"
+          }
+        },
+        {
+          "type": "troubleshooting",
+          "id": "troubleshooting",
+          "title": "t:change.trouble.title",
+          "items": [
+            {
+              "summary": "t:change.trouble.menu.summary",
+              "text": "t:change.trouble.menu.text"
+            },
+            {
+              "summary": "t:change.trouble.title.summary",
+              "text": "t:change.trouble.title.text"
+            },
+            {
+              "summary": "t:change.trouble.workspace.summary",
+              "text": "t:change.trouble.workspace.text"
+            }
+          ]
+        },
+        {
+          "type": "step-unnumbered",
+          "id": "changes",
+          "title": "t:change.track.title",
+          "lead": "t:change.track.lead",
+          "links": [
+            {
+              "label": "t:change.track.link",
+              "href": {
+                "route": "/get-started"
+              }
+            }
+          ]
+        },
+        {
+          "type": "actions",
+          "items": [
+            {
+              "label": "t:change.next.source",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
+                "action": {
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "payload": {
+                    "template": "template-mfe"
+                  }
+                }
+              }
+            },
+            {
+              "label": "t:change.next.kit",
+              "href": {
+                "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

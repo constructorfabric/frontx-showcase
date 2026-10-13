@@ -1,0 +1,45 @@
+/* One full-width template card: figure, then the title and text, then a 20px arrow at the far end. Frame, colours and type come from the kit Card. */
+.card.card {
+  --template-row-figure: 200px;
+  --template-row-figure-height: 160px;
+  --template-row-pad-block: var(--space-6);
+  --template-row-pad-inline: var(--space-6);
+  --template-row-gap: var(--space-6);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--template-row-gap);
+  padding: var(--template-row-pad-block) var(--template-row-pad-inline);
+}
+
+.figure {
+  display: block;
+  flex: none;
+  width: var(--template-row-figure);
+  height: var(--template-row-figure-height);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.arrow {
+  flex: none;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  margin-inline-start: auto;
+}
+
+@media (max-width: 40rem) {
+  .card.card {
+    --template-row-figure: 96px;
+    --template-row-figure-height: 77px;
+    --template-row-pad-block: var(--space-6);
+    --template-row-pad-inline: var(--space-4);
+    --template-row-gap: var(--space-4);
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,116 @@
+/*
+ * The bubble parts of a chat transcript on the kit's Bubble and Attachment.
+ * Layout, plus what the kit's Bubble has no part or prop for: the time inside
+ * the bubble, the receipt ticks, the full-bleed image, the time on a scrim
+ * over a caption-less image and the bottom tail (every visual declaration has
+ * a row in styles-exemptions.json).
+ */
+
+/*
+ * The time docks at the bubble's end edge: a float placed after the text
+ * takes the last line's end when there is room, or a line of its own when
+ * there is none. It keeps the bubble's own text colour, which keeps 4.5:1 on
+ * the primary fill; only the delivered tick is dimmed.
+ */
+.meta {
+  display: flex;
+  float: inline-end;
+  align-items: center;
+  gap: var(--space-1);
+  margin-inline-start: var(--space-2);
+  font-size: var(--text-meta-size);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.meta svg {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.deliveredTick {
+  opacity: 0.65;
+}
+
+/* Read ticks stay at full strength: acknowledged is the affirmative signal. */
+.readTick {
+  opacity: 1;
+}
+
+/*
+ * The kit's Bubble puts its small tail corner at the top on the speaker's
+ * side; this transcript puts it at the bottom on the avatar's side. The
+ * doubled class outranks the kit's own rule whichever stylesheet loads first.
+ */
+.bubble.bubble[data-align='end'] > .bubbleText {
+  border-start-end-radius: var(--radius-lg);
+  border-end-end-radius: var(--radius-xs);
+}
+
+.bubble.bubble[data-align='start'] > .bubbleText {
+  border-start-start-radius: var(--radius-lg);
+  border-end-start-radius: var(--radius-xs);
+}
+
+/*
+ * An image bubble has a definite width: the full-bleed image sizes itself as
+ * a percentage of it, which a fit-content box cannot give. The kit's
+ * `max-width: 100%` still narrows it in a narrow thread.
+ */
+.imageContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 20rem;
+}
+
+/* Negative margins cancel the bubble's padding so the image is the bubble's surface; the corners follow the bubble's. */
+.image {
+  display: block;
+  width: calc(100% + var(--space-3) * 2);
+  margin: calc(var(--space-2) * -1) calc(var(--space-3) * -1) 0;
+  border-radius: inherit;
+}
+
+/* A caption follows, so the image's bottom corners stay square. */
+.imageWithCaption {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* The caption's own text with the time trailing it inline. */
+.caption {
+  font-size: var(--text-body-size);
+}
+
+.imageFrame {
+  position: relative;
+  width: fit-content;
+}
+
+/*
+ * A caption-less image has no text line for the time to trail, so the time
+ * sits on the image's bottom corner, on the kit's modal scrim with the kit's
+ * theme-invariant light text.
+ */
+.metaOverlay {
+  position: absolute;
+  inset-inline-end: var(--space-2);
+  bottom: var(--space-2);
+  margin-inline-start: 0;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  background-color: var(--overlay-modal);
+  color: var(--primary-foreground);
+}
+
+.metaOverlay .deliveredTick,
+.metaOverlay .metaTime {
+  opacity: 0.85;
+}
+
+/* Never wider than the bubble, which a narrow thread makes narrower than 18rem. */
+.attachment {
+  margin-bottom: var(--space-2);
+  max-width: min(18rem, 100%);
+}

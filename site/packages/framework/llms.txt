@@ -1,0 +1,159 @@
+# @gears-frontx/framework
+
+> Plugin-based application framework for FrontX SDK. Orchestrates SDK packages into cohesive applications with MFE (Microfrontend) support.
+
+Part of the FrontX Framework Layer (L2) - depends on all SDK packages (@gears-frontx/state, @gears-frontx/mfes, @gears-frontx/gts-plugin, @gears-frontx/api, @gears-frontx/i18n). Owns layout slices.
+
+## Core API
+
+- [createFrontX](https://frontx.dev/docs/framework/create): The one way to create an app (`.use(...).build()`); a runtime builds exactly one
+- [presets](https://frontx.dev/docs/framework/presets): Pre-configured plugin arrays (full, minimal); `full()` adds microfrontends only when `config.microfrontends` is supplied and auth only when `config.auth` is supplied, `minimal()` is themes only
+
+## Available Plugins
+
+| Plugin | Provides |
+|--------|----------|
+| `themes()` | themeRegistry, changeTheme action |
+| `layout()` | header, footer, menu, sidebar, popup, overlay state |
+| `microfrontends()` | mfeRegistry (MFE-enabled), MFE actions, selectors, domain constants |
+| `i18n()` | i18nRegistry, setLanguage action |
+| `effects()` | Core effect coordination |
+| `mock()` | mockSlice, toggleMockMode action |
+
+## Quick Start
+
+```typescript
+// A runtime builds exactly one app: the two compositions below are
+// alternatives, choose one per runtime.
+
+// Alternative: compose plugins
+import { createFrontX, effects, themes, layout, microfrontends, i18n } from '@gears-frontx/framework';
+const app = createFrontX()
+  .use(effects())
+  .use(themes())
+  .use(layout())
+  .use(microfrontends(config))
+  .use(i18n())
+  .build();
+
+// Alternative: use the full preset, with microfrontends support
+import { createFrontX, presets } from '@gears-frontx/framework';
+const app = createFrontX().useAll(presets.full({ microfrontends: config })).build();
+
+// Access MFE-enabled registry
+app.mfeRegistry.registerDomain(screenDomain, containerProvider);
+await app.mfeRegistry.registerExtension(homeExtension);
+
+// Access MFE actions
+app.actions.loadExtension('home');
+app.actions.mountExtension('home');
+app.actions.unmountExtension('home');
+
+// Access theme and i18n actions
+app.actions.changeTheme({ themeId: 'dark' });
+app.actions.setLanguage({ language: 'es' });
+```
+
+## MFE Plugin
+
+The `microfrontends()` plugin provides:
+
+### MFE Actions
+
+```typescript
+import {
+  loadExtension,        // Load extension code
+  mountExtension,       // Mount extension into domain
+  unmountExtension,     // Unmount extension from domain
+  registerExtension,    // Register extension dynamically
+  unregisterExtension,  // Unregister extension
+} from '@gears-frontx/framework';
+```
+
+### MFE Selectors
+
+```typescript
+import {
+  selectExtensionState,       // Get extension state
+  selectRegisteredExtensions, // Get all registered extensions
+  selectExtensionError,       // Get extension error
+} from '@gears-frontx/framework';
+```
+
+### Domain Constants
+
+```typescript
+import {
+  FRONTX_SCREEN_DOMAIN,   // 'screen'
+  FRONTX_SIDEBAR_DOMAIN,  // 'sidebar'
+  FRONTX_POPUP_DOMAIN,    // 'popup'
+  FRONTX_OVERLAY_DOMAIN,  // 'overlay'
+  screenDomain,         // ExtensionDomain object
+  sidebarDomain,        // ExtensionDomain object
+  popupDomain,          // ExtensionDomain object
+  overlayDomain,        // ExtensionDomain object
+} from '@gears-frontx/framework';
+```
+
+### Action Constants
+
+```typescript
+import {
+  FRONTX_ACTION_LOAD_EXT,     // 'frontx.action.load_ext'
+  FRONTX_ACTION_MOUNT_EXT,    // 'frontx.action.mount_ext'
+  FRONTX_ACTION_UNMOUNT_EXT,  // 'frontx.action.unmount_ext'
+} from '@gears-frontx/framework';
+```
+
+### Shared Property Constants
+
+```typescript
+import {
+  FRONTX_SHARED_PROPERTY_THEME,     // 'frontx.shared.theme'
+  FRONTX_SHARED_PROPERTY_LANGUAGE,  // 'frontx.shared.language'
+} from '@gears-frontx/framework';
+```
+
+## Plugin Composition Pattern
+
+```typescript
+import { createFrontX, microfrontends, gtsPlugin } from '@gears-frontx/framework';
+
+// MFE-enabled app
+const app = createFrontX()
+  .use(microfrontends({ typeSystem: gtsPlugin })) // Provides mfeRegistry (MFE-enabled), MFE actions and domain management
+  .build();
+
+// Access MFE features
+await app.mfeRegistry.registerExtension(extension);
+app.actions.mountExtension(extensionId);
+```
+
+## MFE Types
+
+```typescript
+import type {
+  Extension,              // Extension definition
+  ScreenExtension,        // Screen-specific extension (derived type)
+  ExtensionDomain,        // Domain definition
+  MfeHandler,             // Abstract handler for MFE lifecycle
+  MfeBridgeFactory,       // Abstract factory for bridges
+  ParentMfeBridge,        // Parent bridge interface
+  ChildMfeBridge,         // Child bridge interface
+  LifecycleStage,         // Lifecycle stage definition
+  ActionsChain,           // Actions chain for lifecycle hooks
+} from '@gears-frontx/framework';
+```
+
+## Concrete MFE Implementations
+
+```typescript
+import { MfeHandlerMF } from '@gears-frontx/framework';  // Module Federation handler
+import { gtsPlugin } from '@gears-frontx/framework';     // GTS type validation plugin
+```
+
+## Optional
+
+- [Custom Plugins](https://frontx.dev/docs/framework/plugins): Creating custom plugins
+- [MFE Bridge Communication](https://frontx.dev/docs/framework/mfe-bridge): Parent-child patterns
+- [Migration Guide](https://frontx.dev/docs/framework/migration): Migrating from legacy screensets API

@@ -1,0 +1,52 @@
+/*
+ * The page column: the intro carries the page's top padding, then the tab bar, the wide content and the body 32px apart, then the page's bottom padding.
+ */
+
+.page {
+  position: relative;
+  width: var(--site-column);
+  margin: 0 auto;
+  padding-bottom: var(--site-page-pad-bottom);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.tabs {
+  max-width: none;
+  justify-content: flex-start;
+  overflow-x: auto;
+}
+
+/* The kit centres its list and lets items shrink; the tab bar starts at the column's edge and scrolls instead of wrapping a label. */
+.tabList {
+  flex: none;
+  justify-content: flex-start;
+}
+
+.tabList > * {
+  flex: none;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+/* The footer line sits in the page's bottom padding: 24px under the body. */
+.footer {
+  margin: calc(var(--space-2) * -1) 0 calc(var(--space-6) * -1);
+  font-size: var(--text-meta-size);
+  line-height: 20px;
+}
+
+@media (max-width: 40rem) {
+  .footer {
+    margin: calc(var(--space-4) * -1) 0 calc(var(--space-6) * -1);
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_libs.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3053/assets/remoteEntry.js"
+  },
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_libs.mfe.libs.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_libs.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_libs.screens.libs.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_libs.mfe.libs.v1",
+      "route": "/libs",
+      "presentation": {
+        "label": "Libraries",
+        "icon": "lucide:library",
+        "order": 35
+      },
+      "seo": {
+        "title": "Libraries",
+        "description": "The FrontX packages with their versions and install commands, and short technical summaries of routing, microfrontends and the screen domain.",
+        "routes": {
+          "/routing": {
+            "title": "Routing",
+            "description": "How FrontX addresses screens and their pages in the query string with the routing and routing-tanstack packages, and how ExtensionRouter builds a router."
+          },
+          "/mfes": {
+            "title": "Microfrontends",
+            "description": "The FrontX microfrontend runtime: manifests, entries, extensions, domains, the mount lifecycle, Shadow DOM isolation, the bridge, shared properties, actions."
+          },
+          "/screen-domain": {
+            "title": "Screen domain",
+            "description": "The screen domain of template-shell: its route key, the mount_ext action that swaps the screen on show, and the Exclusive mount strategy behind it."
+          }
+        }
+      }
+    }
+  ]
+}

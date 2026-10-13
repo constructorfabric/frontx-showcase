@@ -1,0 +1,88 @@
+/*
+ * The navigation panel: a sticky column under the shell's header that scrolls its own rows. The shell's header height comes from the site's `--site-header-height` (73px with its border; the panel overlaps that border by 1px, as the reference does), with the same 73px when the site's layout tokens are absent. The row look (muted ink, the hover and current fills) waits for a kit navigation list row; see styles-exemptions.json.
+ */
+
+.panel {
+  --nav-top: calc(var(--site-header-height, 73px) - 1px);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: var(--nav-top);
+  align-self: start;
+  height: calc(100vh - var(--nav-top));
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-4);
+  border-inline-end: var(--border-width) solid var(--border);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.groupLabel {
+  margin: var(--space-6) 0 var(--space-3);
+  padding: 0 var(--space-3);
+  text-transform: uppercase;
+}
+
+.group:first-child .groupLabel {
+  margin-top: var(--space-2);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-height-md);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--muted-foreground);
+  font-size: var(--text-body-size);
+  font-weight: 500;
+  line-height: 16px;
+  text-decoration: none;
+}
+
+.row:hover {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+
+.row[data-section-current] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  font-weight: 600;
+}
+
+.row[aria-current='page']:not([data-section-current]) {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.icon {
+  width: var(--space-4);
+  height: var(--space-4);
+  flex-shrink: 0;
+}
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding: var(--space-8) var(--space-3) 0;
+}

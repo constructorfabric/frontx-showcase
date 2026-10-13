@@ -1,0 +1,11 @@
+{
+  "id": "frontx-template-site-brand-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "brand",
+      "category": "guidelines",
+      "path": "guidelines/brand.md"
+    }
+  ]
+}

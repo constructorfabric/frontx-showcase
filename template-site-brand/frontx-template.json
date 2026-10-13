@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-site-brand",
+  "version": "0.1.0-alpha.0",
+  "description": "The brand of the FrontX site on top of @gears-frontx/ui-kit as one package: a brand record with the V2 design value of every row, the token stylesheet and theme variables generated from it, the self-hosted Inter font, a document entry the shell loads into the document (and through it into every screen), brand assets, an AI guideline and the brand check. Apply onto a project that already has template-shell applied and loads src-app/verify_packages/*/src/document.css into its document; the package lands in the shell's workspace root for template-delivered packages and contributes no screen.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/verify_packages/site-brand/",
+      ".frontx/ai/@gears-frontx/frontx-template-site-brand/"
+    ],
+    "sharedFiles": []
+  }
+}

@@ -1,0 +1,49 @@
+Adaptation of examples/input.tsx
+Kind: substantive
+Reason: the Button group example's input has its own value, which its Clear button clears (the demo's Clear cleared another example's query); the invalid, file and button-group inputs have accessible names (axe `label`)
+--- a/examples/input.tsx
++++ b/examples/input.tsx
+@@ -20,6 +20,7 @@
+ 
+ export default function InputExample() {
+   const [query, setQuery] = useState('');
++  const [email, setEmail] = useState('');
+ 
+   return (
+     <div style={{ display: 'grid', gap: 'var(--space-6)', maxWidth: 480 }}>
+@@ -59,11 +60,11 @@
+       </Section>
+ 
+       <Section title="Invalid">
+-        <Input aria-invalid defaultValue="not-an-email" />
++        <Input aria-invalid aria-label="Email" defaultValue="not-an-email" />
+       </Section>
+ 
+       <Section title="File">
+-        <Input type="file" />
++        <Input type="file" aria-label="Attachment" />
+       </Section>
+ 
+       <Section title="Inline">
+@@ -177,13 +178,19 @@
+          * the two so the strip's outer border reads as one continuous edge.
+          */}
+         <ButtonGroup>
+-          <Input placeholder="you@company.com" icon={<DemoIcon />} />
++          <Input
++            placeholder="you@company.com"
++            aria-label="Email"
++            icon={<DemoIcon />}
++            value={email}
++            onValueChange={setEmail}
++          />
+           <Button
+             variant="outline"
+             size="lg"
+             icon={<CloseIcon />}
+             aria-label="Clear"
+-            onClick={() => setQuery('')}
++            onClick={() => setEmail('')}
+           />
+         </ButtonGroup>
+       </Section>

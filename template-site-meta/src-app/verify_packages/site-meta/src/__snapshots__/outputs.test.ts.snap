@@ -1,0 +1,58 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`generated outputs > llms.txt has a section per screen in menu order, routes grouped by their first segment, and the package links 1`] = `
+"# FrontX
+
+> FrontX is a framework for building frontends from microfrontends, templates and a shared UI kit.
+
+## Home
+
+- [Home](http://localhost:4173/?screen=home): Home: a description long enough to hold the fifty character minimum.
+
+## UI Kit
+
+- [UI Kit](http://localhost:4173/?screen=catalogue): Catalogue: a description long enough to hold the fifty character minimum.
+
+### Components
+
+- [Button](http://localhost:4173/?screen=catalogue;route=components/button): Button: a description long enough to hold the fifty character minimum.
+- [Card](http://localhost:4173/?screen=catalogue;route=components/card): Card: a description long enough to hold the fifty character minimum.
+
+### Foundations
+
+- [Typography](http://localhost:4173/?screen=catalogue;route=foundations/typography): Typography: a description long enough to hold the fifty character minimum.
+
+## Contacts
+
+- [Contacts](http://localhost:4173/?screen=inbox-contacts): Contacts: a description long enough to hold the fifty character minimum.
+
+## Packages
+
+- [@gears-frontx/ui-kit@0.4.0](https://unpkg.com/@gears-frontx/ui-kit@0.4.0/llms.txt): The UI kit.
+"
+`;
+
+exports[`generated outputs > sitemap.xml lists every indexable page, no pattern route 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://localhost:4173/?screen=home</loc>
+  </url>
+  <url>
+    <loc>http://localhost:4173/?screen=catalogue</loc>
+  </url>
+  <url>
+    <loc>http://localhost:4173/?screen=catalogue;route=components/button</loc>
+  </url>
+  <url>
+    <loc>http://localhost:4173/?screen=catalogue;route=components/card</loc>
+  </url>
+  <url>
+    <loc>http://localhost:4173/?screen=catalogue;route=foundations/typography</loc>
+  </url>
+  <url>
+    <loc>http://localhost:4173/?screen=inbox-contacts</loc>
+  </url>
+</urlset>
+"
+`;

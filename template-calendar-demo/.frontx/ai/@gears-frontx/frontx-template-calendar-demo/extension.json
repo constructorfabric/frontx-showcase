@@ -1,0 +1,11 @@
+{
+  "id": "frontx-template-calendar-demo-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "calendar-demo-contract",
+      "category": "guidelines",
+      "path": "guidelines/calendar-demo-contract.md"
+    }
+  ]
+}

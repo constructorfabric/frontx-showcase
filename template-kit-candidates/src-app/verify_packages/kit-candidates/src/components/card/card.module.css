@@ -1,0 +1,52 @@
+/*
+ * What `render` adds to the kit's Card and CardTitle. Applied only with
+ * `render`, so a plain Card keeps the kit's markup and gains no hover.
+ */
+
+/*
+ * A Card whose root is a link or a button: no UA underline or button font,
+ * a --ring border on hover, and on keyboard focus the kit's border recolour
+ * plus inset ring, the same rules as Item.
+ */
+:where(.interactive) {
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--duration-micro) var(--ease-standard);
+}
+
+.interactive:where(a[href], button):hover {
+  border-color: var(--ring);
+}
+
+.interactive:where(a[href], button):focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 var(--ring-inset) var(--ring);
+}
+
+@media (forced-colors: active) {
+  .interactive:where(a[href], button):focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.interactive) {
+    transition: none;
+  }
+}
+
+/*
+ * A title rendered as a heading or a paragraph: the user agent's margins and
+ * font sizes reset at zero specificity, so every rule of the kit's title
+ * class still wins and the element looks as the kit's `div` did.
+ */
+:where(.renderedTitle) {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+}

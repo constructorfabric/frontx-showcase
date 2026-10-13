@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "name": "@gears-frontx/frontx-template-site",
+  "version": "0.2.0-alpha.0",
+  "description": "The FrontX site's own sections as four screens: home (what FrontX is, its parts, a worked first change and the UI kit), templates (an index and a page per template, built from each template's manifest), docs (getting started and a first change) and libs (the FrontX packages and short technical summaries of routing, microfrontends and the screen domain), with a shared content model whose pages, the home page included, are outlines of entries rendered by the blocks of template-site-blocks and also publish as plain text. Apply onto a project that already has template-shell, template-site-brand, template-kit-candidates and template-site-blocks applied; the screens appear in the shell's menu without further wiring.",
+  "ownershipBoundaries": {
+    "exclusiveSubtrees": [
+      "src-app/mfe_packages/site-home-mfe/",
+      "src-app/mfe_packages/site-templates-mfe/",
+      "src-app/mfe_packages/site-docs-mfe/",
+      "src-app/mfe_packages/site-libs-mfe/",
+      "src-app/mfe_packages/shared/site/",
+      ".frontx/ai/@gears-frontx/frontx-template-site/"
+    ],
+    "sharedFiles": []
+  }
+}

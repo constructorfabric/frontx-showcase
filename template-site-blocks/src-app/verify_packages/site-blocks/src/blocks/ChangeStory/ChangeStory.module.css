@@ -1,0 +1,65 @@
+/*
+ * The change rhythm on the section frame (48/64; 32/40 under 640px). The frame's column is a grid and the body's parts join it, so the reading order is the source order at every width: the title, the lead, the link, the drawing. On a wide screen the link takes the title row's far end and the lead sits under the title (620px at most, 16px under it), 32px above the drawing; the drawing spans the column. Under 640px the column is a flex column: the lead 16px under the title, the link 16px under the lead, the drawing 32px under the link. A kit separator held to the page column runs above the band. The drawing paints its own surfaces from its light and dark palette (brand art), so the block declares no surface.
+ */
+
+.rhythm {
+  --site-section-pad-top: 48px;
+  --site-section-pad-bottom: 64px;
+  --site-column-display: grid;
+  --site-heading-columns: minmax(0, 1fr);
+  --site-header-space: 0;
+}
+
+.rule {
+  width: var(--site-column);
+  margin: 0 auto;
+}
+
+.body {
+  display: contents;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  align-self: end;
+  justify-self: end;
+  grid-column: 2;
+  grid-row: 1;
+  gap: var(--space-2);
+  margin-inline-start: var(--space-8);
+}
+
+.linkIcon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+  margin: 0;
+}
+
+.lead {
+  grid-column: 1;
+  grid-row: 2;
+  max-width: 620px;
+  margin-top: var(--space-4);
+  line-height: var(--site-line-height-lead);
+}
+
+.workbench {
+  grid-column: 1 / span 2;
+  min-width: 0;
+  margin-top: var(--space-8);
+}
+
+@media (max-width: 40rem) {
+  .rhythm {
+    --site-section-pad-top: var(--space-8);
+    --site-section-pad-bottom: 40px;
+    --site-column-display: flex;
+  }
+
+  .link {
+    align-self: flex-start;
+    margin-inline-start: 0;
+    margin-top: var(--space-4);
+  }
+}

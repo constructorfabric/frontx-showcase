@@ -1,0 +1,7 @@
+/* A page of the catalogue: its blocks in one column, never wider than the page area. Layout only. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}

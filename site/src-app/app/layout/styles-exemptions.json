@@ -1,0 +1,656 @@
+{
+  "$comment": "Every declaration in a stylesheet of the shell chrome (site/src-app/app/layout/, site/src-app/app/mfe/ and site/src-app/app/globals.css) that is not layout on tokens, with the kit gap or defect it waits for. File paths are relative to this folder. The repository's style policy reads this file; a row whose selector no longer exists fails it. Remove a row when its gap closes.",
+  "rows": [
+    {
+      "file": "Overlay.module.css",
+      "selector": ".overlay",
+      "property": "background-color",
+      "waitsFor": "Kit gap: no overlay layer outside a Dialog (the layout state's overlay)",
+      "gap": "none"
+    },
+    {
+      "file": "Overlay.module.css",
+      "selector": ".overlay",
+      "property": "backdrop-filter",
+      "waitsFor": "Kit gap: no overlay layer outside a Dialog (the layout state's overlay)",
+      "gap": "none"
+    },
+    {
+      "file": "Screen.module.css",
+      "selector": ".screen:focus",
+      "property": "outline",
+      "waitsFor": "Kit gap: no focusable landmark that hides its focus ring when focused programmatically (the skip link target)",
+      "gap": "none"
+    },
+    {
+      "file": "Sidebar.module.css",
+      "selector": ".sidebar, .collapsed",
+      "property": "border-inline-start",
+      "waitsFor": "Kit gap: no collapsible side region for the layout's right sidebar domain (the kit Sidebar is a navigation rail, Sheet a modal panel)",
+      "gap": "none"
+    },
+    {
+      "file": "Sidebar.module.css",
+      "selector": ".sidebar, .collapsed",
+      "property": "background-color",
+      "waitsFor": "Kit gap: no collapsible side region for the layout's right sidebar domain (the kit Sidebar is a navigation rail, Sheet a modal panel)",
+      "gap": "none"
+    },
+    {
+      "file": "Sidebar.module.css",
+      "selector": ".sidebar, .collapsed",
+      "property": "transition",
+      "waitsFor": "Kit gap: no collapsible side region for the layout's right sidebar domain (the kit Sidebar is a navigation rail, Sheet a modal panel)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame",
+      "property": "color",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame",
+      "property": "white-space",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame .lockup",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame .lockup",
+      "property": "font-weight",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame .lockup",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame .lockup",
+      "property": "letter-spacing",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame .lockup",
+      "property": "text-decoration-line",
+      "waitsFor": "Kit candidate gap: Link has no variant that keeps the inherited ink without an underline (the lockup is a brand mark, not a link in text)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame .lockup:hover",
+      "property": "text-decoration-line",
+      "waitsFor": "Kit candidate gap: Link has no variant that keeps the inherited ink without an underline (the lockup is a brand mark, not a link in text)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".divider",
+      "property": "color",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".divider",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".divider",
+      "property": "font-weight",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".accent",
+      "property": "color",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".compact .lockup",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".frame:not(.compact) .lockup",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no brand lockup; the wordmark's size, weight, tracking and ink, the divider (brand token --site-lockup-divider) and the accent letter are the design's lockup values",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".footer",
+      "property": "border-top",
+      "waitsFor": "Kit gap: no site footer (hairline top rule; the rule colour is the brand token --site-chrome-border)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".links",
+      "property": "list-style",
+      "waitsFor": "Kit gap: Text rendered as a list keeps the list markers",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".links .link",
+      "property": "color",
+      "waitsFor": "Kit candidate gap: Link has no footer-ink variant (the muted variant is a shade darker than the footer link colour)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".links .link:hover",
+      "property": "color",
+      "waitsFor": "Kit candidate gap: Link has no footer-ink variant (the muted variant is a shade darker than the footer link colour)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".ink .links .link",
+      "property": "color",
+      "waitsFor": "Kit candidate gap: Link has no footer-ink variant (the muted variant is a shade darker than the footer link colour)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".ink .links .link:hover",
+      "property": "color",
+      "waitsFor": "Kit candidate gap: Link has no footer-ink variant (the muted variant is a shade darker than the footer link colour)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".ink .links",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no footer ink variant; the showcase footer's links take the natural line height as the design draws them",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".header",
+      "property": "border-bottom",
+      "waitsFor": "Kit gap: no site header surface (sticky translucent bar with a hairline rule; the rule colour is the brand token --site-chrome-border)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".header",
+      "property": "background-color",
+      "waitsFor": "Kit gap: no site header surface (sticky translucent bar with a hairline rule; the rule colour is the brand token --site-chrome-border)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".header",
+      "property": "backdrop-filter",
+      "waitsFor": "Kit gap: no site header surface (sticky translucent bar with a hairline rule; the rule colour is the brand token --site-chrome-border)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".actions .link",
+      "property": "color",
+      "waitsFor": "Kit candidate gap: Link has no navigation-ink variant; the header link takes the kit body size",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".actions .link",
+      "property": "font-size",
+      "waitsFor": "Kit candidate gap: Link has no navigation-ink variant; the header link takes the kit body size",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".actions .link",
+      "property": "line-height",
+      "waitsFor": "Kit candidate gap: Link has no navigation-ink variant; the header link takes the kit body size",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".actions .link",
+      "property": "white-space",
+      "waitsFor": "Kit candidate gap: Link has no navigation-ink variant; the header link takes the kit body size",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".actions .link:hover",
+      "property": "color",
+      "waitsFor": "Kit candidate gap: Link has no navigation-ink variant; the header link takes the kit body size",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "border",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "border-radius",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "background",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "box-shadow",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "color",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "font",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "font-size",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "font-weight",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "line-height",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "letter-spacing",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "text-decoration",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "white-space",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link, .list .trigger",
+      "property": "cursor",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link:hover, .list .trigger:hover, .list .trigger[aria-expanded='true']",
+      "property": "background",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link:hover, .list .trigger:hover, .list .trigger[aria-expanded='true']",
+      "property": "color",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link:focus-visible, .list .trigger:focus-visible, .groupList .groupLink:focus-visible",
+      "property": "outline",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link:focus-visible, .list .trigger:focus-visible, .groupList .groupLink:focus-visible",
+      "property": "outline-offset",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link:focus-visible, .list .trigger:focus-visible, .groupList .groupLink:focus-visible",
+      "property": "border-radius",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link[data-active], .list .trigger[data-active]",
+      "property": "background",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link[data-active], .list .trigger[data-active]",
+      "property": "color",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".list .link[data-active], .list .trigger[data-active]",
+      "property": "box-shadow",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".chevron",
+      "property": "transition",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".trigger[aria-expanded='true'] .chevron",
+      "property": "transform",
+      "waitsFor": "Kit gap: NavigationMenu has no plain text-link style with an active underline (its links are pills); the links take the kit body size (the meta size on a phone) and the design's weight 450",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".panel",
+      "property": "border",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".panel",
+      "property": "border-radius",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".panel",
+      "property": "background-color",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".panel",
+      "property": "color",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".panel",
+      "property": "box-shadow",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList",
+      "property": "list-style",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink",
+      "property": "border-radius",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink",
+      "property": "color",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink",
+      "property": "font-size",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink",
+      "property": "line-height",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink",
+      "property": "text-decoration",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink:hover, .groupList .groupLink[data-active]",
+      "property": "background-color",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink:hover, .groupList .groupLink[data-active]",
+      "property": "color",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList .groupLink:hover, .groupList .groupLink[data-active]",
+      "property": "box-shadow",
+      "waitsFor": "Kit defect: the NavigationMenu popup's focus guards fail axe aria-hidden-focus, so a group is a disclosure on Collapsible drawn as the kit's popover surface",
+      "gap": "GAPS kit-defects row \"NavigationMenu popup focus guards\""
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link",
+      "property": "background-color",
+      "waitsFor": "Kit gap: no SkipLink (kit candidate P7, a later ui-kit pull request); off screen until focused, then over the sticky header in the page ink",
+      "gap": "none"
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link",
+      "property": "color",
+      "waitsFor": "Kit gap: no SkipLink (kit candidate P7, a later ui-kit pull request); off screen until focused, then over the sticky header in the page ink",
+      "gap": "none"
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link",
+      "property": "font-size",
+      "waitsFor": "Kit gap: no SkipLink (kit candidate P7, a later ui-kit pull request); off screen until focused, then over the sticky header in the page ink",
+      "gap": "none"
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link",
+      "property": "line-height",
+      "waitsFor": "Kit gap: no SkipLink (kit candidate P7, a later ui-kit pull request); off screen until focused, then over the sticky header in the page ink",
+      "gap": "none"
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link",
+      "property": "text-decoration",
+      "waitsFor": "Kit gap: no SkipLink (kit candidate P7, a later ui-kit pull request); off screen until focused, then over the sticky header in the page ink",
+      "gap": "none"
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link:focus",
+      "property": "outline",
+      "waitsFor": "Kit gap: no SkipLink (kit candidate P7, a later ui-kit pull request); off screen until focused, then over the sticky header in the page ink",
+      "gap": "none"
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link:focus",
+      "property": "outline-offset",
+      "waitsFor": "Kit gap: no SkipLink (kit candidate P7, a later ui-kit pull request); off screen until focused, then over the sticky header in the page ink",
+      "gap": "none"
+    },
+    {
+      "file": "../globals.css",
+      "selector": "body",
+      "property": "font-size",
+      "waitsFor": "Kit gap: the kit theme paints the body (colours, typeface) but sets no body type size or line height; the document takes the body role of the type ramp",
+      "gap": "none"
+    },
+    {
+      "file": "../globals.css",
+      "selector": "body",
+      "property": "line-height",
+      "waitsFor": "Kit gap: the kit theme paints the body (colours, typeface) but sets no body type size or line height; the document takes the body role of the type ramp",
+      "gap": "none"
+    },
+    {
+      "file": "../globals.css",
+      "selector": "body",
+      "property": "-webkit-font-smoothing",
+      "waitsFor": "Kit gap: the kit theme sets no font smoothing for the document",
+      "gap": "none"
+    },
+    {
+      "file": "../globals.css",
+      "selector": "a[role='link']:not([href])",
+      "property": "cursor",
+      "waitsFor": "Kit gap: no link style for a link without an address (a screen's link to another screen, opened through actions); the browser draws it with the text cursor",
+      "gap": "none"
+    },
+    {
+      "file": "../globals.css",
+      "selector": "#root",
+      "property": "min-height",
+      "waitsFor": "Kit gap: no viewport-relative size token (100vh, 100dvh)",
+      "gap": "none"
+    },
+    {
+      "file": "Layout.module.css",
+      "selector": ".layout",
+      "property": "min-height",
+      "waitsFor": "Kit gap: no viewport-relative size token (100vh, 100dvh)",
+      "gap": "none"
+    },
+    {
+      "file": "Sidebar.module.css",
+      "selector": ".sidebar",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 20rem (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".logo",
+      "property": "width",
+      "waitsFor": "Kit gap: no size token for 30px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px); 24px is var(--icon-size-lg) and waits for the swap",
+      "gap": "none"
+    },
+    {
+      "file": "ui/BrandLockup.module.css",
+      "selector": ".logo",
+      "property": "height",
+      "waitsFor": "Kit gap: no size token for 30px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px); 24px is var(--icon-size-lg) and waits for the swap",
+      "gap": "none"
+    },
+    {
+      "file": "ui/FooterFrame.module.css",
+      "selector": ".footer",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 1480px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".inner",
+      "property": "max-width",
+      "waitsFor": "Kit gap: no size token for 1480px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/HeaderBar.module.css",
+      "selector": ".inner",
+      "property": "min-height",
+      "waitsFor": "Kit gap: no size token for 72px (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/NavMenu.module.css",
+      "selector": ".groupList",
+      "property": "min-width",
+      "waitsFor": "Kit gap: no size token for 14rem (the kit's sizes are its icon sizes, 12 to 24px, and control heights, 28 to 40px)",
+      "gap": "none"
+    },
+    {
+      "file": "ui/SkipLink.module.css",
+      "selector": ".link",
+      "property": "top",
+      "waitsFor": "Kit gap: the kit space scale (--space-1 to --space-8: 4, 8, 12, 16, 20, 24 and 32px) has no step for -100px",
+      "gap": "none"
+    }
+  ]
+}

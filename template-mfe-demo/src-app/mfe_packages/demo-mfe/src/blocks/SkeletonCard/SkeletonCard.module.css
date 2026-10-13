@@ -1,0 +1,16 @@
+/* The kit's Skeleton bakes in no dimension; these size each line like the text it stands in for. */
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.line {
+  height: var(--space-4);
+}
+
+.lineShort {
+  height: var(--space-4);
+  width: 75%;
+}

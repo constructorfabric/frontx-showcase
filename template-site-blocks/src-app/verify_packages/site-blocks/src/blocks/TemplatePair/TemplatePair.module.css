@@ -1,0 +1,91 @@
+/* Two template cards side by side with a "+" between them at their middle, each at least 220px high (164px under 640px) with an 18px arrow closing its title; one column under 640px, the sign then between the two cards. Frame, colours and type come from the kit Card. */
+.frame {
+  --template-pair-figure: 200px;
+  --template-pair-figure-height: 160px;
+  --template-pair-body: 350px;
+  --template-pair-gap: 40px;
+  --template-pair-card-gap: var(--space-6);
+  --template-pair-pad-block: var(--space-6);
+  --template-pair-pad-inline: var(--space-6);
+  --template-pair-join: 34px;
+  --template-pair-min-height: 220px;
+  position: relative;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--template-pair-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+.card.card {
+  display: grid;
+  grid-template-columns: var(--template-pair-figure) minmax(0, var(--template-pair-body));
+  align-items: center;
+  gap: var(--template-pair-card-gap);
+  width: 100%;
+  min-height: var(--template-pair-min-height);
+  padding: var(--template-pair-pad-block) var(--template-pair-pad-inline);
+}
+
+.figure {
+  display: block;
+  width: var(--template-pair-figure);
+  height: var(--template-pair-figure-height);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.titleIcon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.join {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: var(--template-pair-join);
+  height: var(--template-pair-join);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+@media (max-width: 40rem) {
+  .frame {
+    --template-pair-figure: 96px;
+    --template-pair-figure-height: 77px;
+    --template-pair-body: 200px;
+    --template-pair-gap: var(--space-6);
+    --template-pair-card-gap: var(--space-4);
+    --template-pair-pad-block: var(--space-6);
+    --template-pair-pad-inline: var(--space-4);
+    --template-pair-min-height: 164px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

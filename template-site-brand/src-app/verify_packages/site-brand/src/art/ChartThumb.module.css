@@ -1,0 +1,63 @@
+/*
+ * Palette of the chart thumbnails (ADR 0002): the purple and pale blue series of the design reference, which the kit's chart tokens do not carry. The brand blue series reads the kit's primary token.
+ */
+.chart,
+.donut,
+.trend {
+  --chart-thumb-purple: #9254ed;
+  --chart-thumb-pale: #bacfff;
+}
+
+/* Recharts measures its container, so each thumbnail gets a fixed height and the full width of its slot; the kit's own aspect ratio would otherwise decide the height from a width not known before layout. */
+.chart {
+  width: 100%;
+  min-width: 0;
+  height: 116px;
+  aspect-ratio: auto;
+}
+
+/* The donut carries its label in the hole. */
+.donut {
+  position: relative;
+  width: 100%;
+}
+
+.donut .chart {
+  height: 118px;
+}
+
+.centre {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--site-description-foreground);
+  font-size: var(--text-micro-size);
+}
+
+.trend {
+  width: 100%;
+}
+
+.trend .chart {
+  height: 83px;
+  margin-top: 10px;
+}
+
+.caption {
+  display: flex;
+  justify-content: space-between;
+  color: var(--site-description-foreground);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 40rem) {
+  .donut .chart {
+    height: 100px;
+  }
+
+  .trend .chart {
+    height: 66px;
+  }
+}

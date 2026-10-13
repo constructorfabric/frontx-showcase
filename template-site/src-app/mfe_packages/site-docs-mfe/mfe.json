@@ -1,0 +1,92 @@
+{
+  "manifest": {
+    "id": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_docs.mfe.manifest.v1",
+    "remoteEntry": "http://localhost:3052/assets/remoteEntry.js"
+  },
+  "schemas": [
+    {
+      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$comment": "The docs screen's show_guide action: shows one guide of the docs screen. Sent as the next step after the screen domain's mount_ext; the screen's handler replaces its own entry through its app's navigation facade. Self-contained and closed, as template-mfe's action schemas are.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "x-gts-ref": "/$id"
+        },
+        "target": {
+          "x-gts-ref": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1",
+          "$comment": "The screen that shows the page: the only target of this action"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "guide": {
+              "type": "string",
+              "enum": [
+                "get-started",
+                "first-change"
+              ],
+              "$comment": "The guide to show: one of the docs screen's guides"
+            }
+          },
+          "required": [
+            "guide"
+          ]
+        },
+        "timeout": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "type",
+        "target",
+        "payload"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_docs.mfe.docs.v1",
+      "requiredProperties": [
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.theme.v1~",
+        "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
+      ],
+      "actions": [
+        "gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~"
+      ],
+      "domainActions": [],
+      "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_docs.mfe.manifest.v1",
+      "exposedModule": "./lifecycle"
+    }
+  ],
+  "extensions": [
+    {
+      "id": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_docs.screens.docs.v1",
+      "domain": "gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1",
+      "entry": "gts.frontx.mfes.mfe.entry.v1~frontx.mfes.mfe.entry_mf.v1~frontx.site_docs.mfe.docs.v1",
+      "route": "/docs",
+      "presentation": {
+        "label": "Docs",
+        "icon": "lucide:book-open",
+        "order": 40
+      },
+      "seo": {
+        "title": "Docs",
+        "description": "FrontX documentation: run a shell with its first MFE, make a first change with a coding agent, and use the FrontX libraries on their own.",
+        "routes": {
+          "/get-started": {
+            "title": "Get started: run a shell and its first MFE",
+            "description": "Create a FrontX workspace with the FrontX CLI, apply template-shell and template-mfe, and run the host with its example screens."
+          },
+          "/first-change": {
+            "title": "Make your first change",
+            "description": "Change a FrontX screen's text in its locale file, check the package and see the result in the running shell, with a task for a coding agent."
+          }
+        }
+      }
+    }
+  ]
+}

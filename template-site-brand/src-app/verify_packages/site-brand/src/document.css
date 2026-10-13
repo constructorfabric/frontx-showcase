@@ -1,0 +1,6 @@
+/*
+ * The brand's document entry: the shell loads every template package's src/document.css once, in the document, after the kit's theme.css, and the document's sheets reach every screen's shadow root through the head-style adoption. Order: brand tokens, then the typeface.
+ */
+
+@import './tokens.css';
+@import './font.css';

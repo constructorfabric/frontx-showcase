@@ -1,0 +1,93 @@
+/* The site header with the values of the designer's V2 site: 72px row plus a 1px border, white at 93% over a 16px blur. The breakpoints are V2's: 1100px (narrower gaps and column), 900px (the navigation wraps to its own row) and 640px (the source link is left out). Every declaration that is not layout is a row of ../styles-exemptions.json. */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: var(--border-width) solid var(--site-chrome-border);
+  background-color: color-mix(in srgb, var(--background) 93%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  width: var(--site-column-chrome);
+  max-width: 1480px;
+  min-height: 72px;
+  margin: 0 auto;
+}
+
+.navArea {
+  display: flex;
+  margin-left: auto;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* The source link: the kit candidate Link in the navigation's ink and size; the selectors carry the actions class so they outrank the Link's own variant rules whatever the stylesheet order. */
+.actions .link {
+  display: flex;
+  color: var(--site-nav-foreground, var(--foreground));
+  font-size: var(--text-body-size);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.actions .link:hover {
+  color: var(--link-foreground);
+}
+
+@media (max-width: 68.75rem) {
+  .inner {
+    gap: var(--space-5);
+  }
+
+  .actions {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 56.25rem) {
+  .inner {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding: var(--space-4) 0 var(--space-3);
+    /* The containing block of a navigation group's list on the narrow row (NavMenu). */
+    position: relative;
+  }
+
+  .navArea {
+    order: 3;
+    width: 100%;
+    margin: 0;
+    padding-bottom: var(--space-1);
+  }
+
+  .actions {
+    margin-left: auto;
+  }
+}
+
+/* The source link is left out; with nothing else in the actions (the language select shows only for a multilingual site) the empty box is left out too, so it adds no gap. */
+@media (max-width: 40rem) {
+  .actions .link {
+    display: none;
+  }
+
+  .actions:not(:has(> :not(.link))) {
+    display: none;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .inner {
+    column-gap: var(--space-2);
+  }
+}

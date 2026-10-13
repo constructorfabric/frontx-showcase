@@ -1,0 +1,54 @@
+/* The top of a catalogue page: the trail (24px under the reference's 18px row), the way back, the title row (title left, aside right, wrapping), the lead 20px under the title. Layout only. */
+
+.top {
+  display: flex;
+  flex-direction: column;
+}
+
+.trail {
+  display: flex;
+  align-items: center;
+  min-height: 18px;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-3);
+}
+
+.back {
+  display: flex;
+  margin-bottom: var(--space-6);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5) var(--space-8);
+  min-height: 44px;
+  margin-bottom: var(--space-8);
+}
+
+.aside {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.lead {
+  max-width: 48rem;
+  margin: calc(var(--space-3) * -1) 0 var(--space-6);
+}
+
+@media (max-width: 48rem) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  /* The stacked header keeps a full 24px above the text under it. */
+  .lead {
+    margin-top: 0;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "frontx-template-site-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "site-contract",
+      "category": "guidelines",
+      "path": "guidelines/site-contract.md"
+    },
+    {
+      "id": "site-styling",
+      "category": "guidelines",
+      "path": "guidelines/site-styling.md"
+    },
+    {
+      "id": "menu-groups",
+      "category": "guidelines",
+      "path": "guidelines/menu-groups.md"
+    }
+  ]
+}

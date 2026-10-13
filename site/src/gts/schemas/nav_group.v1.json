@@ -1,0 +1,17 @@
+{
+  "$id": "gts://gts.frontx.screensets.layout.nav_group.v1~",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Navigation Group Schema. A group the host's navigation lists screens under. The host defines the instances; a screen extension names one in `presentation.group`.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "x-gts-ref": "/$id"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "$comment": "The group's name in the host: the key its strings and its settings use"
+    }
+  },
+  "required": ["id", "name"]
+}

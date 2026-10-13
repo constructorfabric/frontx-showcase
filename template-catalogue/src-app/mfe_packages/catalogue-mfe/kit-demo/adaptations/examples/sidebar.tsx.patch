@@ -1,0 +1,22 @@
+Adaptation of examples/sidebar.tsx
+Kind: mechanical
+Reason: the label given through `render` becomes a function so jsx-a11y sees its content; the rendered DOM is the same
+--- a/examples/sidebar.tsx
++++ b/examples/sidebar.tsx
+@@ -197,7 +197,15 @@
+           {/* Polymorphic via `render` - the group label IS the input's
+               <label>, which is the whole reason the part takes a render
+               prop. */}
+-          <SidebarGroupLabel render={<label htmlFor="sidebar-demo-search" />}>Search</SidebarGroupLabel>
++          <SidebarGroupLabel
++            render={(props) => (
++              <label htmlFor="sidebar-demo-search" {...props}>
++                {props.children}
++              </label>
++            )}
++          >
++            Search
++          </SidebarGroupLabel>
+           {/* Just the input. A decorative icon overlaid on top of it would
+               be positioned by this group, not by the input, so it would
+               survive into the icon rail after the input itself is hidden -

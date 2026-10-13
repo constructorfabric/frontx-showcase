@@ -1,0 +1,5 @@
+/* The kit's DialogContent supplies the backdrop, the surface, the width cap and the stacking, and its DialogTitle the heading-2 type; the module only spaces the dialog's parts. */
+
+.dialog {
+  gap: var(--space-4);
+}

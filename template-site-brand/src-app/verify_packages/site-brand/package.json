@@ -1,0 +1,49 @@
+{
+  "name": "@gears-frontx/site-brand",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "type": "module",
+  "description": "The brand of a FrontX site on top of @gears-frontx/ui-kit: one brand record with the V2 design value of every row, the generated token stylesheet and theme variables, the self-hosted Inter font, the document entry the shell loads, brand assets, the brand art (hairline figures, the hero and closing slab, the architecture map, the change-story workbench, chart thumbnails and metric bars) and the brand check. Delivered by @gears-frontx/frontx-template-site-brand.",
+  "license": "Apache-2.0",
+  "exports": {
+    "./document.css": "./src/document.css",
+    "./tokens.css": "./src/tokens.css",
+    "./font.css": "./src/font.css",
+    "./theme": "./src/theme.ts",
+    "./brand.json": "./src/brand.json",
+    "./assets/*": "./src/assets/*",
+    "./art/*": "./src/art/*.tsx"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "generate": "node src/check/cli.ts generate",
+    "check": "node src/check/cli.ts check",
+    "type-check": "tsc --noEmit && tsc --noEmit -p tsconfig.art.json",
+    "test": "npm run test:unit",
+    "test:unit": "vitest --run --passWithNoTests=false"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@gears-frontx/ui-kit": "0.4.0",
+    "recharts": "3.10.1"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.0.3",
+    "axe-core": "4.13.0",
+    "jsdom": "26.1.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "typescript": "5.9.3",
+    "vite": "6.4.3",
+    "vitest": "4.1.4"
+  },
+  "peerDependencies": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  }
+}

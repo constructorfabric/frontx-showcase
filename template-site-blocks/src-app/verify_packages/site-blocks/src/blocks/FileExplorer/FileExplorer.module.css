@@ -1,0 +1,169 @@
+/*
+ * The tab bar and the source line share a row and wrap on narrow screens. The frame is the kit's Card with its padding and gap taken back, split into the rail (the docs rail's column) and the viewer by a vertical kit Separator; under 40rem the rail stacks over the viewer and a horizontal Separator, inset to the rail's padding (its width gives way to the inset, so it ends inside the card), takes the rule. The file list scrolls inside a short box on narrow screens, the code inside a fixed box everywhere.
+ */
+
+.explorer {
+  display: flex;
+  flex-direction: column;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-end: var(--space-5);
+}
+
+/* Exemption: the kit paints an inactive tab in 60% of the foreground, under 4.5:1 (kit defect); the muted foreground passes. */
+.tab:not([data-active]) {
+  color: var(--muted-foreground);
+}
+
+.frame {
+  display: grid;
+  grid-template-columns: var(--site-rail-column) auto minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+  padding: var(--space-5) var(--space-3);
+}
+
+.railHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+}
+
+.railHeading > :last-child {
+  margin-inline-start: auto;
+}
+
+.icon {
+  flex: none;
+  inline-size: var(--icon-size-sm);
+  block-size: var(--icon-size-sm);
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.file {
+  justify-content: flex-start;
+  overflow: hidden;
+  inline-size: 100%;
+  block-size: auto;
+  min-block-size: var(--control-height-md);
+  padding-block: var(--space-2);
+  text-align: start;
+}
+
+.fileText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.scope {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding-inline: var(--space-2);
+}
+
+.ruleNarrow {
+  display: none;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+  padding: var(--space-6);
+}
+
+.viewerHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.viewerTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+/* The code scrolls inside a box of 480px (fifteen of the kit's 32px steps). */
+.code pre {
+  block-size: calc(var(--space-8) * 15);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+@media (max-width: 40rem) {
+  .frame {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rail {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .files {
+    max-block-size: calc(var(--space-8) * 6);
+    overflow-y: auto;
+  }
+
+  .ruleWide {
+    display: none;
+  }
+
+  .ruleNarrow {
+    display: block;
+    margin-inline: var(--space-3);
+  }
+
+  /* The kit's horizontal separator is 100% wide; the doubled class lets the inset take that width back. */
+  .ruleNarrow.ruleNarrow {
+    inline-size: auto;
+  }
+
+  .viewer {
+    padding: var(--space-5);
+  }
+
+  .code pre {
+    block-size: calc(var(--space-8) * 11);
+  }
+}

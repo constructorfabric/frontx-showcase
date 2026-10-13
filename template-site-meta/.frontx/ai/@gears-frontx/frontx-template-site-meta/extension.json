@@ -1,0 +1,11 @@
+{
+  "id": "frontx-template-site-meta-ai-bundle",
+  "contractVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "site-meta-contract",
+      "category": "guidelines",
+      "path": "guidelines/site-meta-contract.md"
+    }
+  ]
+}

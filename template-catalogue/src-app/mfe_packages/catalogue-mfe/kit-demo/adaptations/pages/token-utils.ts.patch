@@ -1,0 +1,64 @@
+Adaptation of pages/token-utils.ts
+Kind: substantive
+Reason: values are read on an element the page renders inside the shadow root, and re-read when the `data-theme` of its scope or of the shadow host changes, instead of on the document root, which carries none of the kit tokens inside a screen
+--- a/pages/token-utils.ts
++++ b/pages/token-utils.ts
+@@ -1,20 +1,21 @@
+-import { useEffect, useState } from 'react';
++import { useEffect, useState, type RefObject } from 'react';
+ 
+ /**
+- * Resolved values straight from the cascade. Re-read on `data-theme`
+- * changes (watched directly - a `theme` prop would race the parent effect
+- * that applies the attribute, since child effects fire first) and on OS
+- * scheme flips (the `auto` case).
++ * Resolved values straight from the cascade, read on an element of the page itself. The page renders inside the screen's shadow root, where the kit's tokens are declared on the shadow host and scoped by the `data-theme` of the screen frame, so the document root carries none of them.
+  *
+- * Generalized out of the old single Tokens page: each split-out page now
+- * owns its own token list rather than sharing one flat ALL_TOKENS array,
+- * so a page only ever re-reads the custom properties it actually renders.
++ * Re-read when the theme scope changes (the `data-theme` of the nearest scoped ancestor inside the shadow root and of the shadow host, watched directly: a `theme` prop would race the effect that applies the attribute, since child effects fire first) and on OS scheme flips (the `auto` case).
++ *
++ * Each page owns its own token list, so a page only re-reads the custom properties it renders.
++ * @param tokens - token names without the leading `--`
++ * @param anchorRef - an element the page renders, where the values are resolved
+  */
+-export function useTokenValues(tokens: readonly string[]): Record<string, string> {
++export function useTokenValues(tokens: readonly string[], anchorRef: RefObject<Element | null>): Record<string, string> {
+   const [values, setValues] = useState<Record<string, string>>({});
+   useEffect(() => {
++    const anchor = anchorRef.current;
++    if (!anchor) return;
+     const read = () => {
+-      const styles = getComputedStyle(document.documentElement);
++      const styles = getComputedStyle(anchor);
+       const next: Record<string, string> = {};
+       for (const token of tokens) {
+         next[token] = styles.getPropertyValue(`--${token}`).trim();
+@@ -25,15 +26,20 @@
+     const scheme = window.matchMedia('(prefers-color-scheme: dark)');
+     scheme.addEventListener('change', read);
+     const observer = new MutationObserver(read);
+-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
++    const watched = new Set<Element>();
++    const scope = anchor.closest('[data-theme]');
++    if (scope) watched.add(scope);
++    const root = anchor.getRootNode();
++    if (root instanceof ShadowRoot) watched.add(root.host);
++    else watched.add(document.documentElement);
++    for (const element of watched) observer.observe(element, { attributes: true, attributeFilter: ['data-theme'] });
+     return () => {
+       scheme.removeEventListener('change', read);
+       observer.disconnect();
+     };
+-    // Every call site passes a module-level constant array, so this only
+-    // ever re-runs once per mount in practice - but listing `tokens` (rather
+-    // than disabling exhaustive-deps) keeps the hook correct even if a
+-    // future caller passes a computed list.
+-  }, [tokens]);
++    // Every call site passes a module-level constant array and a ref, so this
++    // runs once per mount in practice; listing both (rather than disabling
++    // exhaustive-deps) keeps the hook correct for a computed list.
++  }, [tokens, anchorRef]);
+   return values;
+ }

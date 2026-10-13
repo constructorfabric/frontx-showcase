@@ -1,0 +1,216 @@
+/*
+ * The kit rhythm on the section frame (58/64; 40/40 under 640px) with the header in two equal columns 96px apart (lead 460px); groups 24px apart, tiles four across with a 16px gap (three under 900px, two under 640px). A tile is a kit card with no padding or gap of its own: a fixed-height inert sample slot (narrower air around a table sample), a kit separator, and a link row whose link covers the tile. The tile's focus ring and the stretched link are rows of the exemptions ledger.
+ */
+
+.band {
+  --site-heading-columns: minmax(0, 1fr) minmax(0, 1fr);
+  --site-heading-gap: 96px;
+  --site-lead-column: 460px;
+  --site-section-pad-top: 58px;
+  --site-section-pad-bottom: 64px;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+}
+
+.groups {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.groupTitle {
+  margin-bottom: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+.tile.tile {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.tile:focus-within {
+  outline: var(--border-width-focus) solid var(--ring);
+  outline-offset: 2px;
+}
+
+.sample {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 158px;
+  padding: var(--space-5);
+  overflow: hidden;
+  container: sample / inline-size;
+}
+
+/* A table sample needs the slot's width more than its air: 12px 16px around it, 4px under 640px, so the kit table's two columns fit the tile without scrolling. */
+.sample:has(table) {
+  padding: var(--space-3) var(--space-4);
+}
+
+.tileLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  text-decoration-line: none;
+}
+
+/* The link covers the tile, so the tile is one target with one name. */
+.tileLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.tileLink:focus-visible {
+  outline: none;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 225px;
+}
+
+.stack > :first-child {
+  align-self: flex-start;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.caption {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.stack > .caption,
+.stack > .spread {
+  align-self: stretch;
+}
+
+.lines {
+  display: grid;
+  gap: var(--space-2);
+  padding-inline: var(--space-1);
+}
+
+.lines > * {
+  height: 6px;
+}
+
+.lines > :nth-child(1) {
+  width: 95%;
+}
+
+.lines > :nth-child(2) {
+  width: 70%;
+}
+
+.lines > :nth-child(3) {
+  width: 83%;
+}
+
+.optional {
+  display: contents;
+}
+
+@container sample (max-width: 151.98px) {
+  .optional {
+    display: none;
+  }
+}
+
+@media (max-width: 75rem) {
+  .grid {
+    gap: var(--space-3);
+  }
+
+  .sample {
+    height: 146px;
+    padding: var(--space-4);
+  }
+
+  .tileLink {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+@media (max-width: 56.25rem) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 40rem) {
+  .band {
+    --site-section-pad-top: 40px;
+    --site-section-pad-bottom: 40px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .sample {
+    height: 132px;
+    padding: var(--space-3);
+  }
+
+  .sample:has(table) {
+    padding: var(--space-1);
+  }
+
+  .tileLink {
+    padding: var(--space-3);
+    line-height: 15px;
+  }
+
+  .stack {
+    gap: var(--space-2);
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "skipToContent": "Skip to content",
+  "brandCompany": "Constructor Fabric",
+  "brand": "FrontX",
+  "brandBadge": "Gear",
+  "brandHome": "Constructor Fabric · FrontX home",
+  "nav": {
+    "label": "Site sections",
+    "groups": {
+      "demos": "Demos"
+    },
+    "github": "GitHub"
+  },
+  "controls": {
+    "language": "Language"
+  },
+  "footer": {
+    "label": "Site links",
+    "repoFrontx": "GitHub",
+    "repoFrontxDetail": "FrontX repository",
+    "repoTemplates": "Templates",
+    "repoTemplatesDetail": "FrontX templates repository on GitHub",
+    "screens": {
+      "docs": "Documentation"
+    }
+  },
+  "popup": {
+    "untitled": "Dialog"
+  },
+  "screens": {
+    "empty": "No screens are registered yet. Add a screen package under src-app/mfe_packages/ and run npm install.",
+    "unresolved": "No screen matches this address.",
+    "loadFailed": {
+      "title": "This page could not be loaded",
+      "description": "Its files did not arrive or did not start. Check the connection and try again.",
+      "retry": "Try again"
+    }
+  }
+}
