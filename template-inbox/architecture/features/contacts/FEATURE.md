@@ -245,7 +245,7 @@ The system **MUST** register the `show_contact` handler in the screen's `mount()
 **Constraints**: `cpt-template-inbox-constraint-contacts-show-action`
 
 **Touches**:
-- API: `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~`, payload `{ contact }`
+- API: `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~`, payload `{ contact }`
 
 ## 6. Acceptance Criteria
 

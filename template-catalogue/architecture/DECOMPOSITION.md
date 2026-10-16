@@ -140,7 +140,7 @@ How the template is composed into the site, and the site's own decisions, are de
   - [x] `p1` - `cpt-template-catalogue-component-cross-screen-navigation`
 
 - **API**:
-  - `cpt-template-catalogue-interface-show-component`: `gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~` with payload `{ component }`, handled when targeted at the catalogue's extension
+  - `cpt-template-catalogue-interface-show-component`: `gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~` with payload `{ component }`, handled when targeted at the catalogue's extension
   - `cpt-template-catalogue-contract-host-application`: the screen domain, and the host's registration of the action schema and validation of every chain against it
 
 - **Sequences**:

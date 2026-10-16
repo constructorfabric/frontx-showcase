@@ -200,7 +200,7 @@ The site's contract for moving between screens, the mount action followed by the
   - [x] `p1` - `cpt-template-inbox-component-cross-screen-navigation`
 
 - **API**:
-  - `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~`, payload `{ contact }`, sent as the `next` step after the screen domain's mount action
+  - `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~`, payload `{ contact }`, sent as the `next` step after the screen domain's mount action
   - URL /?screen=inbox-contacts;route=<id> (written by the framework router and the target's own router, never by inbox code)
 
 - **Sequences**:

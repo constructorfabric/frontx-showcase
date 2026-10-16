@@ -22,6 +22,9 @@ npm-debug.log*
 .env.local
 .env.*.local
 
+# Registry credentials of the deploy webhook (deploy/docker-compose.yml)
+deploy/ghcr-config/
+
 # Template inventory of the FrontX CLI (FRONTX_INVENTORY_ROOT points here)
 .frontx-inventory/
 

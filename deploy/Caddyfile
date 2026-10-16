@@ -1,0 +1,70 @@
+# The edge in front of the site image (deploy/docker-compose.yml): TLS and the domain once they exist, the sub-path mount, and the deploy webhook's address. The site image serves plain HTTP on site:8080 and always sees the site at its root.
+
+# Enabled by: the production domain. Uncomment and name the address that receives certificate notices.
+# {
+# 	email <operator address>
+# }
+
+# Local run: http://localhost:8080/ serves the site at the root and http://localhost:8080/frontx/ under a sub-path. The canonical addresses carry the origin the image was built with: SITE_ORIGIN=http://localhost:8080/frontx builds the image for the sub-path.
+http://localhost, http://127.0.0.1 {
+	header -Server
+	redir /frontx /frontx/{?query} 308
+	handle_path /frontx/* {
+		reverse_proxy site:8080
+	}
+	handle {
+		reverse_proxy site:8080
+	}
+	# An error the edge answers itself (the site still starting) skips the deferred deletion above.
+	handle_errors {
+		header -Server
+		respond "{err.status_code} {err.status_text}" {err.status_code}
+	}
+}
+
+# Enabled by: the production domain (replace site.example with it), its DNS record pointing at the host, and the host's public ports 80 and 443 (deploy/docker-compose.yml). Caddy then obtains and renews the certificate itself and redirects HTTP to HTTPS. Remove the local block above at the same time.
+# site.example {
+# 	header Strict-Transport-Security "max-age=31536000"
+# 	header -Server
+# 	# Enabled by: the deploy webhook (deploy/docker-compose.yml). X-Forwarded-For is overwritten with the address Caddy observed, so a caller cannot claim a GitHub address; the webhook reads its rightmost entry.
+# 	handle /deploy-hook {
+# 		reverse_proxy webhook:9000 {
+# 			header_up X-Forwarded-For {remote_host}
+# 		}
+# 	}
+# 	handle {
+# 		reverse_proxy site:8080
+# 	}
+# 	handle_errors {
+# 		header -Server
+# 		respond "{err.status_code} {err.status_text}" {err.status_code}
+# 	}
+# }
+
+# Enabled by: the production domain and the decision to serve the site under a sub-path (here /frontx/; SITE_ORIGIN then carries it, https://site.example/frontx). Use this block instead of the root one above; crawlers read robots.txt only at the origin's root, so it is served there too, and the bare origin redirects into the mount.
+# site.example {
+# 	header Strict-Transport-Security "max-age=31536000"
+# 	header -Server
+# 	# Enabled by: the deploy webhook (deploy/docker-compose.yml), as in the root block.
+# 	handle /deploy-hook {
+# 		reverse_proxy webhook:9000 {
+# 			header_up X-Forwarded-For {remote_host}
+# 		}
+# 	}
+# 	handle /robots.txt {
+# 		reverse_proxy site:8080
+# 	}
+# 	# Temporary, since where the site is mounted is a deploy choice that can change.
+# 	redir / /frontx/{?query} 307
+# 	redir /frontx /frontx/{?query} 308
+# 	handle_path /frontx/* {
+# 		reverse_proxy site:8080
+# 	}
+# 	handle {
+# 		respond 404
+# 	}
+# 	handle_errors {
+# 		header -Server
+# 		respond "{err.status_code} {err.status_text}" {err.status_code}
+# 	}
+# }

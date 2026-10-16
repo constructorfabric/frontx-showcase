@@ -431,7 +431,7 @@ Never runs during a build; uses Node built-ins and the package's own files only;
 | `GET` | `/?screen=catalogue` | The index | stable |
 | `GET` | `/?screen=catalogue;route=components/<slug>` | A component page, one per example file | stable |
 | `GET` | `/?screen=catalogue;route=foundations/<slug>` | A foundation page: `semantic-colors`, `typography`, `layout-elevation` | stable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~` with payload `{ component }`, targeted at the catalogue's extension | Shows one component's page, replacing the current entry; the host's validation against the schema refuses another target and a slug that is not a component | unstable |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~` with payload `{ component }`, targeted at the catalogue's extension | Shows one component's page, replacing the current entry; the host's validation against the schema refuses another target and a slug that is not a component | unstable |
 | `npm` | `generate`, `generate:check`, `generate -- --record <file>`, `generate -- --ref <commit>`, `--source <dir>` | Producing, checking, recording and moving the demo files | unstable |
 
 ### 3.4 Internal Dependencies

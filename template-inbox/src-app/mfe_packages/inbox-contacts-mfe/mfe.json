@@ -5,7 +5,7 @@
   },
   "schemas": [
     {
-      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~",
+      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~",
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "$comment": "The contacts screen's show_contact action: shows one person's page of the contacts screen. Sent as the next step after the screen domain's mount_ext; the screen's handler replaces its own entry through its app's navigation facade. Self-contained and closed, as template-mfe's action schemas are.",
       "type": "object",
@@ -52,7 +52,7 @@
         "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
       ],
       "actions": [
-        "gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~"
+        "gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~"
       ],
       "domainActions": [],
       "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.inbox_contacts.mfe.manifest.v1",

@@ -249,7 +249,7 @@ The system **MUST** offer "View contact" only where the screen occupies the host
 - `cpt-template-inbox-flow-chat-view-contact`
 
 **Touches**:
-- API: the screen domain's mount action, `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~` with payload `{ contact }`
+- API: the screen domain's mount action, `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~` with payload `{ contact }`
 - Entities: `Contact`
 
 ### Chat keeps its place

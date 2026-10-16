@@ -18,7 +18,7 @@ export const DEMOS_NAV_GROUP_ID = 'gts.frontx.screensets.layout.nav_group.v1~fro
  * Custom action type for requesting a profile data refresh.
  * Targeted at the Profile extension ID - routed by the mediator to its registered ActionHandler.
  */
-export const DEMO_ACTION_REFRESH_PROFILE = 'gts.frontx.mfes.comm.action.v1~frontx.demo.action.refresh_profile.v1~';
+export const DEMO_ACTION_REFRESH_PROFILE = 'gts.frontx.mfes.comm.action.v1~frontx.demo.profile.refresh_profile.v1~';
 // @cpt-end:cpt-template-mfe-demo-algo-package-declarations-mirror-identifiers:p1:inst-refresh-action-id
 
 // @cpt-begin:cpt-template-mfe-demo-algo-package-declarations-mirror-identifiers:p1:inst-widgets-host-ids
