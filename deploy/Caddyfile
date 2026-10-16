@@ -5,15 +5,21 @@
 # 	email <operator address>
 # }
 
+# A redeploy replaces the site container; lb_try_duration lets the edge retry site:8080 for up to 10 seconds instead of answering 502 meanwhile.
+
 # Local run: http://localhost:8080/ serves the site at the root and http://localhost:8080/frontx/ under a sub-path. The canonical addresses carry the origin the image was built with: SITE_ORIGIN=http://localhost:8080/frontx builds the image for the sub-path.
 http://localhost, http://127.0.0.1 {
 	header -Server
 	redir /frontx /frontx/{?query} 308
 	handle_path /frontx/* {
-		reverse_proxy site:8080
+		reverse_proxy site:8080 {
+			lb_try_duration 10s
+		}
 	}
 	handle {
-		reverse_proxy site:8080
+		reverse_proxy site:8080 {
+			lb_try_duration 10s
+		}
 	}
 	# An error the edge answers itself (the site still starting) skips the deferred deletion above.
 	handle_errors {
@@ -33,7 +39,9 @@ http://localhost, http://127.0.0.1 {
 # 		}
 # 	}
 # 	handle {
-# 		reverse_proxy site:8080
+# 		reverse_proxy site:8080 {
+# 			lb_try_duration 10s
+# 		}
 # 	}
 # 	handle_errors {
 # 		header -Server
@@ -52,13 +60,17 @@ http://localhost, http://127.0.0.1 {
 # 		}
 # 	}
 # 	handle /robots.txt {
-# 		reverse_proxy site:8080
+# 		reverse_proxy site:8080 {
+# 			lb_try_duration 10s
+# 		}
 # 	}
 # 	# Temporary, since where the site is mounted is a deploy choice that can change.
 # 	redir / /frontx/{?query} 307
 # 	redir /frontx /frontx/{?query} 308
 # 	handle_path /frontx/* {
-# 		reverse_proxy site:8080
+# 		reverse_proxy site:8080 {
+# 			lb_try_duration 10s
+# 		}
 # 	}
 # 	handle {
 # 		respond 404
