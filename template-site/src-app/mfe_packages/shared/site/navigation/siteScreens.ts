@@ -13,10 +13,10 @@ export const SITE_SCREEN_EXTENSIONS = {
 } as const;
 
 /** The docs screen's action that shows one guide: payload `{ guide }`, a guide's route without its leading slash. */
-export const SHOW_GUIDE_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~';
+export const SHOW_GUIDE_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.site_docs.nav.show_guide.v1~';
 
 /** The templates screen's action that shows one template's page: payload `{ template }`, the template's route without its leading slash. */
-export const SHOW_TEMPLATE_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~';
+export const SHOW_TEMPLATE_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~';
 // @cpt-end:cpt-template-site-algo-site-links-screen-ids:p1:inst-own-screens
 
 // @cpt-begin:cpt-template-site-algo-site-links-screen-ids:p1:inst-catalogue-screen
@@ -24,5 +24,5 @@ export const SHOW_TEMPLATE_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.site_
 export const CATALOGUE_SCREEN_EXTENSION = 'gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.catalogue.screens.catalogue.v1';
 
 /** The catalogue's action that shows one component's page: payload `{ component }`, the component's slug, as template-catalogue's manifest declares it. The home page's UI kit tiles send it. */
-export const SHOW_COMPONENT_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~';
+export const SHOW_COMPONENT_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~';
 // @cpt-end:cpt-template-site-algo-site-links-screen-ids:p1:inst-catalogue-screen

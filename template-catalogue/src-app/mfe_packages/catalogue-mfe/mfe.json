@@ -5,7 +5,7 @@
   },
   "schemas": [
     {
-      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~",
+      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~",
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "$comment": "The catalogue's show_component action: shows one component's page of the catalogue. Sent as the next step after the screen domain's mount_ext; the catalogue's handler replaces its own entry through its app's navigation facade. Self-contained and closed, as template-mfe's action schemas are.",
       "type": "object",
@@ -117,7 +117,7 @@
         "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
       ],
       "actions": [
-        "gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~"
+        "gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~"
       ],
       "domainActions": [],
       "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.catalogue.mfe.manifest.v1",

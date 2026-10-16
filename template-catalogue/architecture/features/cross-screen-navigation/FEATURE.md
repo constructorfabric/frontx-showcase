@@ -93,7 +93,7 @@ The handler keeps nothing between actions; the catalogue's current page is its r
 
 - [x] `p1` - **ID**: `cpt-template-catalogue-dod-cross-screen-navigation-show-component`
 
-The system **MUST** declare `gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~` on the catalogue's entry with a closed schema whose target is the catalogue's screen extension and whose payload `{ component }` is an enum of the component slugs, **MUST** register its handler before `mount()` returns, **MUST** move the catalogue's own router to `/components/<slug>` by replacing the current entry, and **MUST NOT** open, link or read any other screen of the host.
+The system **MUST** declare `gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~` on the catalogue's entry with a closed schema whose target is the catalogue's screen extension and whose payload `{ component }` is an enum of the component slugs, **MUST** register its handler before `mount()` returns, **MUST** move the catalogue's own router to `/components/<slug>` by replacing the current entry, and **MUST NOT** open, link or read any other screen of the host.
 
 **Implements**:
 - `cpt-template-catalogue-flow-cross-screen-navigation-show-component`
@@ -101,7 +101,7 @@ The system **MUST** declare `gts.frontx.mfes.comm.action.v1~frontx.catalogue.act
 **Constraints**: `cpt-template-catalogue-constraint-query-addressing`
 
 **Touches**:
-- API: `gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~`, payload `{ component }`
+- API: `gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~`, payload `{ component }`
 - DB: none
 - Entities: Catalogue entry
 

@@ -14,7 +14,7 @@ const REGISTRY = 'https://registry.npmjs.org';
 const SCREEN_DOMAIN = 'gts.frontx.mfes.ext.domain.v1~frontx.screensets.layout.screen.v1';
 const HOME = 'gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~acme.site.screens.home.v1';
 const DOCS = 'gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~acme.site.screens.docs.v1';
-const SHOW_GUIDE = 'gts.frontx.mfes.comm.action.v1~acme.site.action.show_guide.v1~';
+const SHOW_GUIDE = 'gts.frontx.mfes.comm.action.v1~acme.site.nav.show_guide.v1~';
 
 /** The registry's records: every version the fixtures pin, the runtime patch published from a later commit than the rest. */
 let held;

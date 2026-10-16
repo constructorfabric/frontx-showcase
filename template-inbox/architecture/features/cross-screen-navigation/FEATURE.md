@@ -157,7 +157,7 @@ The system **MUST** open another inbox screen with one actions chain, the screen
 - `cpt-template-inbox-seq-view-contact`
 
 **Touches**:
-- API: the screen domain's mount action; `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~`, payload `{ contact }`
+- API: the screen domain's mount action; `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~`, payload `{ contact }`
 - DB: none
 - Entities: none
 
@@ -177,7 +177,7 @@ The system **MUST** provide the `show_contact` action type and the handler the c
 - `cpt-template-inbox-seq-view-contact`
 
 **Touches**:
-- API: `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~`, payload `{ contact }`
+- API: `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~`, payload `{ contact }`
 - DB: none
 - Entities: none
 

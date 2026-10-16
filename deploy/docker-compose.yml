@@ -1,0 +1,86 @@
+# The deploy stack: the site image behind an edge Caddy (deploy/Caddyfile) and, once the host and the domain exist, the signed deploy webhook.
+# Local run, from the repository root: docker compose -f deploy/docker-compose.yml up -d --build, then http://localhost:8080/ (the root) and http://localhost:8080/frontx/ (a sub-path); docker compose -f deploy/docker-compose.yml down stops it.
+# Lines marked "Enabled by" stay commented out until the information they name exists; README.md "Deploy" lists them.
+name: frontx-site
+
+services:
+  site:
+    # Local run: the image is built from this checkout with the local origin.
+    build:
+      context: ..
+      args:
+        SITE_ORIGIN: ${SITE_ORIGIN:-http://localhost:8080}
+    image: frontx-site:local
+    # Enabled by: the published image (the publish job of .github/workflows/docker.yml, which runs once the SITE_ORIGIN repository variable holds the production origin). The job pushes ghcr.io/<owner>/<repository> of the repository it runs in, constructorfabric/frontx-showcase today. Replace `build` and `image` above with:
+    # image: ghcr.io/constructorfabric/frontx-showcase:latest
+    restart: unless-stopped
+    read_only: true
+    # Caddy keeps its state in /data and /config, writable by the image's user (uid 10001) only.
+    tmpfs:
+      - /data:uid=10001,gid=10001
+      - /config:uid=10001,gid=10001
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    expose:
+      - "8080"
+
+  edge:
+    image: caddy:2.11.7-alpine
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      # Local run: the edge on this machine only.
+      - "127.0.0.1:8080:80"
+      # Enabled by: the host (a server with public ports 80 and 443) and a DNS record of the domain pointing at it. Replace the local mapping above with:
+      # - "80:80"
+      # - "443:443"
+      # - "443:443/udp"
+    # One file, read-only: the edge never sees deploy/.env. A bind-mounted file keeps the inode it had when the container started, so an edited Caddyfile takes effect with `docker compose -f deploy/docker-compose.yml up -d --force-recreate edge`.
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    # The webhook is reachable from the edge only, so no other container can reach it with a forged X-Forwarded-For.
+    networks:
+      - default
+      - hook
+    depends_on:
+      site:
+        condition: service_healthy
+
+  # Enabled by: the host, the domain (GitHub delivers to https://<domain>/deploy-hook through the edge's domain block), DEPLOY_WEBHOOK_SECRET in deploy/.env, the GitHub webhook registration (repository settings, Webhooks: payload URL https://<domain>/deploy-hook, content type application/json, the same secret, the "Workflow runs" event only) and the published image above.
+  # The webhook drives the host's Docker over the mounted socket, which is root-equivalent access to the host: anyone holding DEPLOY_WEBHOOK_SECRET can make it pull and restart the site. It keeps its capabilities, since root reads deploy/.env and the registry config through them when they are private to their owner. It mounts the deploy folder as a whole, since a single-file mount keeps a stale inode after an edit, and runs `docker compose pull site` and `up -d site` in this project (`name` above). The pull runs in this container's Docker CLI, which sends the registry credentials: while the GHCR package is private, it needs a Docker config holding a token that can read packages, mounted read-only (the volume line below), and a host login does not reach it.
+  # webhook:
+  #   build: ./webhook
+  #   restart: unless-stopped
+  #   # An init process forwards stop signals to Node and reaps the docker CLI's children.
+  #   init: true
+  #   read_only: true
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   environment:
+  #     DEPLOY_WEBHOOK_SECRET: ${DEPLOY_WEBHOOK_SECRET:?set DEPLOY_WEBHOOK_SECRET in deploy/.env}
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - .:/deploy:ro
+  #     # Enabled by: a private GHCR package. A config.json with an auth entry for ghcr.io (a read:packages token), no credential helper; git and the image build ignore the folder.
+  #     # - ./ghcr-config:/root/.docker:ro
+  #   networks:
+  #     - hook
+  #   expose:
+  #     - "9000"
+
+networks:
+  hook:
+
+volumes:
+  caddy_data:
+  caddy_config:

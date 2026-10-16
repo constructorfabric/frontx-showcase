@@ -200,7 +200,7 @@ The framework's extension router and a screen's route hooks must be one copy, so
 
 - [x] `p2` - **ID**: `cpt-template-inbox-constraint-contacts-show-action`
 
-The mount action carries only the extension, so a page of another screen is reached through an action that screen declares. The contacts screen declares `show_contact` (`gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~`, payload `{ contact }`) on its entry, with a closed schema whose target is the contacts screen only, carried once in its own manifest; a sender names the person, never the contacts screen's route. The site's decision on moving between screens is recorded in the root tree ([architecture/ADR/0006-cross-screen-deep-links.md](../../architecture/ADR/0006-cross-screen-deep-links.md)).
+The mount action carries only the extension, so a page of another screen is reached through an action that screen declares. The contacts screen declares `show_contact` (`gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~`, payload `{ contact }`) on its entry, with a closed schema whose target is the contacts screen only, carried once in its own manifest; a sender names the person, never the contacts screen's route. The site's decision on moving between screens is recorded in the root tree ([architecture/ADR/0006-cross-screen-deep-links.md](../../architecture/ADR/0006-cross-screen-deep-links.md)).
 
 #### Kit contrast and token gaps
 
@@ -446,7 +446,7 @@ Does not read the inbox service and does not bundle its seed.
 | `POST` | `/api/mail/mails` | File a sent mail under Sent; refused without a recipient, or without both subject and body | unstable |
 | `URL` | `/?screen=inbox-contacts`, `inbox-dashboard`, `inbox-chat`, `inbox-mail` | The screens' addresses | stable |
 | `URL` | `/?screen=inbox-contacts;route=<id>` | A person's page | stable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~`, payload `{ contact }` | Shows a person's page in the mounted contacts screen; the schema's target is the contacts screen only | experimental |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~`, payload `{ contact }` | Shows a person's page in the mounted contacts screen; the schema's target is the contacts screen only | experimental |
 
 The host contract is the screen domain with its mount action, the theme and language shared properties, the page-wide QueryClient the shared cache joins, and the mock transport the services declare.
 

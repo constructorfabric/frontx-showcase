@@ -493,10 +493,10 @@ Starts and stops processes; changes no source file and serves no production outp
 | Method | Path | Description | Stability |
 |--------|------|-------------|-----------|
 | `action` | `mount_ext` on the screen domain with the target screen extension as its subject | Opens another screen at its root; the framework router pushes one history entry | stable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~` with payload `{ guide }`, as the chain's `next` step | Shows one docs guide; the payload is an enum of the guides | unstable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~` with payload `{ template }`, as the chain's `next` step | Shows one template's page; the payload is an enum of the templates | unstable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~` with payload `{ component }`, as the chain's `next` step | Shows one component's catalogue page; the payload is an enum of the component slugs | unstable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~` with payload `{ contact }`, as the chain's `next` step | Shows one person's page in the inbox contacts screen | unstable |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_docs.nav.show_guide.v1~` with payload `{ guide }`, as the chain's `next` step | Shows one docs guide; the payload is an enum of the guides | unstable |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~` with payload `{ template }`, as the chain's `next` step | Shows one template's page; the payload is an enum of the templates | unstable |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~` with payload `{ component }`, as the chain's `next` step | Shows one component's catalogue page; the payload is an enum of the component slugs | unstable |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~` with payload `{ contact }`, as the chain's `next` step | Shows one person's page in the inbox contacts screen | unstable |
 
 Each show action's schema is closed: its `target` is the receiving screen's own extension and its payload names a page in that screen's terms, never a route. The receiving screen's handler, registered in its lifecycle's mount before it returns, maps the payload to its own route and replaces the entry `mount_ext` pushed through its app's navigation facade. The host registers each schema with the receiving entry and validates every chain against it (`cpt-site-adr-cross-screen-deep-links`).
 
@@ -620,7 +620,7 @@ sequenceDiagram
 
 ### 3.7 Database schemas & tables
 
-Not applicable: the site has no database and no server process.
+Not applicable: the site has no database.
 
 ### 3.8 Deployment Topology
 
@@ -628,13 +628,17 @@ Not applicable: the site has no database and no server process.
 
 `site/dist/` is self-contained: the host document, `generated-mfe-manifests.json` and each remote in `mfe/<package>/` with a `publicPath` relative to the aggregate, the discovery files and the plain-text twins. Any static server on one origin serves it at the root or under a sub-path with no rewrite rule, since every page is the mount folder plus a query string; the configured origin affects only the canonical addresses of the metadata outputs (`cpt-site-adr-static-deploy-layout`). The hosting target and edge head injection are deferred (section 4.11).
 
+The folder ships as one container image (`Dockerfile`): a build stage on Node 24 with npm 10.9.4 runs `npm ci`, `npm run setup` and `npm run build` with `SITE_ORIGIN` from a required build argument, so an image carries one origin; the run stage serves `site/dist` with Caddy (`deploy/site/Caddyfile`) as a non-root user on port 8080 (`PORT`), with a health check, zstd and gzip compression, `nosniff`, a referrer policy, frame and permissions restrictions and a content security policy limited to `base-uri`, `object-src` and `frame-ancestors` (the head sync is an inline script, the MFE loader runs chunks from `blob:` addresses and the type system compiles validators with `new Function`, so a script policy would protect nothing). Files under an `assets/` folder carry a content hash and are cached as immutable; every other file (the document, the manifest aggregate, each remote's `remoteEntry.js`, `mf-manifest.json` and `shared/*.js`, the discovery files, the twins) is served with `no-cache`, and a missing file with `no-store`. The twins are served as `text/plain; charset=utf-8`. The image always serves the site at its root; a sub-path is the proxy's prefix strip.
+
+`deploy/docker-compose.yml` runs the image read-only with every capability dropped behind an edge Caddy (`deploy/Caddyfile`), which serves the site at the root and under `/frontx/` locally and, once a domain exists, terminates TLS for it. The deploy webhook (`deploy/webhook/`) receives GitHub's `workflow_run` delivery, checks its HMAC signature (`X-Hub-Signature-256` under `DEPLOY_WEBHOOK_SECRET`) and, as defence in depth, GitHub's published hook address ranges, and on a successful push run of the image workflow on `main` pulls the published image, restarts the site service and prunes the replaced site images (by the image's label) through the host's Docker, one deploy at a time. What needs the domain, the host or the secret is commented out or gated in those files, each with the information that enables it (section 4.11).
+
 ## 4. Additional context
 
 ### 4.1 Repository tree
 
 ```text
 frontx-site/
-├── .github/                         CODEOWNERS, workflows/main.yml
+├── .github/                         CODEOWNERS, workflows/main.yml and workflows/docker.yml
 ├── .cf-studio/                      config/ + version.toml committed; .core/ .gen/ config/kits/sdlc/ git-ignored
 ├── architecture/                    the root tree: PRD.md, DESIGN.md, ADR/, GAPS.md (unregistered gap list)
 ├── AGENTS.md, CLAUDE.md             root agent instructions and the template territory rule
@@ -644,8 +648,10 @@ frontx-site/
 ├── .gitignore, .npmrc, .nvmrc       registry and engine-strict; Node 25.1.0 (as gears-frontx)
 ├── package.json, package-lock.json  repo tooling root: engines, packageManager, the scripts of section 4.7
 ├── site.config.json                 site-level values (section 4.6.1)
-├── eslint.config.js, tsconfig.json, vitest.config.mjs   lint, type-check and tests of scripts/
+├── eslint.config.js, tsconfig.json, vitest.config.mjs   lint, type-check and tests of scripts/ and deploy/
 ├── scripts/                         repository tooling: composition, site data, guards, ledger, production layout, dev smoke
+├── Dockerfile, .dockerignore         the container image of site/dist (section 3.8)
+├── deploy/                          the image's Caddyfile, its smoke check, the compose stack with the edge proxy, the deploy webhook
 ├── assets/                          the share image's source and the raster record that pins the PNG to it
 ├── template-site/                   the site's own sections: home, templates, docs, libraries
 ├── template-catalogue/              ui-kit catalogue screen
@@ -867,6 +873,7 @@ All commands run from the repository root with Node `>=24.14.0` (`.nvmrc` pins `
 | Install and compose | `npm ci`, `npm run setup`, `npm run site:assemble` (`-- --check`, `-- --watch`) | Install the tooling; compose the templates and install the site; check the copies for drift or re-copy on edits (`cpt-site-component-site-assemble`) |
 | Run | `npm run dev`, `npm run dev:smoke` | The development run of the host and every remote; its smoke check (`cpt-site-component-dev-run`) |
 | Build | `npm run build`, `npm run site:dist`, `npm run preview` | Compose, build the shell, lay out the remotes, generate the metadata outputs; serve the build locally (`cpt-site-component-deploy-layout`) |
+| Deploy | `docker build --build-arg SITE_ORIGIN=<origin> .`, `docker compose -f deploy/docker-compose.yml up -d --build` | Build the container image of `site/dist`; run it behind the edge proxy at the root and under a sub-path (section 3.8) |
 | Generated data | `npm run site:data` (`-- --check`), `npm run catalogue:generate`, `npm run catalogue:check` | The site data (`cpt-site-component-site-data`); the catalogue's generated demo files (template-catalogue) |
 | Metadata | `npm run seo:generate`, `npm run seo:check` | template-site-meta's generator and check with this repository's config and raster record |
 | Brand | `npm run brand:generate`, `npm run brand:check` | template-site-brand's generator (token files from `brand.json`) and its check, run on the composed copy and part of `lint` |
@@ -895,6 +902,8 @@ The site's `package.json` pins its six direct `@gears-frontx/*` dependencies (ui
 
 The `verify-ui` job runs after `validate` on Node 24.14.x: it installs, composes and builds the site, checks that every finding the baseline carries names its reason, then runs the design check against the development run on every page of the built `seo-manifest.json`, every block showcase route and the not-found address, at 1440 and 390 pixels in the light theme, and fails only on a finding the baseline does not carry. The dark theme is honoured only through the development overlay's stored theme, since the site renders light, so it is checked by a local run (`--themes light,dark`) rather than in CI.
 
+`.github/workflows/docker.yml` runs on the same events with read-only contents permission. Its `build` job builds the image for `linux/amd64` against a local origin and runs `deploy/smoke.sh`, which starts it read-only with every capability dropped and checks its health, the document, a twin's content type, the origin in `robots.txt`, `nosniff`, the content security policy, the cache policy on the host's and a remote's files, named and hashed, and a missing file's `404` with `no-store`, with no `Server` header on the document or the missing file; a newer run of the same pull request cancels the older one. Its `publish` job runs only on a push to `main` once the repository variable `SITE_ORIGIN` holds the production origin, one run at a time, a newer push replacing a pending one so an older commit never lands after a newer one, with `packages: write` for that job alone: it builds the image with that origin, runs the same smoke check on it and, while the commit is still the tip of `main`, pushes that image to GHCR as `latest` and as the commit sha; a successful run is what the deploy webhook acts on.
+
 The `studio-validate` job installs the pinned Studio release (`v1.6.2`) on Python 3.12, materializes its runtime and validates the artifact trees: the root tree and one tree per template, every kind traced in FULL mode. Code is scanned only through the codebase paths the registry lists (the site-owned code for the root, each template's own code for its tree), and a marker binds only to the ids of its own tree (`cpt-site-adr-template-territory-traceability`).
 
 The `studio-spec-coverage` job installs the same Studio release and measures the marker coverage of each system's registered code, one step per system. Each step sets a coverage floor and a granularity floor just under that system's current values, so code added without markers, or marked in coarser blocks, fails the job. The per-file thresholds are not used, because registered files without markers (types, constants, presentational components that a screen's step covers where it renders them) would fail them.
@@ -912,7 +921,7 @@ The gaps of the current shell, routing, tooling and ui-kit releases, with their 
 ### 4.11 Deferred decisions
 
 - Production origin (domain): DEFER until the hosting target exists; `site.config.json` `origin` (or `SITE_ORIGIN`) is the address the site is served from, optionally with its sub-path, is required for a production build and has no default there. It affects the metadata outputs only, not loading.
-- Hosting target and edge head injection: DEFER until the site is to be published. The deploy layout itself is decided (`cpt-site-adr-static-deploy-layout`); a sub-path deploy needs `robots.txt` placed at the origin's root by the host, and the host serves the plain-text twins as `text/plain; charset=utf-8`.
+- Hosting target and edge head injection: DEFER until the site is to be published. The deploy layout itself is decided (`cpt-site-adr-static-deploy-layout`), and so is its packaging, the container image and the deploy stack of section 3.8; a sub-path deploy needs `robots.txt` placed at the origin's root by the edge, and the image serves the plain-text twins as `text/plain; charset=utf-8`. Commented out or gated until the information exists: the GHCR publish job (the production origin as the repository variable `SITE_ORIGIN`), the published image in the compose file (that publish), the public ports and the domain block with TLS of the edge (the host, the domain name with its DNS record, the operator's address for certificate notices), and the webhook service with its route (the host, the domain, the published image, `DEPLOY_WEBHOOK_SECRET` and the GitHub webhook registration for the "Workflow runs" event, and a read-only registry config while the package is private).
 - Public repository coordinates and final name: DEFER until publication (the proposed name is `frontx-showcase`); until then no source-spec for this repository's templates is written anywhere.
 - Locales beyond `en`: DEFER until content exists.
 - Raster renders of the hero and closing band: DEFER until design delivers them as assets; section 2.2 "Brand and content rules" states what the site's art components draw.
@@ -946,13 +955,13 @@ It is repository tooling, not template content: its sources are this repository'
 
 ### 4.14 Applicability of the remaining review areas
 
-- Security (authentication, authorization, data protection, threat model, audit): not applicable beyond the static content. The site has no accounts, no backend, no server process and no visitor data; the inbox demo's data is built-in sample data in the page. The repository holds no secret; CI runs with read-only contents permission and no persisted credentials.
+- Security (authentication, authorization, data protection, threat model, audit): the site has no accounts, no backend and no visitor data; the inbox demo's data is built-in sample data in the page. The image serves static files as a non-root user, and the compose file runs it read-only with every capability dropped (section 3.8). The one server process with power is the deploy webhook: it holds the host's Docker socket, which is root-equivalent, so it acts only on a delivery signed with `DEPLOY_WEBHOOK_SECRET` (kept in `deploy/.env` on the host, never in the repository), only on a successful push run of the image workflow on `main`, and only by pulling and restarting the site service and pruning the replaced site images; the edge overwrites `X-Forwarded-For` and is the only container on the webhook's network, so the address check cannot be spoofed. The repository holds no secret; CI runs with read-only contents permission and no persisted credentials, and only the publish job may write packages.
 - Privacy and compliance: not applicable. The site collects nothing and carries no analytics; the PRD records these exclusions.
 - Data architecture and database design: not applicable. There is no database (section 3.7); the site's data are generated files checked into template-site (section 4.13) and each demo template's sample data.
 - Performance, scalability and capacity: a static folder served by any static server; each screen is a separately loaded remote, so a page loads the host and the screens it shows. No load, latency or capacity budget is set while the hosting target is deferred (section 4.11), and hosting cost follows from that target.
 - Reliability: a screen that fails to load or mount is contained to an error state with a retry inside the page frame (section 4.3.4); there is no server state to recover.
-- Observability and operations: no runtime telemetry or service-level target, since nothing runs server-side; operations are the build and the static deploy (section 3.8), and CI is the operational check (section 4.9).
-- Testing: every package's tests (section 4.2.2), the repository's tests in `scripts/`, the shell's suites and the dev smoke run in CI (section 4.9).
+- Observability and operations: no runtime telemetry or service-level target; the image has a health check, Caddy writes its runtime messages (no access log) and the webhook its decisions to the container output. Operations are the image build and the deploy stack (section 3.8), and CI is the operational check (section 4.9).
+- Testing: every package's tests (section 4.2.2), the repository's tests in `scripts/` and the deploy webhook's in `deploy/webhook/`, the shell's suites, the dev smoke and the image's smoke run in CI (section 4.9).
 
 ## 5. Traceability
 

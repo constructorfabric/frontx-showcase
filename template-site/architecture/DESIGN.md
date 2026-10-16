@@ -422,8 +422,8 @@ Does not generate or check the data files; the Site Data Generator does. Calls n
 | Method | Path | Description | Stability |
 |--------|------|-------------|-----------|
 | `GET` | `/?screen=home`, `/?screen=templates[;route=<template>]`, `/?screen=docs[;route=get-started\|first-change]`, `/?screen=libs[;route=routing\|mfes\|screen-domain]` | The pages of the four screens | stable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~`, payload `{ guide }` | Shows one guide of the docs screen; the schema's enum names the guides and its target is the docs screen only | unstable |
-| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~`, payload `{ template }` | Shows one template's page of the templates screen; the schema's enum names the templates and its target is the templates screen only | unstable |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_docs.nav.show_guide.v1~`, payload `{ guide }` | Shows one guide of the docs screen; the schema's enum names the guides and its target is the docs screen only | unstable |
+| `action` | `gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~`, payload `{ template }` | Shows one template's page of the templates screen; the schema's enum names the templates and its target is the templates screen only | unstable |
 | `GET` | `/api/site-templates/catalogue` | The templates outline, answered from the bundled file | unstable |
 | `GET` | `/api/site-docs/versions` | The docs version variables, answered from the bundled file | unstable |
 | `GET` | `/api/site-libs/libraries` | The libraries data, answered from the bundled file | unstable |

@@ -354,7 +354,7 @@ Each catalogue page **MUST** have one top-level heading, headed sections, real l
 
 - [x] `p2` - **ID**: `cpt-template-catalogue-interface-show-component`
 
-**Type**: Protocol (FrontX action `gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~` with a closed JSON schema, payload `{ component }`)
+**Type**: Protocol (FrontX action `gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~` with a closed JSON schema, payload `{ component }`)
 
 **Stability**: unstable
 

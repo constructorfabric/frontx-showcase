@@ -1,4 +1,4 @@
-// Lints the repository tooling: scripts/ (JavaScript modules). Template code, the template-delivered site-meta package among it, is linted by the site's own ESLint after `npm run site:assemble`.
+// Lints the repository tooling and the deploy webhook: scripts/ and deploy/ (JavaScript modules). Template code, the template-delivered site-meta package among it, is linted by the site's own ESLint after `npm run site:assemble`.
 import js from '@eslint/js';
 import globals from 'globals';
 

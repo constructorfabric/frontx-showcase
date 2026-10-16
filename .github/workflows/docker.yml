@@ -1,0 +1,115 @@
+name: Docker image
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  # The image as the Dockerfile builds it, against a local origin, then started and checked by deploy/smoke.sh. Nothing is pushed.
+  build:
+    name: Build and smoke-test the image
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: docker-build-${{ github.ref }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        persist-credentials: false
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build the image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        platforms: linux/amd64
+        build-args: SITE_ORIGIN=http://localhost:8080
+        tags: frontx-site:ci
+        load: true
+        push: false
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Smoke-test the container
+      run: deploy/smoke.sh frontx-site:ci http://localhost:8080
+
+  # Publishes the image to GHCR as latest and as the commit sha on every push to main. The image bakes in its origin, so this job waits for the production one: it runs once the repository variable SITE_ORIGIN holds the address the site is served from (https://<domain>, with the sub-path if any). The image is smoke-tested with that origin before it is pushed, and a successful run is what the deploy webhook (deploy/webhook/) acts on.
+  publish:
+    name: Publish the image
+    needs: build
+    if: github.event_name == 'push' && vars.SITE_ORIGIN != ''
+    # One publish at a time; a newer push replaces a pending one, and the tip check below skips a commit main has moved past.
+    concurrency:
+      group: docker-publish
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        persist-credentials: false
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build the image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        platforms: linux/amd64
+        build-args: SITE_ORIGIN=${{ vars.SITE_ORIGIN }}
+        tags: frontx-site:publish
+        load: true
+        push: false
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Smoke-test the container
+      env:
+        SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
+      run: deploy/smoke.sh frontx-site:publish "$SITE_ORIGIN"
+
+    # Publish runs queue by arrival, which a faster build of a newer commit can overtake, so a commit that is no longer the tip of main is not pushed.
+    - name: Check that this commit is still the tip of main
+      id: tip
+      env:
+        GH_TOKEN: ${{ github.token }}
+        REPO: ${{ github.repository }}
+        SHA: ${{ github.sha }}
+      run: |
+        tip="$(gh api "repos/$REPO/commits/main" --jq .sha)"
+        if [ "$tip" = "$SHA" ]; then echo "current=true" >> "$GITHUB_OUTPUT"; else echo "main moved to $tip; not pushing $SHA"; fi
+
+    - name: Log in to GHCR
+      if: steps.tip.outputs.current == 'true'
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # The image the smoke test checked, pushed as is under both tags.
+    - name: Push the image
+      if: steps.tip.outputs.current == 'true'
+      env:
+        REPO: ${{ github.repository }}
+        SHA: ${{ github.sha }}
+      run: |
+        IMAGE="ghcr.io/$(printf '%s' "$REPO" | tr '[:upper:]' '[:lower:]')"
+        docker tag frontx-site:publish "$IMAGE:latest"
+        docker tag frontx-site:publish "$IMAGE:$SHA"
+        docker push "$IMAGE:$SHA"
+        docker push "$IMAGE:latest"

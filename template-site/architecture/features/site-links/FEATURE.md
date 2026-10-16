@@ -131,7 +131,7 @@ The feature lets a screen lead to another screen, or to a page of it, the FrontX
 **Output**: The screen's own router replaced at the page's route; or a thrown error when the payload or the app is not as the contract requires.
 
 **Steps**:
-1. [x] - `p1` - Register the handler on the screen's bridge for the screen's show action type (`gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~` for docs, `gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~` for templates); the lifecycle calls this from `mount()` before it returns, so the chain's next step finds the handler - `inst-register-handler`
+1. [x] - `p1` - Register the handler on the screen's bridge for the screen's show action type (`gts.frontx.mfes.comm.action.v1~frontx.site_docs.nav.show_guide.v1~` for docs, `gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~` for templates); the lifecycle calls this from `mount()` before it returns, so the chain's next step finds the handler - `inst-register-handler`
 2. [x] - `p1` - **IF** the payload carries no string under the handler's property, throw, since the action schema and the handler disagree - `inst-read-value`
 3. [x] - `p1` - **IF** the app was built without the microfrontends plugin and has no router, throw - `inst-require-router`
 4. [x] - `p1` - Replace the current entry through the app's navigation facade with the page's route (`/<guide>`, `/<template>`), resolving the facade per action - `inst-replace-route`
@@ -190,7 +190,7 @@ The system **MUST** open another screen through one actions chain of the screen 
 **Constraints**: `cpt-template-site-constraint-no-screen-list`
 
 **Touches**:
-- API: `mount_ext` on the screen domain; `gts.frontx.mfes.comm.action.v1~frontx.site_docs.action.show_guide.v1~` with payload `{ guide }`; `gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~` with payload `{ template }`; template-catalogue's `gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~` with payload `{ component }` (sent)
+- API: `mount_ext` on the screen domain; `gts.frontx.mfes.comm.action.v1~frontx.site_docs.nav.show_guide.v1~` with payload `{ guide }`; `gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~` with payload `{ template }`; template-catalogue's `gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~` with payload `{ component }` (sent)
 - DB: none
 - Entities: `Site screen`
 

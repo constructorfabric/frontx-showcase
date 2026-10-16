@@ -1,0 +1,46 @@
+# The site image's server: site/dist as static files over plain HTTP on PORT (8080 by default). TLS, the domain and a sub-path belong to the proxy in front of it (deploy/Caddyfile); the image always sees the site at its root.
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+:{$PORT:8080} {
+	root * /srv
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options SAMEORIGIN
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+		# No script-src or style-src: the host document carries an inline script (the head sync), the MFE loader runs remote chunks from blob: URLs and the type system compiles its validators with new Function, so a policy that restricts scripts would have to allow inline, eval and blob: and would protect nothing.
+		Content-Security-Policy "base-uri 'self'; object-src 'none'; frame-ancestors 'self'"
+	}
+	# A deletion defers the header block it sits in to the written response, which an error response bypasses, so it has a block of its own.
+	header -Server
+
+	# Every file under an assets/ folder (the host's and each remote's) carries a content hash in its name; every other file keeps its name across builds (index.html, generated-mfe-manifests.json, each remote's remoteEntry.js, mf-manifest.json and shared/*.js, the discovery files, the twins, the icons), so it is revalidated on every load.
+	@hashed path_regexp ^/(?:mfe/[^/]+/)?assets/
+	header @hashed Cache-Control "public, max-age=31536000, immutable"
+	@named not path_regexp ^/(?:mfe/[^/]+/)?assets/
+	header @named Cache-Control "no-cache"
+
+	# The plain-text twins of the pages, /<screen>/<route>.md.
+	@twins path *.md
+	header @twins Content-Type "text/plain; charset=utf-8"
+	@manifest path *.webmanifest
+	header @manifest Content-Type "application/manifest+json"
+
+	# No redirect of a folder address to its slashed form: the redirect would be written from the root and leave a sub-path mount.
+	file_server {
+		disable_canonical_uris
+	}
+
+	# A missing file must not be cached, least of all under assets/ while a deploy is rolling out.
+	handle_errors {
+		header Cache-Control "no-store"
+		header -Server
+		respond "{err.status_code} {err.status_text}" {err.status_code}
+	}
+}

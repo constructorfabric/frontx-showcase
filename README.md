@@ -19,6 +19,7 @@ The site is itself a FrontX application: template-shell, template-mfe and templa
 | `template-kit-candidates/` | The primitives the kit lacks, as one package (`src-app/verify_packages/kit-candidates/`) in the kit's own layout and APIs, proposed to `@gears-frontx/ui-kit` and deleted when the kit releases them. |
 | `template-site-blocks/` | The site's blocks as one package (`src-app/verify_packages/site-blocks/`): section-level compositions of kit components, kit candidates, brand art and the layout tokens, with layout-only styles and content-only props, plus a showcase screen (`/?screen=blocks`, kept out of the search index) that renders each block's fixture on its own route. |
 | `scripts/` | Repository guards, the composition step (`site:assemble`), the generated site data (`site:data`) and the shell change list (`shell:changes`). |
+| `deploy/` | The deploy stack of the container image built by `Dockerfile`: the image's server config, its smoke check, the compose file with the edge proxy and the signed deploy webhook (section "Deploy"). |
 | `assets/` | The SVG source of the share image and `rasters.json`, the record that pins `site/public/og-image.png` to it (`seo:check` reads it). |
 | `architecture/` | PRD and DESIGN of this repository. |
 
@@ -62,6 +63,28 @@ Screens are addressed in the query string: `/?screen=<token>[;route=<path inside
 | `npm run preview` | Serve `site/dist` at `http://localhost:4173`, the host and every MFE remote |
 
 See `CONTRIBUTING.md` for the development loop and `architecture/DESIGN.md` for the design.
+
+## Deploy
+
+The site ships as one container image: `Dockerfile` builds `site/dist` on Node 24 with npm 10.9.4, and the image serves it with Caddy (`deploy/site/Caddyfile`) as a non-root user on port 8080, with a health check, compression, the security headers, the cache policy (hashed `assets/` files immutable, every other file revalidated) and the plain-text twins as `text/plain; charset=utf-8`. `SITE_ORIGIN` is a required build argument, baked into the sitemap, `robots.txt`, the canonical addresses and `llms.txt`, so an image serves one origin; the same image serves the site at the root or under a sub-path, since the proxy in front strips the prefix.
+
+```bash
+docker build --build-arg SITE_ORIGIN=http://localhost:8080 -t frontx-site:local .
+docker run --rm -p 8080:8080 --read-only --tmpfs /data:uid=10001,gid=10001 --tmpfs /config:uid=10001,gid=10001 --cap-drop ALL --security-opt no-new-privileges frontx-site:local
+```
+
+`deploy/` holds the stack for a host: `docker-compose.yml` runs the image behind an edge Caddy (`deploy/Caddyfile`) and, later, the deploy webhook (`deploy/webhook/`), which takes GitHub's signed `workflow_run` delivery of a successful push run of the image workflow on `main` and pulls and restarts the site. Without a domain the stack runs locally: `docker compose -f deploy/docker-compose.yml up -d --build` serves `http://localhost:8080/` and the sub-path `http://localhost:8080/frontx/` (with `SITE_ORIGIN=http://localhost:8080/frontx` the canonical addresses match the sub-path). `.github/workflows/docker.yml` builds the image on every pull request to `main` and every push to `main` and checks it with `deploy/smoke.sh <image> <origin>`, which also runs locally.
+
+What is commented out or gated, and the information that enables each part:
+
+| Part | Enabled by |
+|---|---|
+| Publishing the image to GHCR (`latest` and the commit sha), the `publish` job of `.github/workflows/docker.yml` | The production origin as the repository variable `SITE_ORIGIN` (`https://<domain>`, with the sub-path if any); the job runs once it is set |
+| The published image in `deploy/docker-compose.yml` (`site` service) | The image published as above, `ghcr.io/<owner>/<repository>` of the repository the workflow runs in |
+| Public ports 80 and 443 (`edge` service) | The host: a server that runs the stack, with a DNS record of the domain pointing at it |
+| The domain block with automatic TLS in `deploy/Caddyfile`, and the certificate notice address | The domain name and the operator's address; a sub-path variant (with `robots.txt` at the origin's root) is there too |
+| The `webhook` service and its `/deploy-hook` route | The host, the domain, the published image, `DEPLOY_WEBHOOK_SECRET` in `deploy/.env` (`deploy/.env.example`) and the GitHub webhook registration: payload URL `https://<domain>/deploy-hook`, content type `application/json`, the same secret, the "Workflow runs" event only |
+| The webhook's registry credentials | A private GHCR package: a Docker config with a token that can read packages, mounted read-only into the webhook, since its own Docker CLI pulls and a host login does not reach it |
 
 ## License
 

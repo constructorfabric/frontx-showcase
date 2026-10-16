@@ -13,5 +13,5 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["scripts/**/*.mjs", "eslint.config.js", "vitest.config.mjs"]
+  "include": ["scripts/**/*.mjs", "deploy/**/*.mjs", "eslint.config.js", "vitest.config.mjs"]
 }

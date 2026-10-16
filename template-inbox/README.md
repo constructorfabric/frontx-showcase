@@ -56,7 +56,7 @@ A project with template-shell, template-mfe and template-kit-candidates applied 
 | `inbox-chat` | `inbox-chat-mfe` | `/` | 63 Chat | 3030 |
 | `inbox-mail` | `inbox-mail-mfe` | `/` | 64 Mail | 3040 |
 
-Addresses: `/?screen=inbox-contacts`, a person: `/?screen=inbox-contacts;route=<id>`. Each screen renders its route tree through `<ExtensionRouter>`; an address its tree does not match renders the screen's own not-found page. Chat's "View contact" opens the person's page in contacts through `openScreen` (`shared/inbox/navigation/openScreen.ts`): the screen domain's `mount_ext` opens contacts, and contacts' own `show_contact` action (`gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~`, payload `{ contact }`, the person's id) shows the person's page. Contacts declares the action and its closed schema in its `mfe.json` and registers the handler when it mounts. One history entry; Back returns to the chat.
+Addresses: `/?screen=inbox-contacts`, a person: `/?screen=inbox-contacts;route=<id>`. Each screen renders its route tree through `<ExtensionRouter>`; an address its tree does not match renders the screen's own not-found page. Chat's "View contact" opens the person's page in contacts through `openScreen` (`shared/inbox/navigation/openScreen.ts`): the screen domain's `mount_ext` opens contacts, and contacts' own `show_contact` action (`gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~`, payload `{ contact }`, the person's id) shows the person's page. Contacts declares the action and its closed schema in its `mfe.json` and registers the handler when it mounts. One history entry; Back returns to the chat.
 
 ## SEO metadata
 

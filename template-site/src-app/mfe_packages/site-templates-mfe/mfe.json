@@ -5,7 +5,7 @@
   },
   "schemas": [
     {
-      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+      "$id": "gts://gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "$comment": "The templates screen's show_template action: shows one template's page of the templates screen. Sent as the next step after the screen domain's mount_ext; the screen's handler replaces its own entry through its app's navigation facade. Self-contained and closed, as template-mfe's action schemas are.",
       "type": "object",
@@ -65,7 +65,7 @@
         "gts.frontx.mfes.comm.shared_property.v1~frontx.mfes.comm.language.v1~"
       ],
       "actions": [
-        "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~"
+        "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~"
       ],
       "domainActions": [],
       "manifest": "gts.frontx.mfes.mfe.mf_manifest.v1~frontx.site_templates.mfe.manifest.v1",

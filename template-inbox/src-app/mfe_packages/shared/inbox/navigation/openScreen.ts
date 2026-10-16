@@ -16,7 +16,7 @@ import { INBOX_SCREEN_EXTENSIONS, type InboxScreenToken } from './screens';
  * person's page sends it and never names the contacts screen's routes.
  */
 // @cpt-dod:cpt-template-inbox-dod-cross-screen-navigation-open-screen:p1
-export const SHOW_CONTACT_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.action.show_contact.v1~';
+export const SHOW_CONTACT_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.inbox_contacts.nav.show_contact.v1~';
 
 /**
  * Whether the bridge belongs to a screen composed into the shell's screen domain, the only place `openScreen` can navigate in.

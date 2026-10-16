@@ -4,7 +4,7 @@
 import { ActionHandler, type FrontXApp, type JsonObject } from '@gears-frontx/react';
 
 /** The catalogue's action that shows one component's page: payload `{ component }`, the component's slug. */
-export const SHOW_COMPONENT_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.catalogue.action.show_component.v1~';
+export const SHOW_COMPONENT_ACTION = 'gts.frontx.mfes.comm.action.v1~frontx.catalogue.nav.show_component.v1~';
 
 /** Moves the catalogue's own router to the page of the component a `show_component` action names, replacing the entry `mount_ext` just wrote. */
 // @cpt-flow:cpt-template-catalogue-flow-cross-screen-navigation-show-component:p1

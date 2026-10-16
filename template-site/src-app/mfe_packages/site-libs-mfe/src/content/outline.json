@@ -60,7 +60,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-site"
                   }
@@ -73,7 +73,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-site-meta"
                   }
@@ -86,7 +86,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-site-brand"
                   }
@@ -99,7 +99,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-kit-candidates"
                   }
@@ -112,7 +112,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-site-blocks"
                   }
@@ -125,7 +125,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-catalogue"
                   }
@@ -138,7 +138,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-inbox"
                   }
@@ -151,7 +151,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-mfe-demo"
                   }
@@ -164,7 +164,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-calendar-demo"
                   }

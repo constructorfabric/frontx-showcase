@@ -412,7 +412,7 @@
               "href": {
                 "extension": "gts.frontx.mfes.ext.extension.v1~frontx.screensets.layout.screen.v1~frontx.site_templates.screens.templates.v1",
                 "action": {
-                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.action.show_template.v1~",
+                  "type": "gts.frontx.mfes.comm.action.v1~frontx.site_templates.nav.show_template.v1~",
                   "payload": {
                     "template": "template-mfe"
                   }
