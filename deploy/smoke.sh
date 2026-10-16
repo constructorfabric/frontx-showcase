@@ -60,6 +60,8 @@ expect "cache of /${remote}${chunk}" "$(header "/${remote}${chunk}" cache-contro
 expect 'nosniff' "$(header / x-content-type-options)" 'nosniff'
 expect 'content security policy' "$(header / content-security-policy)" "base-uri 'self'; object-src 'none'; frame-ancestors 'self'"
 expect 'document status' "$(status /)" '200'
+# Pages are addressed in the query string (/?screen=<token>;route=<path>), so a deep page address is the document itself.
+expect 'deep page address status' "$(status '/?screen=docs;route=get-started')" '200'
 expect 'missing file status' "$(status /assets/missing.js)" '404'
 expect 'no Server header' "$(header / server)" ''
 expect 'no Server header on a missing file' "$(header /assets/missing.js server)" ''
