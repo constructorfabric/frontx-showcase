@@ -5,7 +5,7 @@
   "themeKey": "frontx:studio:theme",
   "summary": {
     "states": 172,
-    "findings": 702
+    "findings": 708
   },
   "states": [
     {
@@ -2685,6 +2685,18 @@
           "detail": "Elements must meet minimum color contrast ratio thresholds (impact: serious, 3 node(s))",
           "target": "div[data-theme=\"light\"][dir=\"ltr\"],#base-ui-_r_2_",
           "reason": "Kit defect: the kit paints an inactive TabsTrigger in 60% of the foreground, 4.08 to 4.38:1 (GAPS kit-defects row \"inactive TabsTrigger contrast\", upstream draft)"
+        },
+        {
+          "id": "card-missing-padding",
+          "detail": "content sits 1px from the card's right edge (minimum 4px) - bounded containers carry horizontal padding unless a full-width media child fills them",
+          "target": "div._wrapper_c72nh_34",
+          "reason": "G34 false finding: a part of the kit's own data-table example that the checker takes for a card"
+        },
+        {
+          "id": "card-content-overflow",
+          "detail": "content overflows the card's right edge by 287px - wide content scrolls or wraps inside its container, never past a drawn edge",
+          "target": "div._wrapper_c72nh_34",
+          "reason": "G34 false finding: a wide table scrolls inside its kit DataTable wrapper (overflow: auto)"
         }
       ]
     },
@@ -4782,6 +4794,18 @@
           "detail": "content overflows the card's right edge by 119px - wide content scrolls or wraps inside its container, never past a drawn edge",
           "target": "div._codeBlock_115nl_8._sizeDefault_115nl_76",
           "reason": "G34 false finding: the kit candidate CodeBlock scrolls its code horizontally (overflow-x: auto) and the checker counts a scroll region as overflow"
+        },
+        {
+          "id": "card-missing-padding",
+          "detail": "content sits 1px from the card's right edge (minimum 4px) - bounded containers carry horizontal padding unless a full-width media child fills them",
+          "target": "div._card_136no_6._sizeDefault_136no_82",
+          "reason": "G34 false finding: the kit Card holds a kit candidate CodeBlock whose code scrolls horizontally; the checker counts ink inside a horizontal scroll container, so a line ending in the scroll region reads as content at the card's edge (the fix belongs upstream in template-design-guardrails)"
+        },
+        {
+          "id": "card-content-overflow",
+          "detail": "content overflows the card's right edge by 109px - wide content scrolls or wraps inside its container, never past a drawn edge",
+          "target": "div._card_136no_6._sizeDefault_136no_82",
+          "reason": "G34 false finding: the kit Card holds a kit candidate CodeBlock whose code scrolls horizontally; the checker counts the scroll region as the card's overflow"
         }
       ]
     },
@@ -4844,6 +4868,12 @@
           "detail": "content overflows the card's right edge by 583px - wide content scrolls or wraps inside its container, never past a drawn edge",
           "target": "div._codeBlock_115nl_8._sizeDefault_115nl_76",
           "reason": "G34 false finding: the kit candidate CodeBlock scrolls its code horizontally (overflow-x: auto) and the checker counts a scroll region as overflow"
+        },
+        {
+          "id": "clipped-text",
+          "detail": "text clipped without ellipsis (293px content in 281px box)",
+          "target": "p._itemDescription_v42b5_124",
+          "reason": "Kit defect: the kit ItemDescription always clamps to two lines (overflow: hidden) and does not break a long identifier, so at a phone width beside a classic scrollbar it clips one (GAPS kit-defects row \"ItemDescription clamp\"; a configurable clamp is to be proposed upstream in gears-frontx)"
         }
       ]
     },
@@ -4857,6 +4887,12 @@
           "detail": "content overflows the card's right edge by 184px - wide content scrolls or wraps inside its container, never past a drawn edge",
           "target": "div._codeBlock_115nl_8._sizeDefault_115nl_76",
           "reason": "G34 false finding: the kit candidate CodeBlock scrolls its code horizontally (overflow-x: auto) and the checker counts a scroll region as overflow"
+        },
+        {
+          "id": "card-missing-padding",
+          "detail": "content sits 3px from the card's right edge (minimum 4px) - bounded containers carry horizontal padding unless a full-width media child fills them",
+          "target": "div._codeBlock_115nl_8._sizeDefault_115nl_76",
+          "reason": "G34 false finding: the kit candidate CodeBlock scrolls its code horizontally (overflow-x: auto); the checker counts ink inside a horizontal scroll container, so a line ending in the scroll region's padding reads as content at the card's edge (the fix belongs upstream in template-design-guardrails)"
         }
       ]
     },
