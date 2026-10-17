@@ -31,7 +31,7 @@ The folder also exports the layout pieces a sample is built with, so a sample re
 
 ## Layout
 
-- Rhythm 58/64 (40/40 under 640px); the header in two equal columns 96px apart, the lead 460px wide. Groups 24px apart; tiles four across with a 16px gap (12px under 1200px, three across under 900px, two with an 8px gap under 640px). Sample slot 158px high (146px under 1200px, 132px under 640px), a size container for `SampleOptional`; a slot holding a table keeps 12/16px of padding (4px under 640px), so the kit table fits a phone's tile.
+- Rhythm 58/64 (40/40 under 640px); the header in two equal columns 96px apart, the lead 460px wide. Groups 24px apart; tiles four across with a 16px gap (12px under 1200px, three across under 900px, two with an 8px gap under 640px). Sample slot 158px high (146px under 1200px, 132px under 640px), a size container for `SampleOptional`; a slot holding a table keeps 12/16px of padding (4px above and below and none at the sides under 640px), so the kit table fits a phone's tile even beside a classic scrollbar.
 
 ## Design section
 

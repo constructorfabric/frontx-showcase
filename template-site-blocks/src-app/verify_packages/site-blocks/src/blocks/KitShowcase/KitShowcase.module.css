@@ -70,7 +70,7 @@
   container: sample / inline-size;
 }
 
-/* A table sample needs the slot's width more than its air: 12px 16px around it, 4px under 640px, so the kit table's two columns fit the tile without scrolling. */
+/* A table sample needs the slot's width more than its air: 12px 16px around it, and under 640px 4px above and below and none at the sides, so the kit table's two columns fit the tile without scrolling even where a classic scrollbar takes 15px of a phone-width viewport (the table's own cells pad its text). */
 .sample:has(table) {
   padding: var(--space-3) var(--space-4);
 }
@@ -202,7 +202,7 @@
   }
 
   .sample:has(table) {
-    padding: var(--space-1);
+    padding: var(--space-1) 0;
   }
 
   .tileLink {
