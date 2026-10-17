@@ -153,7 +153,7 @@ export default function AttachmentExample() {
       </Section>
 
       <Section title="Group">
-        <AttachmentGroup style={{ paddingBlockEnd: 'var(--space-2)' }}>
+        <AttachmentGroup style={{ paddingBlockEnd: 'var(--space-2)' }} role="group" aria-label="Attachments" tabIndex={0}>
           <Attachment orientation="vertical">
             <AttachmentMedia>
               <DemoIcon />

@@ -1,0 +1,14 @@
+Adaptation of examples/attachment.tsx
+Kind: substantive
+Reason: the group scrolls sideways once its attachments outgrow it (a phone-width viewport beside a classic scrollbar) and the kit hides its scrollbar, so it is a named group the keyboard can reach and scroll (axe `scrollable-region-focusable`)
+--- a/examples/attachment.tsx
++++ b/examples/attachment.tsx
+@@ -153,7 +153,7 @@
+       </Section>
+ 
+       <Section title="Group">
+-        <AttachmentGroup style={{ paddingBlockEnd: 'var(--space-2)' }}>
++        <AttachmentGroup style={{ paddingBlockEnd: 'var(--space-2)' }} role="group" aria-label="Attachments" tabIndex={0}>
+           <Attachment orientation="vertical">
+             <AttachmentMedia>
+               <DemoIcon />

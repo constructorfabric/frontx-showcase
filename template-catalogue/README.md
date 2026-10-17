@@ -16,7 +16,7 @@ The example files (`src/examples/*.tsx`), the foundation pages (`src/pages/`) an
 - Content rules, applied to every file: long dashes become "-", the design tool's vendor name becomes "the design source", internal mail addresses move to `example.com` (the repository's text policy refuses all three).
 - `kit-demo/adaptations/<file>.patch`: one strict unified diff per file the site changes beyond the content rules, headed by its `Kind:` (`mechanical`: the behaviour is the kit's, the edit meets a site rule such as jsx-a11y or links that stay on the page; `substantive`: the page does or shows something else) and its `Reason:`. A hunk whose source lines changed upstream fails the generation instead of being guessed at.
 
-The adaptations (54 files are the demo after the content rules alone):
+The adaptations (53 files are the demo after the content rules alone):
 
 | File | Kind | Adaptation |
 |---|---|---|
@@ -27,6 +27,7 @@ The adaptations (54 files are the demo after the content rules alone):
 | `src/examples/marker.tsx` | mechanical | an element given through `render` made a function so jsx-a11y sees its content (same rendered DOM) |
 | `src/examples/sidebar.tsx` | mechanical | the same for the search group's label |
 | `src/examples/spinner.tsx` | mechanical | the search input's value is a neutral word |
+| `src/examples/attachment.tsx` | substantive | the Group example's strip is a named group the keyboard can reach, since it scrolls sideways under its scrollbar-less style once its attachments outgrow it |
 | `src/examples/carousel.tsx` | substantive | the API example reads the current slide when the API arrives and removes its `select` listener on cleanup |
 | `src/examples/data-table.tsx` | substantive | the row-actions column has a header |
 | `src/examples/input.tsx` | substantive | the Button group example's input has its own value, which its Clear button clears; the invalid and the file inputs have accessible names |
