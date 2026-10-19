@@ -255,7 +255,7 @@ Every kit component and foundation gets its own page at its own address inside o
 3. [x] - `p1` - Follow the language property and load each new language - `inst-follow-language`
 4. [x] - `p1` - Import the language's module; **IF** there is none, warn and import English; **IF** English is missing too, or the import fails, use no strings - `inst-import-module`
 5. [x] - `p1` - Number each load and apply only the latest one, and only while the screen is mounted - `inst-apply-latest`
-6. [x] - `p1` - **RETURN** a translation function that answers the string, or the key itself, with a warning when it is missing from loaded strings (a key asked for while the strings load gets no warning) - `inst-translate`
+6. [x] - `p1` - **RETURN** a translator that answers the string, or the key itself, with a warning when it is missing from loaded strings (a key asked for while the strings load gets no warning) - `inst-translate`
 
 ### Reveal the Current Row
 

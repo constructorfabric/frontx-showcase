@@ -96,7 +96,7 @@ User-facing interactions that start with an actor (human or external system) and
 5. [x] - `p1` - **IF** the entry is the data loading screen - `inst-if-data-loading`
    1. [x] - `p1` - Render the screen first through the base mount, so it is visible before any action arrives - `inst-render-first`
    2. [x] - `p1` - Register the refresh profile action handler on the bridge before `mount()` returns - `inst-register-handler`
-   3. [x] - `p1` - On a refresh profile action the handler calls the demo app's refresh function and resolves at once - `inst-handle-refresh`
+   3. [x] - `p1` - On a refresh profile action the handler asks the demo app to refresh and resolves at once - `inst-handle-refresh`
 
 ## 3. Processes / Business Logic (CDSL)
 

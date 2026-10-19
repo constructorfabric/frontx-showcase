@@ -138,8 +138,6 @@ jobs:
   studio-validate:
     name: Studio Validate Artifacts
     runs-on: ubuntu-latest
-    env:
-      CFS_VERSION: v1.6.2
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
@@ -151,14 +149,21 @@ jobs:
       with:
         python-version: '3.12'
 
+    # The release pinned in .cf-studio/version.toml, checked before it reaches a command.
+    - name: Read the pinned Studio version
+      run: |
+        version="$(python3 -c 'import tomllib; print(tomllib.load(open(".cf-studio/version.toml", "rb"))["cfs"]["version"])')"
+        if ! printf '%s' "$version" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then echo "::error::.cf-studio/version.toml pins '$version', not a vX.Y.Z release"; exit 1; fi
+        echo "CFS_VERSION=$version" >> "$GITHUB_ENV"
+
     - name: Install the Studio CLI
-      run: pipx install "git+https://github.com/constructorfabric/studio.git@${{ env.CFS_VERSION }}"
+      run: pipx install "git+https://github.com/constructorfabric/studio.git@$CFS_VERSION"
 
     # .cf-studio/.core is git-ignored; materialize it before running studio.py. GITHUB_TOKEN keeps the release download off the anonymous rate limit.
     - name: Bootstrap the Studio runtime
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: cfs update -y --no-interactive --with-kits yes --version ${{ env.CFS_VERSION }}
+      run: cfs update -y --no-interactive --with-kits yes --version "$CFS_VERSION"
 
     - name: Validate artifacts
       run: python3 .cf-studio/.core/skills/studio/scripts/studio.py validate
@@ -167,8 +172,6 @@ jobs:
   studio-spec-coverage:
     name: Studio Spec Coverage
     runs-on: ubuntu-latest
-    env:
-      CFS_VERSION: v1.6.2
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
@@ -180,13 +183,20 @@ jobs:
       with:
         python-version: '3.12'
 
+    # The release pinned in .cf-studio/version.toml, checked before it reaches a command.
+    - name: Read the pinned Studio version
+      run: |
+        version="$(python3 -c 'import tomllib; print(tomllib.load(open(".cf-studio/version.toml", "rb"))["cfs"]["version"])')"
+        if ! printf '%s' "$version" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then echo "::error::.cf-studio/version.toml pins '$version', not a vX.Y.Z release"; exit 1; fi
+        echo "CFS_VERSION=$version" >> "$GITHUB_ENV"
+
     - name: Install the Studio CLI
-      run: pipx install "git+https://github.com/constructorfabric/studio.git@${{ env.CFS_VERSION }}"
+      run: pipx install "git+https://github.com/constructorfabric/studio.git@$CFS_VERSION"
 
     - name: Bootstrap the Studio runtime
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: cfs update -y --no-interactive --with-kits yes --version ${{ env.CFS_VERSION }}
+      run: cfs update -y --no-interactive --with-kits yes --version "$CFS_VERSION"
 
     - name: Coverage of site
       run: python3 .cf-studio/.core/skills/studio/scripts/studio.py spec-coverage --system site --min-coverage 57 --min-granularity 0.88

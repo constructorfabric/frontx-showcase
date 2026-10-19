@@ -503,7 +503,7 @@ Every page **MUST** have exactly one top-level heading, headed sections and link
 | gears-frontx releases on the npm registry (published from `main` `ec2a1dbf`) | mfes `0.3.2` and gts-plugin `0.3.3` | p1 |
 | gears-frontx-templates `main` `8510e80` | template-shell `0.1.0-alpha.5` with its own packages as workspace sources (framework `0.2.0-alpha.12`, react `0.2.0-alpha.10`, state and i18n `0.2.0-alpha.1`, auth and studio `0.2.0-alpha.2`), template-mfe `0.1.0-alpha.2`, template-design-guardrails `0.1.0-alpha.0` | p1 |
 | gears-frontx-templates draft PR #13 | the inbox app | p2 |
-| Constructor Studio `v1.6.2` | artifact validation with the `sdlc` kit `v1.2.1` | p3 |
+| Constructor Studio `v1.8.0` | artifact validation with the `sdlc` kit `v1.2.1` | p3 |
 | Designer site | the target look and information architecture; a design reference, never code | p2 |
 
 ## 11. Assumptions

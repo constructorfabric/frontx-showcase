@@ -136,7 +136,7 @@ Screen code is committed once, inside the template that owns it; the site's copy
 1. [x] - `p2` - Developer runs `npm run site:assemble -- --watch` - `inst-watch-run`
 2. [x] - `p2` - Compose once, as the compose flow does - `inst-watch-initial`
 3. [x] - `p2` - **FOR EACH** template directory: watch it recursively, and on a change outside the ignored directories compose again after a 200 ms quiet period - `inst-watch-templates`
-4. [x] - `p2` - **RETURN** a stop function that cancels the pending run and closes every watcher - `inst-watch-stop`
+4. [x] - `p2` - **RETURN** a way to stop watching, which cancels the pending run and closes every watcher - `inst-watch-stop`
 
 ## 3. Processes / Business Logic (CDSL)
 

@@ -34,7 +34,7 @@ This repository owns nine templates, each a top-level directory carrying a `fron
 * **A template moves as a unit** - a template is a separately versioned overlay that may be copied into a project, move to gears-frontx-templates or become a project repository of its own; its specification has to move with it and validate where it lands.
 * **No shared id namespace with gears-frontx** - gears-frontx ids are internal to that repository and may change; a document or marker here that carries one breaks silently, because cfs does not report a reference outside the prefixes registered here.
 * **A marker is a claim** - a `@cpt-` marker asserts that a numbered instruction specifies the marked code; a marker that names nothing defined here misleads every reader.
-* **The rule must be checkable** - cfs v1.6.2 keeps all ids in one set: it neither ties a marker or a reference to the system that defines the id nor rejects a `cpt-frontx-*` id in a document, so whatever cfs does not check has to be stated plainly enough for review to check it.
+* **The rule must be checkable** - cfs v1.8.0, the pinned release, keeps all ids in one set: it neither ties a marker or a reference to the system that defines the id nor rejects a `cpt-frontx-*` id in a document, so whatever cfs does not check has to be stated plainly enough for review to check it.
 
 ## Considered Options
 

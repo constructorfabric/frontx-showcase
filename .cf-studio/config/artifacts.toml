@@ -10,7 +10,7 @@
 #
 # Each system registers its own code ([[systems.codebase]] under its block): the root registers scripts/ and the site-owned shell code under site/, and each template registers its <template>/src-app. Nothing under site/ is registered except the site-owned code: site/src-app/mfe_packages/ and the template packages in site/src-app/verify_packages/ are composed copies of the templates, and the rest is applied official template payload.
 #
-# cfs v1.6.2 keeps all ids in one set, so review checks what it does not: that each system's documents carry only ids with that system's prefix, that a template's markers name only that template's ids, and that no document carries a cpt-frontx-* id. cfs accepts an id defined in any system in any document or marker, and it does not report a reference outside the registered prefixes.
+# cfs v1.8.0, the pinned release, keeps all ids in one set, so review checks what it does not: that each system's documents carry only ids with that system's prefix, that a template's markers name only that template's ids, and that no document carries a cpt-frontx-* id. cfs accepts an id defined in any system in any document or marker, and it does not report a reference outside the registered prefixes.
 
 [[ignore]]
 reason = "Dependencies and build output are not source. A template directory can hold an installed node_modules (template-catalogue's catalogue-mfe does), so the pattern matters once that template's code is registered."

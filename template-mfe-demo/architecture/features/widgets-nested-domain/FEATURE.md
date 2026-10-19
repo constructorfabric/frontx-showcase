@@ -172,7 +172,7 @@ Internal system functions and procedures that do not interact with actors direct
 
 **Steps**:
 1. [x] - `p1` - Place the page the lifecycle provides at `/` - `inst-index-page`
-2. [x] - `p1` - For any other path render the shared not-found page and call the settle function after the first commit, since no slot will attach - `inst-not-found-settles`
+2. [x] - `p1` - For any other path render the shared not-found page and signal that the screen has settled after the first commit, since no slot will attach - `inst-not-found-settles`
 3. [x] - `p1` - **RETURN** the root route rendering an outlet, with the not-found route and one child at `/` - `inst-route-tree`
 
 ## 4. States (CDSL)

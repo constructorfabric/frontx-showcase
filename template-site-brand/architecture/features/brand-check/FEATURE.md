@@ -171,7 +171,7 @@ Each rule closes a way the brand drifted: hand-edited outputs, overrides of toke
 1. [x] - `p1` - Report a light palette whose appearance is not `light` and a dark palette whose appearance is not `dark` - `inst-appearance`
 2. [x] - `p1` - **FOR EACH** adopted value and head colour: report a colour fragment, and a colour row whose value is not a full CSS colour - `inst-full-colour`
 3. [x] - `p1` - Report a colour with a literal alpha, and a `-hover` token not derived with `color-mix(in oklab, var(<base>) ...)` - `inst-derived`
-4. [x] - `p1` - Report a token re-wrapped in a colour function - `inst-no-rewrap`
+4. [x] - `p1` - Report a token whose value wraps another token in a colour notation, since a token holds a full colour - `inst-no-rewrap`
 
 ### Rule 4: Contrast
 
