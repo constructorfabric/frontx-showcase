@@ -7,9 +7,13 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 
 const SCRIPT = fileURLToPath(new URL('./release-tags.sh', import.meta.url));
+/** @type {string[]} */
 const dirs = [];
 
-/** A repository with one commit per tag on main, each tagged, and origin/main at the last one; `off` tags go on a commit outside main. */
+/**
+ * A repository with one commit per tag on main, each tagged, and origin/main at the last one; `off` tags go on a commit outside main.
+ * @param {{ main?: string[], off?: string[] }} layout
+ */
 function repo({ main = [], off = [] }) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-tags-'));
   dirs.push(dir);
@@ -36,7 +40,11 @@ function repo({ main = [], off = [] }) {
   return { dir, sha: (tag) => git('rev-parse', `${tag}^{commit}`), run: (tag, sha) => spawnSync(SCRIPT, [tag, sha], { cwd: dir, encoding: 'utf8' }) };
 }
 
-/** The image tags the script prints for a tag, with the sha shown as `sha`. */
+/**
+ * The image tags the script prints for a tag, with the sha shown as `sha`.
+ * @param {ReturnType<typeof repo>} r
+ * @param {string} tag
+ */
 function imageTags(r, tag) {
   const sha = r.sha(tag);
   const out = r.run(tag, sha);
