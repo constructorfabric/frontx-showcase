@@ -88,10 +88,25 @@ describe('release-tags.sh', () => {
 
   it('fails apart from "not on main" when git cannot check the commit', () => {
     const r = repo({ main: ['v0.1.0'] });
-    const out = r.run('v0.1.0', '0123456789abcdef0123456789abcdef01234567');
+    execFileSync('git', ['update-ref', '-d', 'refs/remotes/origin/main'], { cwd: r.dir });
+    const out = r.run('v0.1.0', r.sha('v0.1.0'));
     expect(out.status).toBe(1);
     expect(out.stderr).toMatch(/git exit/);
     expect(out.stderr).not.toMatch(/not on main/);
+  });
+
+  it('fails when the tag is missing or points at another commit, lightweight or annotated', () => {
+    const r = repo({ main: ['v0.1.0', 'v0.2.0'] });
+    execFileSync('git', ['tag', '-a', '-m', 'v0.3.0', 'v0.3.0', 'v0.1.0'], { cwd: r.dir });
+    expect(imageTags(r, 'v0.3.0')).toEqual(['0.3.0', 'sha', '0.3', 'latest']);
+    for (const tag of ['v0.1.0', 'v0.3.0']) {
+      const out = r.run(tag, r.sha('v0.2.0'));
+      expect(out.status, tag).toBe(1);
+      expect(out.stderr).toMatch(/points at .*, not at /);
+    }
+    const missing = r.run('v0.4.0', r.sha('v0.2.0'));
+    expect(missing.status).toBe(1);
+    expect(missing.stderr).toMatch(/not a tag in this clone/);
   });
 
   it('fails on a shallow clone, which cannot tell a commit off main from missing history', () => {
