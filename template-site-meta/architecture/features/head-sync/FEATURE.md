@@ -80,7 +80,7 @@ A static host answers every address with the same built document, so the per-pag
 3. [x] - `p1` - Resolve the realm's navigation history, the singleton the framework router writes through - `inst-resolve-history`
 4. [x] - `p1` - Read the path, query and hash of the history's current location - `inst-read-address`
 5. [x] - `p1` - Resolve the page of the current address through the page map and apply its head, once at start - `inst-apply-now`
-6. [x] - `p1` - Subscribe to the history so that every address change the router writes applies the new page's head; **RETURN** the release function of the subscription - `inst-follow-history`
+6. [x] - `p1` - Subscribe to the history so that every address change the router writes applies the new page's head; **RETURN** the handle that ends the subscription - `inst-follow-history`
 
 ## 3. Processes / Business Logic (CDSL)
 
