@@ -87,7 +87,7 @@ export function createHandler({ secret, getRanges, redeploy, log = console }) {
     }
     // GitHub times a delivery out after 10 seconds; a pull takes longer, so the answer comes first.
     res.writeHead(202).end('deploying');
-    log.log(`pulling latest after ${payload.workflow_run.head_branch} at ${payload.workflow_run.head_sha} (run ${payload.workflow_run.id})`);
+    log.log(`redeploying after ${payload.workflow_run.head_branch} at ${payload.workflow_run.head_sha} (run ${payload.workflow_run.id})`);
     redeploy();
   };
 }
