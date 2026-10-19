@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto';
 import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { clientIp, DEPLOY_BRANCH, DEPLOY_WORKFLOW, DEPLOY_WORKFLOW_PATH, isFromGitHub, parseHookRanges, shouldDeploy, verifySignature } from './verify.mjs';
+import { clientIp, DEPLOY_WORKFLOW, DEPLOY_WORKFLOW_PATH, isFromGitHub, parseHookRanges, shouldDeploy, verifySignature } from './verify.mjs';
 
 const SECRET = 'a'.repeat(64);
 const sign = (body, secret = SECRET) => `sha256=${createHmac('sha256', secret).update(body).digest('hex')}`;
@@ -66,18 +66,29 @@ describe('clientIp', () => {
 describe('shouldDeploy', () => {
   const delivery = (run, action = 'completed') => ({
     action,
-    workflow_run: { name: DEPLOY_WORKFLOW, path: DEPLOY_WORKFLOW_PATH, event: 'push', head_branch: DEPLOY_BRANCH, conclusion: 'success', ...run },
+    workflow_run: { name: DEPLOY_WORKFLOW, path: DEPLOY_WORKFLOW_PATH, event: 'push', head_branch: 'v0.1.0', conclusion: 'success', ...run },
   });
 
-  it('deploys a successful push run of the image workflow on main', () => {
+  it('deploys a successful push run of the image workflow for a release tag', () => {
     expect(shouldDeploy(delivery({}))).toBe(true);
+    expect(shouldDeploy(delivery({ head_branch: 'v12.0.3' }))).toBe(true);
   });
 
-  it('ignores another stage, workflow, workflow file, branch, event or conclusion', () => {
+  it('ignores a push run on main, which publishes nothing', () => {
+    expect(shouldDeploy(delivery({ head_branch: 'main' }))).toBe(false);
+  });
+
+  it('ignores a ref that is not a plain release version', () => {
+    for (const ref of ['feat/x', 'v0.1', 'v0.1.0-rc.1', '0.1.0', 'v01.0.0', 'release/v0.1.0', 'v0.1.0\n']) {
+      expect(shouldDeploy(delivery({ head_branch: ref }))).toBe(false);
+    }
+    expect(shouldDeploy(delivery({ head_branch: undefined }))).toBe(false);
+  });
+
+  it('ignores another stage, workflow, workflow file, event or conclusion', () => {
     expect(shouldDeploy(delivery({}, 'requested'))).toBe(false);
     expect(shouldDeploy(delivery({ name: 'Main CI' }))).toBe(false);
     expect(shouldDeploy(delivery({ path: '.github/workflows/other.yml' }))).toBe(false);
-    expect(shouldDeploy(delivery({ head_branch: 'feat/x' }))).toBe(false);
     expect(shouldDeploy(delivery({ event: 'pull_request' }))).toBe(false);
     expect(shouldDeploy(delivery({ conclusion: 'failure' }))).toBe(false);
   });

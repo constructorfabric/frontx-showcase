@@ -2,10 +2,11 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { BlockList, isIPv4, isIPv6 } from 'node:net';
 
-/** The workflow whose successful run on main publishes the image, by name and by file. */
+/** The workflow whose successful run for a version tag publishes the image, by name and by file. */
 export const DEPLOY_WORKFLOW = 'Docker image';
 export const DEPLOY_WORKFLOW_PATH = '.github/workflows/docker.yml';
-export const DEPLOY_BRANCH = 'main';
+/** A release version tag, the only ref the workflow publishes from; a tag push run reports it as `head_branch`. */
+export const RELEASE_TAG = /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 
 /**
  * GitHub signs the raw request body with the webhook secret and sends `X-Hub-Signature-256: sha256=<hex>`. The digest is computed over the raw bytes, never over re-serialized JSON.
@@ -81,7 +82,7 @@ export function isFromGitHub(ranges, ip) {
 }
 
 /**
- * A workflow_run delivery comes for every workflow, at every stage and for pull requests too; only a successful push run of the image workflow on main deploys. The event check matters: a pull request from a fork whose branch is named main reports `head_branch: main`. While the publish job is gated off the run still succeeds, and the deploy then pulls the unchanged `latest` and changes nothing.
+ * A workflow_run delivery comes for every workflow, at every stage and for pull requests too; only a successful push run of the image workflow for a release tag `vX.Y.Z` deploys, since only such a run publishes. A push to main runs the workflow too and is ignored. The event check matters: a pull request from a fork whose branch is named like a tag reports that name as `head_branch`. The tag and `main` checks run in the workflow, not here. While the publish job is gated off, or when the tag is not the highest release, the run still succeeds, and the deploy then pulls the unchanged `latest` and changes nothing.
  * @param {any} payload - untrusted JSON of unverified shape; every access is optional-chained
  * @returns {boolean}
  */
@@ -92,7 +93,8 @@ export function shouldDeploy(payload) {
     run?.name === DEPLOY_WORKFLOW &&
     run?.path === DEPLOY_WORKFLOW_PATH &&
     run?.event === 'push' &&
-    run?.head_branch === DEPLOY_BRANCH &&
+    typeof run?.head_branch === 'string' &&
+    RELEASE_TAG.test(run.head_branch) &&
     run?.conclusion === 'success'
   );
 }

@@ -11,7 +11,7 @@ services:
       args:
         SITE_ORIGIN: ${SITE_ORIGIN:-http://localhost:8080}
     image: frontx-site:local
-    # Enabled by: the published image (the publish job of .github/workflows/docker.yml, which runs once the SITE_ORIGIN repository variable holds the production origin). The job pushes ghcr.io/<owner>/<repository> of the repository it runs in, constructorfabric/frontx-showcase today. Replace `build` and `image` above with:
+    # Enabled by: the published image (the publish job of .github/workflows/docker.yml, which runs on a version tag vX.Y.Z once the SITE_ORIGIN repository variable holds the production origin; latest is the highest release, X.Y.Z pins one). The job pushes ghcr.io/<owner>/<repository> of the repository it runs in, constructorfabric/frontx-showcase today. Replace `build` and `image` above with:
     # image: ghcr.io/constructorfabric/frontx-showcase:latest
     restart: unless-stopped
     read_only: true
