@@ -17,6 +17,10 @@ function repo({ main = [], off = [] }) {
   git('init', '-q', '-b', 'main');
   git('config', 'user.email', 'test@example.invalid');
   git('config', 'user.name', 'test');
+  // The developer's global signing or hooks must not reach the scratch commits and tags.
+  git('config', 'commit.gpgsign', 'false');
+  git('config', 'tag.gpgSign', 'false');
+  git('config', 'core.hooksPath', '/dev/null');
   git('commit', '-q', '--allow-empty', '-m', 'root');
   for (const tag of main) {
     git('commit', '-q', '--allow-empty', '-m', tag);
@@ -29,7 +33,7 @@ function repo({ main = [], off = [] }) {
     git('tag', tag);
     git('switch', '-q', 'main');
   }
-  return { sha: (tag) => git('rev-parse', `${tag}^{commit}`), run: (tag, sha) => spawnSync(SCRIPT, [tag, sha], { cwd: dir, encoding: 'utf8' }) };
+  return { dir, sha: (tag) => git('rev-parse', `${tag}^{commit}`), run: (tag, sha) => spawnSync(SCRIPT, [tag, sha], { cwd: dir, encoding: 'utf8' }) };
 }
 
 /** The image tags the script prints for a tag, with the sha shown as `sha`. */
@@ -72,6 +76,24 @@ describe('release-tags.sh', () => {
     const out = r.run('v0.2.0', r.sha('v0.2.0'));
     expect(out.status).toBe(1);
     expect(out.stderr).toMatch(/not on main/);
+  });
+
+  it('fails apart from "not on main" when git cannot check the commit', () => {
+    const r = repo({ main: ['v0.1.0'] });
+    const out = r.run('v0.1.0', '0123456789abcdef0123456789abcdef01234567');
+    expect(out.status).toBe(1);
+    expect(out.stderr).toMatch(/git exit/);
+    expect(out.stderr).not.toMatch(/not on main/);
+  });
+
+  it('fails on a shallow clone, which cannot tell a commit off main from missing history', () => {
+    const r = repo({ main: ['v0.1.0', 'v0.2.0'] });
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-tags-shallow-'));
+    dirs.push(dir);
+    execFileSync('git', ['clone', '-q', '--depth', '1', '--no-single-branch', `file://${r.dir}`, dir]);
+    const out = spawnSync(SCRIPT, ['v0.2.0', r.sha('v0.2.0')], { cwd: dir, encoding: 'utf8' });
+    expect(out.status).toBe(1);
+    expect(out.stderr).toMatch(/shallow/);
   });
 
   it('fails on a tag that is not a plain release version', () => {

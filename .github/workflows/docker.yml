@@ -60,7 +60,7 @@ jobs:
       env:
         SHA: ${{ github.sha }}
         TAG: ${{ github.ref_name }}
-      run: deploy/release-tags.sh "$TAG" "$SHA"
+      run: deploy/release-tags.sh "$TAG" "$SHA" || { echo "::error::release tag $TAG rejected; the step log says why"; exit 1; }
 
   # Publishes the image to GHCR from a version tag vX.Y.Z on a commit of main, as X.Y.Z and the commit sha, as X.Y for the highest patch of its line and as latest for the highest release; pushes to main publish nothing, so a deploy always follows a released version. The image bakes in its origin, so this job waits for the production one: it runs once the repository variable SITE_ORIGIN holds the address the site is served from (https://<domain>, with the sub-path if any). The image is smoke-tested with that origin before it is pushed, and a successful run is what the deploy webhook (deploy/webhook/) acts on.
   publish:

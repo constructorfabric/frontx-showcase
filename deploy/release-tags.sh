@@ -9,8 +9,17 @@ version="${tag#v}"
 if [ "$tag" = "$version" ] || ! printf '%s\n' "$version" | grep -Eq "$release" || [ "$(printf '%s\n' "$tag" | wc -l)" -ne 1 ]; then
   echo "$tag is not a release version vX.Y.Z" >&2; exit 1
 fi
-if ! git merge-base --is-ancestor "$sha" origin/main 2>/dev/null; then
+# A shallow clone cannot tell a commit off main from history it does not hold.
+if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+  echo "cannot check $sha against origin/main: the clone is shallow; it needs full history" >&2; exit 1
+fi
+# merge-base exits 1 when the commit is not on main and above 1 when git cannot answer (no origin/main, an unknown sha).
+status=0
+git merge-base --is-ancestor "$sha" origin/main || status=$?
+if [ "$status" -eq 1 ]; then
   echo "$tag points at $sha, which is not on main" >&2; exit 1
+elif [ "$status" -ne 0 ]; then
+  echo "cannot check $sha against origin/main (git exit $status): the sha or origin/main is not in this clone" >&2; exit 1
 fi
 releases="$(git tag --merged origin/main --list 'v*.*.*' | sed 's/^v//' | grep -E "$release" | sort -V)"
 line="${version%.*}"
