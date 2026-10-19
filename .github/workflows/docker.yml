@@ -43,10 +43,29 @@ jobs:
     - name: Smoke-test the container
       run: deploy/smoke.sh frontx-site:ci http://localhost:8080
 
+  # A tag run checks its tag whether or not the image can be published yet: a tag that is not a plain vX.Y.Z on a commit of main fails the run, so it never publishes and never deploys.
+  release-check:
+    name: Check the release tag
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+
+    - name: Check the tag and list its image tags
+      env:
+        SHA: ${{ github.sha }}
+        TAG: ${{ github.ref_name }}
+      run: deploy/release-tags.sh "$TAG" "$SHA"
+
   # Publishes the image to GHCR from a version tag vX.Y.Z on a commit of main, as X.Y.Z and the commit sha, as X.Y for the highest patch of its line and as latest for the highest release; pushes to main publish nothing, so a deploy always follows a released version. The image bakes in its origin, so this job waits for the production one: it runs once the repository variable SITE_ORIGIN holds the address the site is served from (https://<domain>, with the sub-path if any). The image is smoke-tested with that origin before it is pushed, and a successful run is what the deploy webhook (deploy/webhook/) acts on.
   publish:
     name: Publish the image
-    needs: build
+    needs: [ build, release-check ]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && vars.SITE_ORIGIN != ''
     # One publish at a time, so each run decides X.Y and latest against every release published before it. GitHub keeps one waiting run per group: a third tag pushed while one waits replaces the waiting one, which then needs a re-run.
     concurrency:
@@ -58,25 +77,12 @@ jobs:
       contents: read
       packages: write
     steps:
-    # Full history and tags, for the checks below.
+    # Full history and tags, for deploy/release-tags.sh.
     - name: Checkout code
       uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       with:
         persist-credentials: false
         fetch-depth: 0
-
-    # The tag must be a plain release version on a commit of main; anything else fails the run, so a tag on an unmerged branch never publishes and never deploys.
-    - name: Check the tag
-      env:
-        SHA: ${{ github.sha }}
-        TAG: ${{ github.ref_name }}
-      run: |
-        if ! printf '%s' "$TAG" | grep -Eq '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'; then
-          echo "::error::$TAG is not a release version vX.Y.Z"; exit 1
-        fi
-        if ! git merge-base --is-ancestor "$SHA" origin/main; then
-          echo "::error::$TAG points at $SHA, which is not on main"; exit 1
-        fi
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
@@ -105,20 +111,15 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    # The image the smoke test checked, pushed as is under each tag. The releases are the vX.Y.Z tags on main: X.Y moves only to the highest patch of its line and latest only to the highest release, so a late patch to an older line or a re-run of an older release does not roll either back.
+    # The image the smoke test checked, pushed as is under each tag deploy/release-tags.sh lists.
     - name: Push the image
       env:
         REPO: ${{ github.repository }}
         SHA: ${{ github.sha }}
         TAG: ${{ github.ref_name }}
       run: |
-        releases="$(git tag --merged origin/main --list 'v*.*.*' | sed 's/^v//' | grep -E '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' | sort -V)"
-        version="${TAG#v}"
-        line="${version%.*}"
-        tags="$version $SHA"
-        if [ "$(printf '%s\n' "$releases" | awk -v p="$line." 'index($0, p) == 1' | tail -n 1)" = "$version" ]; then tags="$tags $line"; fi
-        if [ "$(printf '%s\n' "$releases" | tail -n 1)" = "$version" ]; then tags="$tags latest"; fi
-        echo "image tags: $tags"
+        tags="$(deploy/release-tags.sh "$TAG" "$SHA")"
+        printf 'image tags:\n%s\n' "$tags"
         IMAGE="ghcr.io/$(printf '%s' "$REPO" | tr '[:upper:]' '[:lower:]')"
         for tag in $tags; do
           docker tag frontx-site:publish "$IMAGE:$tag"
