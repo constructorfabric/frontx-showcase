@@ -2,13 +2,13 @@ import { createHmac } from 'node:crypto';
 import { createServer, request } from 'node:http';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createHandler, HOOK_PATH, MAX_BODY_BYTES } from './handler.mjs';
-import { DEPLOY_BRANCH, DEPLOY_WORKFLOW, DEPLOY_WORKFLOW_PATH, parseHookRanges } from './verify.mjs';
+import { DEPLOY_WORKFLOW, DEPLOY_WORKFLOW_PATH, parseHookRanges } from './verify.mjs';
 
 const SECRET = 's'.repeat(64);
 const sign = (body, secret = SECRET) => `sha256=${createHmac('sha256', secret).update(body).digest('hex')}`;
 const deployable = JSON.stringify({
   action: 'completed',
-  workflow_run: { id: 1, head_sha: 'abc', name: DEPLOY_WORKFLOW, path: DEPLOY_WORKFLOW_PATH, event: 'push', head_branch: DEPLOY_BRANCH, conclusion: 'success' },
+  workflow_run: { id: 1, head_sha: 'abc', name: DEPLOY_WORKFLOW, path: DEPLOY_WORKFLOW_PATH, event: 'push', head_branch: 'v0.1.0', conclusion: 'success' },
 });
 const quiet = { log: () => {}, warn: () => {} };
 

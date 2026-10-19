@@ -1,4 +1,4 @@
-// The deploy webhook: GitHub posts a signed workflow_run delivery to /deploy-hook when the image workflow finishes, and a successful push run on main pulls the published image and restarts the site service through the host's Docker. The request checks are in handler.mjs and verify.mjs.
+// The deploy webhook: GitHub posts a signed workflow_run delivery to /deploy-hook when the image workflow finishes, and a successful push run for a release tag vX.Y.Z pulls the published image and restarts the site service through the host's Docker. The request checks are in handler.mjs and verify.mjs.
 import { execFile } from 'node:child_process';
 import { createServer } from 'node:http';
 import { createHandler } from './handler.mjs';
