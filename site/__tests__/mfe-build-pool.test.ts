@@ -8,9 +8,8 @@
  * the order of events is set by handshakes, not by timing. What is pinned is
  * the contract `buildMfes` documents: up to `concurrency` builds at once, a
  * start notice per build, no new build after the first failure, the running
- * ones finish, each package's output prints as one block under its header, a
- * signal stops the live builds with their output so far, and the rejection is
- * the failed package's `buildFailureMessage`.
+ * ones finish, each package's output prints as one block under its header, and
+ * the rejection is the failed package's `buildFailureMessage`.
  */
 
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
@@ -113,7 +112,6 @@ const exists = (file: string): void => {
  */
 function capture(run: () => Promise<void>): { writes: string[]; settled: Promise<unknown> } {
   const writes: string[] = [];
-  // Like a stream, calls back once the chunk is flushed: the signal handler waits for that.
   const record = (chunk: unknown, callback?: unknown): boolean => {
     if (chunk !== '') writes.push(String(chunk));
     if (typeof callback === 'function') callback();
@@ -250,47 +248,6 @@ describe('buildMfes', () => {
       await expect(tools.buildMfes(mfes)).rejects.toThrow(tools.BUILD_CONCURRENCY_ENV_VAR);
     } finally {
       vi.unstubAllEnvs();
-    }
-  });
-
-  it('on SIGINT kills the live builds, prints what they wrote so far and raises the signal again', async () => {
-    const { tools, dir, mfes } = await fixture([
-      { name: 'pkg-x', wait: true },
-      { name: 'pkg-y', wait: true },
-    ]);
-    const before = new Set(process.listeners('SIGINT'));
-    // The pool raises the signal on its own process; here that would end the test worker.
-    const raise = vi.spyOn(process, 'kill').mockImplementation(() => true);
-    try {
-      const { writes, settled } = capture(() => tools.buildMfes(mfes, 2));
-      await vi.waitFor(() => {
-        exists(join(dir('pkg-x'), 'started'));
-        exists(join(dir('pkg-y'), 'started'));
-      }, { timeout: 10_000 });
-      const handler = process.listeners('SIGINT').find((listener) => !before.has(listener));
-      expect(handler).toBeDefined();
-      // Called directly rather than emitted, so the test runner's own listeners stay out of it.
-      (handler as (signal: NodeJS.Signals) => void)('SIGINT');
-
-      const error = await settled;
-      expect(raise).toHaveBeenCalledWith(process.pid, 'SIGINT');
-      // Stopped, not failed: the killed builds record no build failure.
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).toBe('buildMfes: stopped by SIGINT.');
-      for (const name of ['pkg-x', 'pkg-y']) {
-        // Printed once, by the handler; the worker the kill ends prints no block of its own.
-        const headers = writes.filter((write) => write.replace(/^\n+/, '').startsWith(`📦 ${name} stopped by SIGINT`));
-        expect(headers, name).toHaveLength(1);
-        expect(lineIndex(writes, `📦 ${name} failed in `), name).toBe(-1);
-        expect(lineIndex(writes, `📦 ${name} built in `), name).toBe(-1);
-      }
-      expect(existsSync(join(dir('pkg-x'), 'finished'))).toBe(false);
-      expect(existsSync(join(dir('pkg-y'), 'finished'))).toBe(false);
-      // The pool leaves no handler behind.
-      expect(process.listeners('SIGINT').filter((listener) => !before.has(listener))).toEqual([]);
-      expect(process.listeners('SIGTERM')).toEqual(expect.not.arrayContaining([handler]));
-    } finally {
-      raise.mockRestore();
     }
   });
 });
