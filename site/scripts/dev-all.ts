@@ -146,10 +146,12 @@ async function main() {
 // names the package, how it failed and the command that shows the real error -
 // so it is printed as its message rather than as a value. `console.error` with
 // an Error object prints a stack trace, which buries a multi-line hint in frames
-// that point at this script instead of at the package to fix.
+// that point at this script instead of at the package to fix. Every child has
+// exited by then, so `exitCode` lets a piped stdout drain the buffered build
+// output that `process.exit` could cut off.
 // @cpt-begin:cpt-site-flow-dev-run-start:p3:inst-report-failure
 main().catch((err) => {
   console.error(`❌ ${err instanceof Error ? err.message : String(err)}`);
-  process.exit(1);
+  process.exitCode = 1;
 });
 // @cpt-end:cpt-site-flow-dev-run-start:p3:inst-report-failure

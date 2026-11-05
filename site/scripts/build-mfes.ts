@@ -29,7 +29,9 @@ async function main() {
 // `buildMfes` already phrases its rejection as a full report (which
 // package, which exit code, which command shows the underlying type error), so
 // it is printed as-is. Prefixing it would only restate its first line.
+// `exitCode` rather than `process.exit`: every build has exited by now, and
+// exiting at once could drop buffered output still queued on a piped stdout.
 main().catch((err) => {
   console.error(`❌ ${err instanceof Error ? err.message : String(err)}`);
-  process.exit(1);
+  process.exitCode = 1;
 });

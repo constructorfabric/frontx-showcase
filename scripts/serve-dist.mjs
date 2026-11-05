@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import process from 'node:process';
+import { pipeline } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 import zlib from 'node:zlib';
 import { isEntryPoint } from './entry-point.mjs';
@@ -94,8 +95,8 @@ export function resolveFile(root, pathname) {
 function chooseEncoding(header) {
   const accepted = new Set();
   for (const part of (header ?? '').split(',')) {
-    const [name, ...params] = part.trim().toLowerCase().split(';');
-    const q = params.map((p) => p.trim()).find((p) => p.startsWith('q='));
+    const [name, ...params] = part.split(';').map((p) => p.trim().toLowerCase());
+    const q = params.find((p) => p.startsWith('q='));
     if (name && (q === undefined || Number(q.slice(2)) > 0)) accepted.add(name);
   }
   if (accepted.has('br')) return 'br';
@@ -103,6 +104,32 @@ function chooseEncoding(header) {
   return null;
 }
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+
+/**
+ * Whether an If-None-Match value names `etag`: `*`, or a comma-separated list of tags compared weakly (RFC 9110 section 13.1.2), so `W/"x"` matches `"x"`.
+ * @param {string | undefined} header - the request's If-None-Match
+ * @param {string} etag - the file's tag
+ * @returns {boolean}
+ */
+// @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
+export function matchesEtag(header, etag) {
+  const opaque = (/** @type {string} */ tag) => tag.trim().replace(/^W\//, '');
+  return (header ?? '').split(',').some((tag) => tag.trim() === '*' || opaque(tag) === opaque(etag));
+}
+// @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
+
+/**
+ * The port a PORT value names, or null when it is not an integer from 0 to 65535.
+ * @param {string | undefined} value - PORT; unset or empty means 8080
+ * @returns {number | null}
+ */
+// @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-listen
+export function parsePort(value) {
+  if (value === undefined || value === '') return 8080;
+  const port = /^\d+$/.test(value) ? Number(value) : NaN;
+  return port <= 65535 ? port : null;
+}
+// @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-listen
 
 /**
  * @param {http.ServerResponse} res
@@ -169,41 +196,45 @@ export function createServer(root = DIST) {
 
     // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
     const type = TYPES[path.extname(file).toLowerCase()] ?? 'application/octet-stream';
+    // The policy follows the file served, not the raw path: `/assets/..%2Fmf-manifest.json` names a root file.
+    const served = `/${path.relative(base, file).split(path.sep).join('/')}`;
     const etag = `"${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}"`;
     /** @type {http.OutgoingHttpHeaders} */
     const headers = {
       ...SECURITY_HEADERS,
       'Content-Type': type,
-      'Cache-Control': HASHED.test(pathname) ? 'public, max-age=31536000, immutable' : 'no-cache',
+      'Cache-Control': HASHED.test(served) ? 'public, max-age=31536000, immutable' : 'no-cache',
       ETag: etag,
       'Last-Modified': stats.mtime.toUTCString(),
     };
+    // A 304 carries the Vary its 200 would, so a cache keys both the same way.
+    const compressible = COMPRESSIBLE.test(type) && stats.size >= MIN_COMPRESS_BYTES;
+    if (compressible) headers.Vary = 'Accept-Encoding';
     // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
     // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
-    if (req.headers['if-none-match'] === etag) {
+    if (matchesEtag(req.headers['if-none-match'], etag)) {
       res.writeHead(304, headers);
       return res.end();
     }
     // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
 
     // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-    const compressible = COMPRESSIBLE.test(type) && stats.size >= MIN_COMPRESS_BYTES;
     const encoding = compressible ? chooseEncoding(req.headers['accept-encoding']) : null;
-    if (compressible) headers.Vary = 'Accept-Encoding';
     if (encoding) headers['Content-Encoding'] = encoding;
     else headers['Content-Length'] = stats.size;
     res.writeHead(200, headers);
     if (req.method === 'HEAD') return res.end();
 
-    const source = fs.createReadStream(file);
-    const body =
+    const transform =
       encoding === 'br'
-        ? source.pipe(zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }))
+        ? zlib.createBrotliCompress({ params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } })
         : encoding === 'gzip'
-          ? source.pipe(zlib.createGzip())
-          : source;
-    source.on('error', () => res.destroy());
-    body.pipe(res);
+          ? zlib.createGzip()
+          : null;
+    // pipeline destroys every stream on an error or on a client that leaves mid-body, so no file stays open.
+    const source = fs.createReadStream(file);
+    if (transform) pipeline(source, transform, res, () => {});
+    else pipeline(source, res, () => {});
     // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
   });
 }
@@ -218,9 +249,18 @@ if (isEntryPoint(import.meta.url)) {
   }
   // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-no-build
   // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-listen
-  const port = Number(process.env.PORT || 8080);
+  const port = parsePort(process.env.PORT);
+  if (port === null) {
+    console.error(`serve-dist: PORT must be an integer from 0 to 65535, got "${process.env.PORT}"`);
+    process.exit(1);
+  }
   const host = process.env.HOST || '0.0.0.0';
-  createServer(DIST).listen(port, host, () => {
+  const server = createServer(DIST);
+  server.on('error', (error) => {
+    console.error(`serve-dist: cannot listen on ${host}:${port}: ${error.message}`);
+    process.exit(1);
+  });
+  server.listen(port, host, () => {
     console.log(`serve-dist: site/dist at http://${host}:${port}/`);
   });
   // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-listen

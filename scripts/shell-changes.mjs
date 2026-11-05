@@ -50,6 +50,7 @@ export const SHELL_CHANGES = {
     'vite.config.ts',
   ],
   added: [
+    '__tests__/mfe-build-concurrency.test.ts',
     'packages/react/src/mfe/__tests__/ThemeAwareReactLifecycle.font.test.tsx',
     'public/brand/apple-touch-icon.png',
     'public/brand/favicon-32.png',

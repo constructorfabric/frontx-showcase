@@ -291,7 +291,7 @@ export function buildFailureMessage(
       `MFE build for ${name} was terminated by signal ${failure.signal}.`,
       `The build was stopped from outside rather than failing to compile, so the output`,
       `above holds no diagnostics for it. On ${failure.signal} the usual causes are the`,
-      `system running out of memory during the declaration build and a manual interrupt.`,
+      `system running out of memory during the build and a manual interrupt.`,
     ].join('\n');
   }
 

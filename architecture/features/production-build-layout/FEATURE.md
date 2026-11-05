@@ -128,17 +128,18 @@ Hosting is not chosen yet, and the shell's build fetches the aggregate from a fi
 
 **Error Scenarios**:
 - `site/dist/index.html` is missing: the command exits with a failure that names `npm run build`.
+- `PORT` is not an integer from 0 to 65535, or the address cannot be listened on (already in use, for one): the command prints one line naming the problem, the host and port where it applies, and exits with a failure.
 - A request names no file under `site/dist/`, or a path that leaves it: the answer is `404 Not Found` as plain text that is never cached.
 
 **Steps**:
 1. [x] - `p2` - **IF** `site/dist/index.html` is missing, exit with a failure that names `npm run build` - `inst-if-no-build`
-2. [x] - `p2` - Listen on `HOST` (`0.0.0.0` by default) and `PORT` (8080 by default) and print the address - `inst-listen`
+2. [x] - `p2` - Listen on `HOST` (`0.0.0.0` by default) and `PORT` (8080 by default) and print the address; **IF** `PORT` is not an integer from 0 to 65535 or the listen fails, print one line and exit with a failure - `inst-listen`
 3. [x] - `p2` - **IF** the method is not GET or HEAD, answer 405 - `inst-if-method`
 4. [x] - `p2` - Decode the path without its query string; **IF** it does not decode, carries a NUL byte or resolves outside `site/dist/`, it names nothing - `inst-resolve-path`
 5. [x] - `p2` - **IF** the path names a folder, serve its `index.html` without a redirect; **IF** it names nothing, answer 404 - `inst-folder-index`
-6. [x] - `p2` - Set the security headers, `Cache-Control` immutable under an `assets/` folder and `no-cache` elsewhere, the content type by extension (`*.md` as `text/plain; charset=utf-8`, `*.webmanifest` as `application/manifest+json`) and the validators - `inst-headers`
-7. [x] - `p2` - **IF** the request's `If-None-Match` matches, answer 304 - `inst-if-unchanged`
-8. [x] - `p2` - Compress a text body with br or gzip as `Accept-Encoding` allows and send it; a HEAD request gets the headers only - `inst-compress`
+6. [x] - `p2` - Set the security headers, `Cache-Control` immutable for a file under an `assets/` folder of the resolved path and `no-cache` elsewhere, the content type by extension (`*.md` as `text/plain; charset=utf-8`, `*.webmanifest` as `application/manifest+json`), the validators and `Vary: Accept-Encoding` for a compressible body - `inst-headers`
+7. [x] - `p2` - **IF** the request's `If-None-Match` is `*` or lists the file's tag, compared weakly, answer 304 with the same headers - `inst-if-unchanged`
+8. [x] - `p2` - Compress a text body with br or gzip as `Accept-Encoding` allows and send it, closing the file when the client leaves mid-body; a HEAD request gets the headers only - `inst-compress`
 9. [x] - `p2` - Answer an error as plain text `<code> <status>` with `Cache-Control: no-store` - `inst-error`
 
 ## 3. Processes / Business Logic (CDSL)
@@ -237,4 +238,4 @@ The system **MUST** serve `site/dist/` from Node's standard library with the sec
 - [x] The bootstrap registers the four base domains before fetching, throws when the fetch fails and registers schemas, manifest, entries and the host's extensions per package (`bootstrap.test.ts`).
 - [x] A failed screen mount is reported with its screen and still fails the action; the report clears once a screen mounts (`bootstrap.test.ts`, "screen load failures").
 - [x] `npm run build` followed by `npm run preview` serves every address of DESIGN section 4.5 from `site/dist/`, with the generated discovery files beside the host.
-- [x] `npm start` serves the document at `/` and `/?screen=docs`, a folder's index without a trailing slash, hashed assets as immutable and every other file with `no-cache`, the twins as plain text and the web manifest with its type, the security headers without a `Server` header, br or gzip on request; it answers 404 to a missing file and to `/../package.json` and `/%2e%2e/package.json`, sends no body to HEAD, answers 405 to POST and refuses to start without a build (`scripts/serve-dist.test.mjs`).
+- [x] `npm start` serves the document at `/` and `/?screen=docs`, a folder's index without a trailing slash, hashed assets as immutable and every other file with `no-cache`, decided by the resolved file rather than the raw path, the twins as plain text and the web manifest with its type, the security headers without a `Server` header, br or gzip on request; it answers 304 to a matching, listed, weak or `*` `If-None-Match` with the `Vary` of the 200, closes the file when a client leaves mid-body and keeps answering, refuses a `PORT` outside 0 to 65535; it answers 404 to a missing file and to `/../package.json` and `/%2e%2e/package.json`, sends no body to HEAD, answers 405 to POST and refuses to start without a build (`scripts/serve-dist.test.mjs`).

@@ -1,10 +1,11 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import fs, { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createServer, missingBuild } from './serve-dist.mjs';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { createServer, matchesEtag, missingBuild, parsePort } from './serve-dist.mjs';
 
 let root;
 let dist;
@@ -44,6 +45,8 @@ beforeAll(async () => {
   write('docs/get-started.md', '# Get started\n');
   write('site.webmanifest', '{"name":"FrontX"}');
   write('blob.unknownext', 'bytes');
+  // Random text barely compresses, so neither body fits in the socket buffers before the client leaves.
+  write('assets/large-0a1b2c.js', randomBytes(512 * 1024).toString('base64'));
   server = createServer(dist);
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   port = /** @type {import('node:net').AddressInfo} */ (server.address()).port;
@@ -115,11 +118,82 @@ describe('serve-dist', () => {
     expect(plain.body.toString()).toBe(SCRIPT);
   });
 
-  it('answers 304 when the validator matches', async () => {
+  it('reads Accept-Encoding parameters with spaces around the semicolon', async () => {
+    const res = await request('/assets/index-abc123.js', { headers: { 'accept-encoding': 'gzip;q=0.5, br ; q=0.8' } });
+    expect(res.headers['content-encoding']).toBe('br');
+  });
+
+  it('answers 304 when the validator matches, with the Vary the 200 carries', async () => {
     const first = await request('/');
     const again = await request('/', { headers: { 'if-none-match': first.headers.etag } });
     expect(again.status).toBe(304);
     expect(again.body.length).toBe(0);
+
+    const script = await request('/assets/index-abc123.js');
+    const unchanged = await request('/assets/index-abc123.js', { headers: { 'if-none-match': script.headers.etag } });
+    expect(unchanged.status).toBe(304);
+    expect(script.headers.vary).toBe('Accept-Encoding');
+    expect(unchanged.headers.vary).toBe('Accept-Encoding');
+    expect(first.headers.vary).toBeUndefined();
+    expect(again.headers.vary).toBeUndefined();
+  });
+
+  it('matches If-None-Match as a list, weakly and as *', () => {
+    expect(matchesEtag('"a-1"', '"a-1"')).toBe(true);
+    expect(matchesEtag('"b-2", "a-1"', '"a-1"')).toBe(true);
+    expect(matchesEtag('W/"a-1"', '"a-1"')).toBe(true);
+    expect(matchesEtag('*', '"a-1"')).toBe(true);
+    expect(matchesEtag('"b-2"', '"a-1"')).toBe(false);
+    expect(matchesEtag('"a-1-x"', '"a-1"')).toBe(false);
+    expect(matchesEtag(undefined, '"a-1"')).toBe(false);
+    expect(matchesEtag('', '"a-1"')).toBe(false);
+  });
+
+  it('decides the cache policy from the file served, not the raw path', async () => {
+    const immutable = 'public, max-age=31536000, immutable';
+    // Looks hashed, names a root file.
+    const escaped = await request('/assets/..%2Fsite.webmanifest');
+    expect(escaped.status).toBe(200);
+    expect(escaped.headers['cache-control']).toBe('no-cache');
+    // Looks unhashed, names a hashed asset.
+    for (const address of ['/docs/../assets/index-abc123.js', '/%61ssets/index-abc123.js']) {
+      const res = await request(address);
+      expect(res.status, address).toBe(200);
+      expect(res.headers['cache-control'], address).toBe(immutable);
+    }
+  });
+
+  it('closes the file when a client leaves mid-body and keeps answering', async () => {
+    const opened = vi.spyOn(fs, 'createReadStream');
+    try {
+      for (const headers of [{}, { 'accept-encoding': 'gzip' }]) {
+        opened.mockClear();
+        await new Promise((resolve) => {
+          const req = http.request({ host: '127.0.0.1', port, path: '/assets/large-0a1b2c.js', headers }, (res) => {
+            res.once('data', () => {
+              req.destroy();
+              resolve(undefined);
+            });
+          });
+          req.on('error', () => {});
+          req.on('close', () => resolve(undefined));
+          req.end();
+        });
+        await vi.waitFor(() => expect(opened.mock.results[0]?.value.destroyed).toBe(true));
+        expect((await request('/')).status).toBe(200);
+      }
+    } finally {
+      opened.mockRestore();
+    }
+  });
+
+  it('reads PORT as an integer from 0 to 65535, 8080 when unset', () => {
+    expect(parsePort(undefined)).toBe(8080);
+    expect(parsePort('')).toBe(8080);
+    expect(parsePort('0')).toBe(0);
+    expect(parsePort('3000')).toBe(3000);
+    expect(parsePort('65535')).toBe(65535);
+    for (const value of ['65536', '-1', '80.5', 'abc', ' 80', '0x50']) expect(parsePort(value), value).toBeNull();
   });
 
   it('answers 404 as uncached plain text to a missing file and to every path that leaves the build', async () => {

@@ -76,7 +76,7 @@ docker run --rm -p 8080:8080 --read-only --tmpfs /data:uid=10001,gid=10001 --tmp
 
 A Node host such as DigitalOcean App Platform runs the same build without the image: it builds with `npm ci && npm run setup && npm run build` with `SITE_ORIGIN` set and runs `npm start`, which serves `site/dist` on `$PORT` with the image's headers, cache policy and content types (`scripts/serve-dist.mjs`, Node's standard library only). The image stays the main deploy path.
 
-The MFE packages build several at once, half the cores up to 6; `FRONTX_BUILD_CONCURRENCY=<n>` sets the number, and `1` builds them one after another, for a host with little memory.
+The MFE packages build several at once, half the cores up to 6; `FRONTX_BUILD_CONCURRENCY=<n>` sets the number, and `1` builds them one after another, for a host with little memory. A value above the default trades memory for speed: each build is a full Vite run.
 
 `deploy/` holds the stack for a host: `docker-compose.yml` runs the image behind an edge Caddy (`deploy/Caddyfile`) and, later, the deploy webhook (`deploy/webhook/`), which takes GitHub's signed `workflow_run` delivery of a successful push run of the image workflow for a version tag and pulls and restarts the site. Without a domain the stack runs locally: `docker compose -f deploy/docker-compose.yml up -d --build` serves `http://localhost:8080/` and the sub-path `http://localhost:8080/frontx/` (with `SITE_ORIGIN=http://localhost:8080/frontx` the canonical addresses match the sub-path). `.github/workflows/docker.yml` builds the image on every pull request to `main`, every push to `main` and every version tag, and checks it with `deploy/smoke.sh <image> <origin>`, which also runs locally. Only a version tag publishes the image.
 
