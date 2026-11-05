@@ -57,6 +57,7 @@ export const SHELL_CHANGES = {
     'public/brand/icon-512.png',
     'public/brand/icon-maskable-512.png',
     'public/og-image.png',
+    'scripts/lib/build-freshness.ts',
     'src-app/app/layout/Header.test.tsx',
     'src-app/app/layout/Layout.module.css',
     'src-app/app/layout/Overlay.module.css',

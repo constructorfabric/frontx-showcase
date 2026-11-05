@@ -19,6 +19,18 @@ import {
   noDiscoveredPackagesNotice,
   type MfeInfo,
 } from './lib/mfe-tools.js';
+import { packagesStale, staleMfes } from './lib/build-freshness.js';
+
+/** `--incremental` (dev:fast): rebuild only the packages and MFEs whose outputs are missing or older than their sources. */
+const incremental = process.argv.slice(2).includes('--incremental');
+
+function runNpmScript(script: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const proc = spawn('/bin/sh', ['-c', `npm run ${script}`], { stdio: 'inherit', cwd: process.cwd() });
+    proc.on('error', reject);
+    proc.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`npm run ${script} failed with exit code ${code}`))));
+  });
+}
 
 // Determine main app command based on available scripts
 function getMainAppCommand(): string {
@@ -83,7 +95,17 @@ function generateManifests(): Promise<void> {
 // Main execution
 // @cpt-dod:cpt-site-dod-dev-run-strict-ports:p3
 async function main() {
-  console.log('🚀 Starting dev:all...\n');
+  console.log(incremental ? '⚡ Starting dev:fast...\n' : '🚀 Starting dev:all...\n');
+
+  // The full run's packages build happens in the predev:all hook.
+  if (incremental) {
+    if (packagesStale(process.cwd())) {
+      console.log('📦 Solution packages changed, rebuilding them...\n');
+      await runNpmScript('build:packages');
+    } else {
+      console.log('✅ Solution packages are up to date.\n');
+    }
+  }
 
   // @cpt-begin:cpt-site-flow-dev-run-start:p3:inst-discover
   const { packages, skippedExamples } = getMFEPackages();
@@ -100,9 +122,17 @@ async function main() {
   }
   // @cpt-end:cpt-site-flow-dev-run-start:p3:inst-discover
 
-  // Step 1: Build all MFEs (produces dist/ with mf-manifest.json)
+  // Step 1: Build all MFEs (produces dist/ with mf-manifest.json); an incremental run builds only the stale ones
   // @cpt-begin:cpt-site-flow-dev-run-start:p3:inst-build-packages
-  await buildMfesSequentially(packages);
+  const toBuild = incremental ? staleMfes(process.cwd(), packages) : packages;
+  if (incremental) {
+    console.log(
+      toBuild.length === 0
+        ? '✅ Every MFE build is up to date.\n'
+        : `🔁 Rebuilding ${toBuild.length} changed MFE(s): ${toBuild.map((mfe) => mfe.name).join(', ')}\n`,
+    );
+  }
+  await buildMfesSequentially(toBuild);
   // @cpt-end:cpt-site-flow-dev-run-start:p3:inst-build-packages
 
   // Step 2: Generate manifests (reads dist/mf-manifest.json, produces generated-mfe-manifests.ts).

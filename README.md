@@ -38,7 +38,7 @@ export NPM_CONFIG_USERCONFIG="$HOME/.config/frontx-site/npmrc"   # contains: reg
 ```bash
 npm ci           # repository tooling, including the FrontX CLI
 npm run setup    # compose the templates into site/, then install the site
-npm run dev      # host at http://localhost:5173/, which opens the home screen
+npm start        # host at http://localhost:5173/, which opens the home screen; rebuilds only what changed
 ```
 
 Screens are addressed in the query string: `/?screen=<token>[;route=<path inside the screen>]`, for example `/?screen=docs;route=get-started`.
@@ -51,6 +51,7 @@ Screens are addressed in the query string: `/?screen=<token>[;route=<path inside
 | `npm run site:data` | Generate the templates screen's pages, the docs screen's version data and the libs screen's library data from their sources; `-- --check` reports drift |
 | `npm run shell:changes` | List the site's changes to the files of the applied official templates; `-- --check` compares them and the long-dash adaptation with the pristine templates; `-- --adapt` writes the adaptation after a template upgrade |
 | `npm run dev` | Build the MFE packages, serve them and start the host, which also serves the pages' plain-text twins |
+| `npm start`, `npm run dev:fast` | Same as `npm run dev`, but rebuild only the solution packages and MFEs whose files are newer than their build outputs |
 | `npm run dev:smoke` | Run `npm run dev` until the host and every remote entry answer, then stop it |
 | `npm run build` | Assemble, build the site, lay the MFE remotes out in `site/dist/mfe/` (`npm run site:dist`; the result works from any static server, at the root or under a sub-path), generate the SEO outputs, the web manifest and the plain-text twins; needs `origin` in `site.config.json`, or `SITE_ORIGIN` for a local preview (`SITE_ORIGIN=http://localhost:4173 npm run build`) |
 | `npm run seo:check` | Page metadata rules, and that the generated outputs in `site/dist/` match the sources |

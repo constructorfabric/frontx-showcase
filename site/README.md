@@ -153,6 +153,7 @@ my-app/
 | Script | What it does |
 |--------|--------------|
 | `npm run dev:all` | Build MFEs, then run the host + every MFE preview server together |
+| `npm run dev:fast` | Like `dev:all`, but rebuilds only the solution packages and MFEs whose sources are newer than their build outputs |
 | `npm run dev` | Host only (rebuilds packages + MFEs, then Vite dev server) |
 | `npm run build` | Full production build |
 | `npm run build:packages` | Build the solution workspace packages |

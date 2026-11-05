@@ -208,6 +208,7 @@ import { Button, Card, CardContent } from '@gears-frontx/ui-kit';
 ```bash
 # Development
 npm run dev:all           # build MFEs + start host and all MFE preview servers
+npm run dev:fast          # like dev:all, but rebuilds only changed packages and MFEs
 npm run dev               # host only (rebuilds packages + MFEs, then vite)
 npm run build             # full production build
 npm run build:packages    # build solution workspace packages

@@ -35,6 +35,7 @@
     "dev": "npm run build:mfes && npm run generate:mfe-manifests && vite",
     "predev:all": "npm run build:packages",
     "dev:all": "npx tsx scripts/dev-all.ts",
+    "dev:fast": "npx tsx scripts/dev-all.ts --incremental",
     "preview": "vite preview",
     "build:package": "tsup",
     "build:packages:auth": "npm run build --workspace=@gears-frontx/auth",

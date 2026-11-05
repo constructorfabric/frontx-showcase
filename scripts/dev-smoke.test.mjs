@@ -77,3 +77,18 @@ describe('the site install provides every tool the shell reaches through npx', (
     expect([...used].filter((tool) => !declared[tool])).toEqual([]);
   });
 });
+
+describe('fast development target', () => {
+  const rootPackage = JSON.parse(readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  const sitePackage = JSON.parse(readFileSync(path.join(repoRoot, 'site', 'package.json'), 'utf8'));
+
+  it('exposes the site fast-start command from the repository root, also as npm start', () => {
+    expect(rootPackage.scripts['dev:fast']).toBe('npm run dev:fast --prefix site');
+    expect(rootPackage.scripts.start).toBe('npm run dev:fast');
+  });
+
+  it('runs dev:all incrementally, without the predev:all full packages build', () => {
+    expect(sitePackage.scripts['dev:fast']).toBe('npx tsx scripts/dev-all.ts --incremental');
+    expect(sitePackage.scripts['predev:fast']).toBeUndefined();
+  });
+});
