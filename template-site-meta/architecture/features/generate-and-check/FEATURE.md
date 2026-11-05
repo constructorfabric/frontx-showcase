@@ -114,7 +114,7 @@ Published metadata must never go stale silently. Generation refuses to write any
 3. [x] - `p1` - Apply the configuration rule, the metadata rules, the routing version check and the raster record check - `inst-apply-rules`
 4. [x] - `p1` - **IF** generated outputs exist - `inst-if-outputs-exist`
    1. [x] - `p1` - Read the built document and report every missing linked asset - `inst-check-assets`
-   2. [x] - `p1` - Render every output again; **FOR EACH** output, **IF** its file is missing or differs, report it with the command to generate again - `inst-compare-outputs`
+   2. [x] - `p1` - **IF** the configuration rule reported an error, its messages stand alone and the outputs are not compared; **ELSE** render every output again and, **FOR EACH** output, **IF** its file is missing or differs, report it with the command to generate again - `inst-compare-outputs`
 5. [x] - `p1` - **RETURN** the failures and whether outputs were compared - `inst-return-result`
 
 ### Run the Command Line

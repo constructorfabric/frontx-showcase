@@ -478,8 +478,14 @@ export async function buildMfes(mfes: MfeInfo[], concurrency?: number): Promise<
       console.log(`\n📦 ${name} stopped by ${signal}; its output so far:`);
       for (const [stream, chunk] of output) stream.write(chunk);
     }
-    // With this handler gone, the signal ends the process as it would have.
-    process.kill(process.pid, signal);
+    // With this handler gone, the signal ends the process as it would have, but only once
+    // both streams have flushed what was just written: a pipe drains asynchronously.
+    let pending = 2;
+    const raise = (): void => {
+      if (--pending === 0) process.kill(process.pid, signal);
+    };
+    process.stdout.write('', raise);
+    process.stderr.write('', raise);
   };
   const removeSignalHandlers = (): void => {
     process.off('SIGINT', onSignal);

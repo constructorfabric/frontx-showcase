@@ -113,8 +113,10 @@ const exists = (file: string): void => {
  */
 function capture(run: () => Promise<void>): { writes: string[]; settled: Promise<unknown> } {
   const writes: string[] = [];
-  const record = (chunk: unknown): boolean => {
-    writes.push(String(chunk));
+  // Like a stream, calls back once the chunk is flushed: the signal handler waits for that.
+  const record = (chunk: unknown, callback?: unknown): boolean => {
+    if (chunk !== '') writes.push(String(chunk));
+    if (typeof callback === 'function') callback();
     return true;
   };
   const out = vi.spyOn(process.stdout, 'write').mockImplementation(record);

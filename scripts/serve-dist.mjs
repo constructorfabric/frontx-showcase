@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// `npm start`: serves the production build, site/dist, over plain HTTP on PORT (8080 by default) and HOST (0.0.0.0 by default), the way the image's Caddy serves it (deploy/site/Caddyfile): the same security headers, cache policy and content types, a folder address served without a redirect, GET and HEAD only, errors as plain text that is never cached. It sends every file as it is, uncompressed: a CDN or proxy in front compresses, as the image's Caddy does. For a Node host that runs the built site; the container image stays the main deploy path. Node's standard library only, so it runs after `npm ci --omit=dev` too.
+// `npm start`: serves the production build, site/dist, over plain HTTP on PORT (8080 by default) and SERVE_HOST (0.0.0.0 by default; not HOST, which shells set to the hostname), the way the image's Caddy serves it (deploy/site/Caddyfile): the same security headers, cache policy and content types, a folder address served without a redirect, GET and HEAD only, errors as plain text that is never cached. It sends every file as it is, uncompressed: a CDN or proxy in front compresses, as the image's Caddy does. For a Node host that runs the built site; the container image stays the main deploy path. Node's standard library only, so it runs after `npm ci --omit=dev` too.
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
@@ -283,7 +283,7 @@ function main() {
     process.exitCode = 1;
     return;
   }
-  const host = process.env.HOST || '0.0.0.0';
+  const host = process.env.SERVE_HOST || '0.0.0.0';
   const server = createServer(DIST);
   // Longer than a platform load balancer's idle timeout, so it never reuses an upstream socket Node has just closed.
   server.keepAliveTimeout = 65_000;
