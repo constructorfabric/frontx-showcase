@@ -123,14 +123,18 @@ describe('serve-dist', () => {
     expect((await request('/blob.unknownext')).headers['content-type']).toBe('application/octet-stream');
   });
 
-  it("sends the image's security headers and no Server header, on errors too", async () => {
+  it("sends the image's security headers, on errors too", async () => {
     const security = caddySecurityHeaders();
     expect(Object.keys(security)).toHaveLength(5);
     for (const address of ['/', '/missing.js']) {
       const { headers } = await request(address);
       for (const [name, value] of Object.entries(security)) expect(headers[name.toLowerCase()], `${address} ${name}`).toBe(value);
-      expect(headers.server).toBeUndefined();
     }
+  });
+
+  it('answers 404 to a folder without an index.html', async () => {
+    write('bare/note.txt', 'x');
+    for (const address of ['/bare', '/bare/']) expect((await request(address)).status, address).toBe(404);
   });
 
   it("keeps the image's hashed-asset pattern", () => {

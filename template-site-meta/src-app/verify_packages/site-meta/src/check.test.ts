@@ -122,6 +122,14 @@ describe('check', () => {
     expect((await check({ paths })).errors).toEqual(['dist/demo/week.md differs from what the sources generate; run npm run seo:generate']);
   });
 
+  it('writes each llmsSections entry into llms.txt as its heading and one list line per item', async () => {
+    const paths = makeProject(roots);
+    write(paths.config, { ...CONFIG, llmsSections: [{ heading: 'Build', items: ['Run `npm run build`.', 'Serve site/dist.'] }] });
+    await generate({ paths }, { SITE_ORIGIN: ORIGIN });
+    const llms = fs.readFileSync(path.join(paths.dist, 'llms.txt'), 'utf8');
+    expect(llms).toContain('## Build\n\n- Run `npm run build`.\n- Serve site/dist.\n');
+  });
+
   it('refuses to generate when the build lacks an icon the head links', async () => {
     const paths = makeProject(roots);
     fs.rmSync(path.join(paths.dist, SITE_ASSETS.appleTouchIcon));

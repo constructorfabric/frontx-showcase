@@ -69,7 +69,7 @@ export function missingBuild(root) {
  * @returns {string | null}
  */
 // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-resolve-path
-export function resolveFile(root, pathname) {
+function resolveFile(root, pathname) {
   let decoded;
   try {
     decoded = decodeURIComponent(pathname);
@@ -102,7 +102,7 @@ export function matchesEtag(header, etag) {
  * @param {number} mtimeMs - the file's modification time
  * @returns {boolean}
  */
-export function notModified(headers, etag, mtimeMs) {
+function notModified(headers, etag, mtimeMs) {
   if (headers['if-none-match'] !== undefined) return matchesEtag(headers['if-none-match'], etag);
   const since = Date.parse(headers['if-modified-since'] ?? '');
   return !Number.isNaN(since) && Math.floor(mtimeMs / 1000) <= Math.floor(since / 1000);
@@ -288,6 +288,8 @@ function main() {
   // Longer than a platform load balancer's idle timeout, so it never reuses an upstream socket Node has just closed.
   server.keepAliveTimeout = 65_000;
   server.headersTimeout = 66_000;
+  // A client that stops reading must not hold a socket and a file handle forever.
+  server.timeout = 120_000;
   // A failed listen leaves nothing open, so the process ends on its own.
   server.on('error', (error) => {
     console.error(`serve-dist: cannot listen on ${host}:${port}: ${error.message}`);

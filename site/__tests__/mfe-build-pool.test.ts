@@ -70,7 +70,7 @@ interface Fixture {
  * in a child process, which is what Vitest's default pool, forks, runs each
  * file in; worker threads would refuse it.
  */
-async function fixture(packages: ReadonlyArray<{ name: string; wait?: boolean; fail?: boolean }>): Promise<Fixture> {
+async function fixture(packages: ReadonlyArray<{ name: string; wait?: boolean; fail?: boolean; vite?: boolean }>): Promise<Fixture> {
   const project = join(root, String(++fixtures));
   mkdirSync(join(project, 'src-app', 'mfe_packages'), { recursive: true });
   writeFileSync(join(project, 'order.log'), '');
@@ -84,13 +84,15 @@ async function fixture(packages: ReadonlyArray<{ name: string; wait?: boolean; f
     process.chdir(cwd);
   }
   const dir = (name: string): string => join(tools.MFE_PACKAGES_DIR, name);
-  for (const { name, wait, fail } of packages) {
+  for (const { name, wait, fail, vite: hasVite = true } of packages) {
     const vite = join(dir(name), 'node_modules', 'vite');
-    mkdirSync(vite, { recursive: true });
+    mkdirSync(hasVite ? vite : dir(name), { recursive: true });
     packageDirs.push(dir(name));
     writeFileSync(join(dir(name), 'package.json'), JSON.stringify({ name, private: true }));
     if (wait) writeFileSync(join(dir(name), 'wait'), '');
     if (fail) writeFileSync(join(dir(name), 'fail'), '');
+    // A package without the stub has no `vite` to resolve: its build cannot start.
+    if (!hasVite) continue;
     writeFileSync(join(vite, 'package.json'), JSON.stringify({ name: 'vite', bin: { vite: 'cli.js' } }));
     writeFileSync(join(vite, 'cli.js'), STUB_CLI);
   }
@@ -110,16 +112,27 @@ const exists = (file: string): void => {
  * Starts `run` and records everything written to stdout, stderr and
  * console.log while it is pending, in order; `settled` gives its error, if any.
  */
-function capture(run: () => Promise<void>): { writes: string[]; settled: Promise<unknown> } {
+function capture(run: () => Promise<void>): {
+  writes: string[];
+  streams: Array<readonly ['stdout' | 'stderr', string]>;
+  settled: Promise<unknown>;
+} {
   const writes: string[] = [];
-  const record = (chunk: unknown): boolean => {
-    if (chunk !== '') writes.push(String(chunk));
-    return true;
-  };
-  const out = vi.spyOn(process.stdout, 'write').mockImplementation(record);
-  const err = vi.spyOn(process.stderr, 'write').mockImplementation(record);
+  const streams: Array<readonly ['stdout' | 'stderr', string]> = [];
+  const recorder =
+    (stream: 'stdout' | 'stderr') =>
+    (chunk: unknown): boolean => {
+      if (chunk !== '') {
+        writes.push(String(chunk));
+        streams.push([stream, String(chunk)]);
+      }
+      return true;
+    };
+  const out = vi.spyOn(process.stdout, 'write').mockImplementation(recorder('stdout'));
+  const err = vi.spyOn(process.stderr, 'write').mockImplementation(recorder('stderr'));
   const log = vi.spyOn(console, 'log').mockImplementation((...args: unknown[]) => {
     writes.push(`${format(...args)}\n`);
+    streams.push(['stdout', `${format(...args)}\n`]);
   });
   const settled = run().then(
     () => undefined,
@@ -130,7 +143,7 @@ function capture(run: () => Promise<void>): { writes: string[]; settled: Promise
     err.mockRestore();
     log.mockRestore();
   });
-  return { writes, settled };
+  return { writes, streams, settled };
 }
 
 /** The index of the first write that starts, after its leading newlines, with `prefix`. */
@@ -203,7 +216,7 @@ describe('buildMfes', () => {
       { name: 'pkg-c', wait: true },
     ]);
 
-    const { writes, settled } = capture(() => tools.buildMfes(mfes, 2));
+    const { writes, streams, settled } = capture(() => tools.buildMfes(mfes, 2));
     // a and b both start while neither can end, and c has no worker left.
     await vi.waitFor(() => {
       exists(join(dir('pkg-a'), 'started'));
@@ -224,16 +237,68 @@ describe('buildMfes', () => {
     for (const name of ['pkg-a', 'pkg-b', 'pkg-c']) {
       expect(lineIndex(writes, `📦 started ${name}`), name).toBeGreaterThanOrEqual(0);
       expectBlock(writes, name, 'built');
+      // The child's stdout line goes to our stdout and its stderr line to our stderr.
+      expect(streams, name).toContainEqual(['stdout', `stub stdout ${name}\n`]);
+      expect(streams, name).toContainEqual(['stderr', `stub stderr ${name}\n`]);
     }
   });
 
   it('builds the packages one after another, in order, with a concurrency of 1', async () => {
-    const { tools, mfes, order } = await fixture([{ name: 'pkg-a' }, { name: 'pkg-b' }, { name: 'pkg-c' }]);
+    const { tools, dir, mfes, order } = await fixture([{ name: 'pkg-a', wait: true }, { name: 'pkg-b' }, { name: 'pkg-c' }]);
 
     const { settled } = capture(() => tools.buildMfes(mfes, 1));
+    // pkg-a is running and holds the only worker: pkg-b must not start until it ends.
+    await vi.waitFor(() => exists(join(dir('pkg-a'), 'started')), { timeout: 10_000 });
+    expect(existsSync(join(dir('pkg-b'), 'started'))).toBe(false);
+    writeFileSync(join(dir('pkg-a'), 'release'), '');
 
     expect(await settled).toBeUndefined();
     expect(order()).toEqual(['start pkg-a', 'end pkg-a', 'start pkg-b', 'end pkg-b', 'start pkg-c', 'end pkg-c']);
+  });
+
+  it('rejects with the spawn failure of a package whose build cannot start', async () => {
+    const { tools, dir, mfes } = await fixture([{ name: 'pkg-a', vite: false }]);
+
+    const error = await capture(() => tools.buildMfes(mfes, 1)).settled;
+
+    expect(error).toBeInstanceOf(Error);
+    const message = (error as Error).message;
+    expect(message).toContain('MFE build for pkg-a could not start:');
+    expect(message).toContain(`npm install --prefix ${dir('pkg-a')}`);
+  });
+
+  it('rejects with the first recorded failure when two builds fail', async () => {
+    const { tools, dir, mfes } = await fixture([
+      { name: 'pkg-1', wait: true, fail: true },
+      { name: 'pkg-2', wait: true, fail: true },
+    ]);
+
+    const { writes, settled } = capture(() => tools.buildMfes(mfes, 2));
+    await vi.waitFor(() => {
+      exists(join(dir('pkg-1'), 'started'));
+      exists(join(dir('pkg-2'), 'started'));
+    }, { timeout: 10_000 });
+    writeFileSync(join(dir('pkg-1'), 'release'), '');
+    await vi.waitFor(() => expect(lineIndex(writes, '📦 pkg-1 failed in ')).toBeGreaterThanOrEqual(0), { timeout: 10_000 });
+    writeFileSync(join(dir('pkg-2'), 'release'), '');
+
+    const error = await settled;
+    expect(lineIndex(writes, '📦 pkg-2 failed in ')).toBeGreaterThan(lineIndex(writes, '📦 pkg-1 failed in '));
+    expect((error as Error).message).toBe(
+      tools.buildFailureMessage('pkg-1', dir('pkg-1'), { kind: 'exit', code: 1, signal: null }),
+    );
+  });
+
+  it('reads the concurrency from the environment and never states more workers than packages', async () => {
+    const { tools, mfes } = await fixture([{ name: 'pkg-a' }]);
+    vi.stubEnv(tools.BUILD_CONCURRENCY_ENV_VAR, '2');
+    try {
+      const { writes, settled } = capture(() => tools.buildMfes(mfes));
+      expect(await settled).toBeUndefined();
+      expect(writes[0]).toContain('1 at a time');
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it('refuses a concurrency that is not a positive integer, and reads none when there is nothing to build', async () => {
