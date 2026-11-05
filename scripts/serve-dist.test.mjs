@@ -34,10 +34,11 @@ function request(pathname, { method = 'GET', headers = {} } = {}) {
 }
 
 beforeAll(async () => {
-  // The build sits one level down, so `/../package.json` would reach a real file if traversal worked.
+  // The build sits one level down: the `package.json` outside it holds the secret that must never be served; the one inside is what a clamped dot-segment path reaches.
   root = mkdtempSync(path.join(tmpdir(), 'serve-dist-'));
   writeFileSync(path.join(root, 'package.json'), '{"secret":true}');
   dist = path.join(root, 'dist');
+  write('package.json', '{"inside":true}');
   write('index.html', '<!doctype html><title>home</title>');
   write('assets/index-abc123.js', SCRIPT);
   write('mfe/site-docs-mfe/assets/lifecycle-def456.js', SCRIPT);
@@ -280,13 +281,22 @@ describe('serve-dist', () => {
     for (const value of ['65536', '-1', '80.5', 'abc', ' 80', '0x50']) expect(parsePort(value), value).toBeNull();
   });
 
-  it('answers 404 as uncached plain text to a missing file and to every path that leaves the build', async () => {
-    for (const address of ['/missing.js', '/../package.json', '/%2e%2e/package.json', '/docs/%2e%2e/%2e%2e/package.json', '/%00', '/%E0%A4%A']) {
+  it('answers 404 as uncached plain text to a missing file and to a path that does not decode', async () => {
+    for (const address of ['/missing.js', '/%00', '/%E0%A4%A']) {
       const res = await request(address);
       expect(res.status, address).toBe(404);
       expect(res.headers['cache-control']).toBe('no-store');
       expect(res.headers['content-type']).toBe('text/plain; charset=utf-8');
       expect(res.body.toString()).toBe('404 Not Found');
+    }
+  });
+
+  it('clamps dot segments at the build root, so nothing outside the build is ever served', async () => {
+    for (const address of ['/../package.json', '/%2e%2e/package.json', '/docs/%2e%2e/%2e%2e/package.json']) {
+      const res = await request(address);
+      expect(res.status, address).toBe(200);
+      expect(res.body.toString(), address).toBe('{"inside":true}');
+      expect(res.body.toString(), address).not.toContain('secret');
     }
   });
 

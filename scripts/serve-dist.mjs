@@ -72,7 +72,7 @@ export function missingBuild(root) {
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-no-build
 
 /**
- * The file a request path names under `root`, or null: the path is decoded and normalized, and a path that does not decode, carries a NUL byte or leaves `root` names nothing.
+ * The file a request path names under `root`, or null: the path is decoded and its dot segments are resolved inside `root` (`/../x` is `/x`, as Caddy cleans it), so a path never leaves `root`; a path that does not decode or carries a NUL byte names nothing, and the containment check stays as a backstop.
  * @param {string} root - an absolute path
  * @param {string} pathname - the request path without its query string
  * @returns {string | null}
