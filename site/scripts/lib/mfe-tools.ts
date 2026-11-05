@@ -455,8 +455,10 @@ export async function buildMfes(mfes: MfeInfo[], concurrency?: number): Promise<
   // An array rather than a `let`: TypeScript does not see a closure assign one.
   const failures: Error[] = [];
 
-  // No signal handler: Ctrl+C in a terminal and a CI cancel reach the whole process group, so the
-  // vite children stop with this process (output still buffered at that moment is not printed).
+  // No signal handler. Ctrl+C in a terminal and a CI cancel signal the whole process group, so the
+  // vite children stop too. A signal sent to this PID alone (`kill <pid>`, a process manager, PID 1
+  // in a container) leaves the running children to finish or fail on their own, and output still
+  // buffered at that moment is not printed.
   const worker = async (): Promise<void> => {
     while (failures.length === 0 && next < mfes.length) {
       const mfe = mfes[next++];
