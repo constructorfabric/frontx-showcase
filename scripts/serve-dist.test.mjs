@@ -123,7 +123,7 @@ describe('serve-dist', () => {
     expect((await request('/blob.unknownext')).headers['content-type']).toBe('application/octet-stream');
   });
 
-  it("sends the image's security headers, on errors too", async () => {
+  it("sends the image's security headers on errors too, and matches the Caddyfile's cache regex and absent Server header", async () => {
     const security = caddySecurityHeaders();
     expect(Object.keys(security)).toHaveLength(5);
     for (const address of ['/', '/missing.js']) {

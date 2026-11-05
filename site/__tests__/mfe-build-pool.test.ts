@@ -259,7 +259,14 @@ describe('buildMfes', () => {
   it('rejects with the spawn failure of a package whose build cannot start', async () => {
     const { tools, dir, mfes } = await fixture([{ name: 'pkg-a', vite: false }]);
 
-    const error = await capture(() => tools.buildMfes(mfes, 1)).settled;
+    // A global vite on NODE_PATH would resolve and turn this into a successful build.
+    vi.stubEnv('NODE_PATH', '');
+    let error: unknown;
+    try {
+      error = await capture(() => tools.buildMfes(mfes, 1)).settled;
+    } finally {
+      vi.unstubAllEnvs();
+    }
 
     expect(error).toBeInstanceOf(Error);
     const message = (error as Error).message;
@@ -290,12 +297,13 @@ describe('buildMfes', () => {
   });
 
   it('reads the concurrency from the environment and never states more workers than packages', async () => {
-    const { tools, mfes } = await fixture([{ name: 'pkg-a' }, { name: 'pkg-b' }, { name: 'pkg-c' }]);
-    vi.stubEnv(tools.BUILD_CONCURRENCY_ENV_VAR, '2');
+    const { tools, mfes } = await fixture(Array.from({ length: 8 }, (_, i) => ({ name: `pkg-${i + 1}` })));
+    // 7 is a value the cpu-based default can never produce, so the test cannot pass on the default.
+    vi.stubEnv(tools.BUILD_CONCURRENCY_ENV_VAR, '7');
     try {
       const read = capture(() => tools.buildMfes(mfes));
       expect(await read.settled).toBeUndefined();
-      expect(read.writes[0]).toContain('2 at a time');
+      expect(read.writes[0]).toContain('7 at a time');
       const clamped = capture(() => tools.buildMfes(mfes.slice(0, 1)));
       expect(await clamped.settled).toBeUndefined();
       expect(clamped.writes[0]).toContain('1 at a time');
