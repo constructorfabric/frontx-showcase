@@ -9,7 +9,7 @@
 
 import { availableParallelism } from 'os';
 
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 
 import { BUILD_CONCURRENCY_ENV_VAR, buildConcurrency } from '../scripts/lib/mfe-tools';
 
@@ -19,10 +19,17 @@ vi.mock('os', async (importOriginal) => {
 });
 
 describe('buildConcurrency', () => {
+  // Back to the real core count, so no test sees the value a previous one set.
+  beforeEach(() => {
+    vi.mocked(availableParallelism).mockReset();
+  });
+
   it.each([
     [1, 1],
     [3, 1],
     [8, 4],
+    [12, 6],
+    [13, 6],
     [64, 6],
   ])('defaults to %i cores -> %i builds when unset or empty', (cores, builds) => {
     vi.mocked(availableParallelism).mockReturnValue(cores);

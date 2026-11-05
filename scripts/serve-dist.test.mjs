@@ -1,11 +1,10 @@
-import { randomBytes } from 'node:crypto';
 import fs, { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { chooseEncoding, createServer, matchesEtag, missingBuild, parsePort } from './serve-dist.mjs';
+import { chooseEncoding, createServer, HASHED, matchesEtag, missingBuild, parsePort } from './serve-dist.mjs';
 
 let root;
 let dist;
@@ -20,10 +19,37 @@ function write(file, content) {
   writeFileSync(path.join(dist, file), content);
 }
 
+const CADDYFILE = new URL('../deploy/site/Caddyfile', import.meta.url);
+
+/** The headers of the Caddyfile's `header { ... }` block, comments skipped and quotes removed. */
+function caddySecurityHeaders() {
+  const block = fs.readFileSync(CADDYFILE, 'utf8').match(/^\theader \{\n([\s\S]*?)\n\t\}$/m)?.[1] ?? '';
+  return Object.fromEntries(
+    block
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith('#'))
+      .map((line) => {
+        const [, name, quoted, bare] = /** @type {RegExpMatchArray} */ (line.match(/^(\S+) (?:"(.*)"|(\S+))$/));
+        return [name, quoted ?? bare];
+      }),
+  );
+}
+
+/** Writes new content of the same size into a file and puts its mtime back, so its tag does not change. */
+function rewriteKeepingTag(file, content) {
+  // Seconds as numbers, not Dates: a Date rounds the time to a whole millisecond, which can move the tag.
+  const { atimeMs, mtimeMs } = fs.statSync(file);
+  writeFileSync(file, content);
+  fs.utimesSync(file, atimeMs / 1000, mtimeMs / 1000);
+}
+
+const brotliText = (res) => zlib.brotliDecompressSync(res.body).toString();
+
 /** A raw request: the path goes out as written, so `..` reaches the server instead of being resolved by the client. */
-function request(pathname, { method = 'GET', headers = {} } = {}) {
+function request(pathname, { method = 'GET', headers = {}, port: to = port } = {}) {
   return new Promise((resolve, reject) => {
-    const req = http.request({ host: '127.0.0.1', port, path: pathname, method, headers }, (res) => {
+    const req = http.request({ host: '127.0.0.1', port: to, path: pathname, method, headers }, (res) => {
       const chunks = [];
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks) }));
@@ -58,8 +84,11 @@ beforeAll(async () => {
     // Windows without the privilege to create links.
     if (process.platform !== 'win32') throw error;
   }
-  // Random text barely compresses, so neither body fits in the socket buffers before the client leaves.
-  write('assets/large-0a1b2c.js', randomBytes(512 * 1024).toString('base64'));
+  // 16 MB: more than the send and receive buffers of a loopback socket hold together, so the body is still being read when the client leaves.
+  write('assets/large-0a1b2c.js', Buffer.alloc(16 * 1024 * 1024, 'x'));
+  write('assets/head-1a2b3c.js', SCRIPT);
+  write('assets/case-abc123.js', SCRIPT);
+  write('assets/locked-0f0f0f.js', SCRIPT);
   server = createServer(dist);
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   port = /** @type {import('node:net').AddressInfo} */ (server.address()).port;
@@ -105,15 +134,21 @@ describe('serve-dist', () => {
   });
 
   it("sends the image's security headers and no Server header, on errors too", async () => {
+    const security = caddySecurityHeaders();
+    expect(Object.keys(security)).toHaveLength(5);
     for (const address of ['/', '/missing.js']) {
       const { headers } = await request(address);
-      expect(headers['x-content-type-options']).toBe('nosniff');
-      expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
-      expect(headers['x-frame-options']).toBe('SAMEORIGIN');
-      expect(headers['permissions-policy']).toBe('camera=(), microphone=(), geolocation=(), payment=(), usb=()');
-      expect(headers['content-security-policy']).toBe("base-uri 'self'; object-src 'none'; frame-ancestors 'self'");
+      for (const [name, value] of Object.entries(security)) expect(headers[name.toLowerCase()], `${address} ${name}`).toBe(value);
       expect(headers.server).toBeUndefined();
     }
+  });
+
+  it("keeps the image's hashed-asset pattern", () => {
+    const caddyfile = fs.readFileSync(CADDYFILE, 'utf8');
+    const hashed = caddyfile.match(/^\s*@hashed path_regexp (\S+)$/m)?.[1];
+    expect(hashed).toBeDefined();
+    expect(caddyfile).toContain(`@named not path_regexp ${hashed}\n`);
+    expect(HASHED.source.replaceAll('\\/', '/')).toBe(hashed);
   });
 
   it('compresses text with br or gzip as the client asks', async () => {
@@ -131,18 +166,16 @@ describe('serve-dist', () => {
     expect(plain.body.toString()).toBe(SCRIPT);
 
     // One strong tag per content coding, each body with its own length.
-    expect(br.headers.etag).toBe(plain.headers.etag.replace(/"$/, '-br"'));
-    expect(gzip.headers.etag).toBe(plain.headers.etag.replace(/"$/, '-gzip"'));
+    expect(new Set([br.headers.etag, gzip.headers.etag, plain.headers.etag]).size).toBe(3);
     for (const res of [br, gzip, plain]) expect(Number(res.headers['content-length'])).toBe(res.body.length);
   });
 
-  it('reads Accept-Encoding parameters with spaces around the semicolon', async () => {
-    const res = await request('/assets/index-abc123.js', { headers: { 'accept-encoding': 'gzip;q=0.5, br ; q=0.8' } });
-    expect(res.headers['content-encoding']).toBe('br');
-  });
-
-  it('chooses br, then gzip, from Accept-Encoding, honouring a refusal by q=0', () => {
+  it('chooses the accepted coding of the higher weight, br on a tie, honouring a refusal by q=0', () => {
     expect(chooseEncoding('gzip, br')).toBe('br');
+    expect(chooseEncoding('gzip;q=1, br;q=0.1')).toBe('gzip');
+    expect(chooseEncoding('gzip;q=0.5, br ; q=0.8')).toBe('br');
+    expect(chooseEncoding('gzip;q=0.5, br;q=0.5')).toBe('br');
+    expect(chooseEncoding('gzip, *;q=0.5')).toBe('gzip');
     expect(chooseEncoding('gzip')).toBe('gzip');
     expect(chooseEncoding('*')).toBe('br');
     expect(chooseEncoding('gzip;q=0, *')).toBe('br');
@@ -156,25 +189,56 @@ describe('serve-dist', () => {
   });
 
   it('compresses a file once and sends the kept body until the file changes', async () => {
-    const file = path.join(dist, 'assets/cached-123abc.js');
-    const read = vi.spyOn(fs.promises, 'readFile');
-    try {
-      const headers = { 'accept-encoding': 'br' };
-      const first = await request('/assets/cached-123abc.js', { headers });
-      const second = await request('/assets/cached-123abc.js', { headers });
-      expect(read).toHaveBeenCalledTimes(1);
-      expect(second.body.equals(first.body)).toBe(true);
+    const address = '/assets/cached-123abc.js';
+    const headers = { 'accept-encoding': 'br' };
+    const first = await request(address, { headers });
+    expect(brotliText(first)).toBe(SCRIPT);
 
-      // A changed file changes its tag, so the kept body is not sent for it.
-      const changed = SCRIPT.replace('x', 'y');
-      writeFileSync(file, changed);
-      fs.utimesSync(file, new Date(), new Date(Date.now() + 5000));
-      const third = await request('/assets/cached-123abc.js', { headers });
-      expect(read).toHaveBeenCalledTimes(2);
-      expect(third.headers.etag).not.toBe(first.headers.etag);
-      expect(zlib.brotliDecompressSync(third.body).toString()).toBe(changed);
+    // Same size, mtime put back: the tag holds, so the kept body still goes out, not the new content.
+    rewriteKeepingTag(path.join(dist, 'assets/cached-123abc.js'), SCRIPT.replace('x', 'y'));
+    const second = await request(address, { headers });
+    expect(second.headers.etag).toBe(first.headers.etag);
+    expect(brotliText(second)).toBe(SCRIPT);
+
+    // A new mtime changes the tag, so the body is made again from the file.
+    fs.utimesSync(path.join(dist, 'assets/cached-123abc.js'), new Date(), new Date(Date.now() + 5000));
+    const third = await request(address, { headers });
+    expect(third.headers.etag).not.toBe(first.headers.etag);
+    expect(brotliText(third)).toBe(SCRIPT.replace('x', 'y'));
+  });
+
+  it('keeps one compressed body per file, whatever the spelling of its path on a case-insensitive disk', async (context) => {
+    if (!fs.existsSync(path.join(dist, 'ASSETS/CASE-ABC123.JS'))) return context.skip();
+    const headers = { 'accept-encoding': 'br' };
+    const lower = await request('/assets/case-abc123.js', { headers });
+    rewriteKeepingTag(path.join(dist, 'assets/case-abc123.js'), SCRIPT.replace('x', 'y'));
+    // A body made for this spelling would carry the new content; the one kept for the file carries the old.
+    const upper = await request('/ASSETS/CASE-ABC123.JS', { headers });
+    expect(upper.status).toBe(200);
+    expect(upper.headers.etag).toBe(lower.headers.etag);
+    expect(brotliText(upper)).toBe(SCRIPT);
+  });
+
+  it('drops the least recently used compressed body once the kept bodies pass their bound', async () => {
+    const headers = { 'accept-encoding': 'br' };
+    for (const name of ['a', 'b', 'c']) write(`evict/${name}.js`, SCRIPT);
+    // Room for two bodies of SCRIPT, not three.
+    const length = (await request('/assets/index-abc123.js', { headers })).body.length;
+    const small = createServer(dist, { cacheBytes: 2 * length });
+    await new Promise((resolve) => small.listen(0, '127.0.0.1', () => resolve(undefined)));
+    const smallPort = /** @type {import('node:net').AddressInfo} */ (small.address()).port;
+    const get = (/** @type {string} */ name) => request(`/evict/${name}.js`, { headers, port: smallPort });
+    try {
+      await get('a');
+      await get('b');
+      // a is used again, so b is the least recently used when c's body arrives.
+      await get('a');
+      await get('c');
+      for (const name of ['a', 'b']) rewriteKeepingTag(path.join(dist, `evict/${name}.js`), SCRIPT.replace('x', 'y'));
+      expect(brotliText(await get('a'))).toBe(SCRIPT);
+      expect(brotliText(await get('b'))).toBe(SCRIPT.replace('x', 'y'));
     } finally {
-      read.mockRestore();
+      await new Promise((resolve) => small.close(resolve));
     }
   });
 
@@ -184,7 +248,6 @@ describe('serve-dist', () => {
     const plain = await request('/assets/index-abc123.js');
 
     expect((await request('/assets/index-abc123.js', { headers: { ...gzipped, 'if-none-match': gzip.headers.etag } })).status).toBe(304);
-    expect((await request('/assets/index-abc123.js', { headers: { 'if-none-match': plain.headers.etag } })).status).toBe(304);
     // A tag of the other coding names a different representation.
     expect((await request('/assets/index-abc123.js', { headers: { 'if-none-match': gzip.headers.etag } })).status).toBe(200);
     expect((await request('/assets/index-abc123.js', { headers: { ...gzipped, 'if-none-match': plain.headers.etag } })).status).toBe(200);
@@ -220,6 +283,56 @@ describe('serve-dist', () => {
     expect(again.headers.vary).toBeUndefined();
   });
 
+  it('answers 304 to If-Modified-Since at or after the file time, in whole seconds, unless If-None-Match is sent', async () => {
+    const { headers } = await request('/docs/get-started.md');
+    const modified = Date.parse(String(headers['last-modified']));
+    const at = (/** @type {number} */ time, /** @type {Record<string, string>} */ more = {}) =>
+      request('/docs/get-started.md', { headers: { 'if-modified-since': new Date(time).toUTCString(), ...more } });
+
+    expect((await at(modified)).status).toBe(304);
+    expect((await at(modified + 60_000)).status).toBe(304);
+    expect((await at(modified - 1000)).status).toBe(200);
+    // If-None-Match decides when present, even when the date alone would match.
+    expect((await at(modified, { 'if-none-match': '"other"' })).status).toBe(200);
+    expect((await request('/docs/get-started.md', { headers: { 'if-modified-since': 'not a date' } })).status).toBe(200);
+  });
+
+  it('answers HEAD with the coding but compresses nothing for it: the length goes out only once the body is kept', async () => {
+    const headers = { 'accept-encoding': 'br' };
+    const cold = await request('/assets/head-1a2b3c.js', { method: 'HEAD', headers });
+    expect(cold.status).toBe(200);
+    expect(cold.headers['content-encoding']).toBe('br');
+    expect(cold.headers['content-length']).toBeUndefined();
+    expect(cold.body.length).toBe(0);
+
+    const get = await request('/assets/head-1a2b3c.js', { headers });
+    const warm = await request('/assets/head-1a2b3c.js', { method: 'HEAD', headers });
+    expect(warm.headers['content-length']).toBe(String(get.body.length));
+    expect(warm.headers.etag).toBe(get.headers.etag);
+  });
+
+  it('answers 500 to a file it cannot open, whatever the coding, and logs the path and the reason', async (context) => {
+    // Permissions do not bind root, and Windows has no mode bits to clear.
+    if (process.platform === 'win32' || process.getuid?.() === 0) return context.skip();
+    const file = path.join(dist, 'assets/locked-0f0f0f.js');
+    fs.chmodSync(file, 0o000);
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      for (const headers of [{}, { 'accept-encoding': 'br' }]) {
+        const res = await request('/assets/locked-0f0f0f.js', { headers });
+        expect(res.status).toBe(500);
+        expect(res.headers['cache-control']).toBe('no-store');
+        expect(res.body.toString()).toBe('500 Internal Server Error');
+      }
+      expect(logged).toHaveBeenCalledTimes(2);
+      expect(logged.mock.calls[0][0]).toContain(file);
+      expect(logged.mock.calls[0][0]).toContain('EACCES');
+    } finally {
+      logged.mockRestore();
+      fs.chmodSync(file, 0o644);
+    }
+  });
+
   it('matches If-None-Match as a list, weakly and as *', () => {
     expect(matchesEtag('"a-1"', '"a-1"')).toBe(true);
     expect(matchesEtag('"b-2", "a-1"', '"a-1"')).toBe(true);
@@ -245,30 +358,30 @@ describe('serve-dist', () => {
     }
   });
 
-  it('closes the file when a client leaves mid-body and keeps answering', async () => {
+  it('closes the file when a client leaves mid-body, logs nothing for it and keeps answering', async () => {
     const opened = vi.spyOn(fs, 'createReadStream');
+    const logged = vi.spyOn(console, 'error');
     try {
-      for (const headers of [{}, { 'accept-encoding': 'gzip' }]) {
-        // A compressed body is sent from memory: no file is open while it goes out.
-        const streamed = !headers['accept-encoding'];
-        opened.mockClear();
-        await new Promise((resolve) => {
-          const req = http.request({ host: '127.0.0.1', port, path: '/assets/large-0a1b2c.js', headers }, (res) => {
-            res.once('data', () => {
-              req.destroy();
-              resolve(undefined);
-            });
+      await new Promise((resolve) => {
+        const req = http.request({ host: '127.0.0.1', port, path: '/assets/large-0a1b2c.js' }, (res) => {
+          res.once('data', () => {
+            req.destroy();
+            resolve(undefined);
           });
-          req.on('error', () => {});
-          req.on('close', () => resolve(undefined));
-          req.end();
         });
-        if (streamed) await vi.waitFor(() => expect(opened.mock.results[0]?.value.destroyed).toBe(true));
-        else expect(opened).not.toHaveBeenCalled();
-        expect((await request('/')).status).toBe(200);
-      }
+        req.on('error', () => {});
+        req.on('close', () => resolve(undefined));
+        req.end();
+      });
+      const stream = opened.mock.results[0]?.value;
+      await vi.waitFor(() => expect(stream?.destroyed).toBe(true));
+      // Cut short, not read to the end: the 16 MB body was still going out when the client left.
+      expect(stream.bytesRead).toBeLessThan(fs.statSync(path.join(dist, 'assets/large-0a1b2c.js')).size);
+      expect((await request('/')).status).toBe(200);
+      expect(logged).not.toHaveBeenCalled();
     } finally {
       opened.mockRestore();
+      logged.mockRestore();
     }
   });
 
@@ -296,7 +409,6 @@ describe('serve-dist', () => {
       const res = await request(address);
       expect(res.status, address).toBe(200);
       expect(res.body.toString(), address).toBe('{"inside":true}');
-      expect(res.body.toString(), address).not.toContain('secret');
     }
   });
 

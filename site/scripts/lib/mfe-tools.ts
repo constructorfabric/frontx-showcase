@@ -5,7 +5,7 @@
  * Used by dev-all.ts (build + preview) and build-mfes.ts (build only).
  */
 
-import { spawn } from 'child_process';
+import { spawn, type ChildProcess } from 'child_process';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { createRequire } from 'module';
 import { availableParallelism } from 'os';
@@ -341,12 +341,17 @@ export function buildConcurrency(env: NodeJS.ProcessEnv = process.env): number {
   return value;
 }
 
+/** What a child wrote, in order, each chunk with the stream it came on. */
+type MfeBuildOutput = ReadonlyArray<readonly [NodeJS.WriteStream, Buffer]>;
+
 interface MfeBuildResult {
-  /** What the child wrote, in order, each chunk with the stream it came on. */
-  readonly output: ReadonlyArray<readonly [NodeJS.WriteStream, Buffer]>;
+  readonly output: MfeBuildOutput;
   readonly seconds: number;
   readonly failure: MfeBuildFailure | null;
 }
+
+/** The builds whose child is alive, with what each has written so far. */
+type RunningBuilds = Map<ChildProcess, { readonly name: string; readonly output: MfeBuildOutput }>;
 
 /**
  * The path of Vite's CLI script as `npx vite` run in `packageDir` would find
@@ -368,8 +373,10 @@ function resolveViteCli(packageDir: string): string {
  * PATH entry shadowing a trusted executable), no `npx` start-up per package and
  * no `/bin/sh -c`, which is non-portable on Windows and fragile when a package
  * path contains shell-special characters.
+ *
+ * The child stays in `running` from its spawn until it closes.
  */
-function buildMfe(packageDir: string): Promise<MfeBuildResult> {
+function buildMfe(name: string, packageDir: string, running: RunningBuilds): Promise<MfeBuildResult> {
   const started = performance.now();
   const output: Array<readonly [NodeJS.WriteStream, Buffer]> = [];
   const finish = (failure: MfeBuildFailure | null): MfeBuildResult => ({
@@ -397,11 +404,15 @@ function buildMfe(packageDir: string): Promise<MfeBuildResult> {
       env,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
+    running.set(proc, { name, output });
+    // Two separate pipes: inside one package's block, a stdout line and a
+    // stderr line can come out in another order than Vite wrote them.
     proc.stdout.on('data', (chunk: Buffer) => output.push([process.stdout, chunk]));
     proc.stderr.on('data', (chunk: Buffer) => output.push([process.stderr, chunk]));
 
     let settled = false;
     proc.on('error', (cause) => {
+      running.delete(proc);
       if (settled) return;
       settled = true;
       resolve(finish({ kind: 'spawn', cause }));
@@ -409,6 +420,7 @@ function buildMfe(packageDir: string): Promise<MfeBuildResult> {
     // `close`, not `exit`: it waits for the pipes to drain, so the captured
     // output is complete when it is printed.
     proc.on('close', (code, signal) => {
+      running.delete(proc);
       if (settled) return;
       settled = true;
       resolve(finish(code === 0 ? null : { kind: 'exit', code, signal }));
@@ -432,26 +444,51 @@ function printBuildBlock(name: string, result: MfeBuildResult): void {
  * starts; the running ones finish, and the promise rejects with that package's
  * `buildFailureMessage`.
  *
- * @param concurrency - Builds at once; defaults to `buildConcurrency()`
+ * A one-line notice marks each start, so a build that hangs can be named. On
+ * SIGINT or SIGTERM the live builds are killed, the output each had written so
+ * far is printed, and the signal is raised again to end the process.
+ *
+ * @param concurrency - Builds at once, a positive integer; defaults to
+ *   `buildConcurrency()`, read only when there is something to build
  */
-export async function buildMfes(
-  mfes: MfeInfo[],
-  concurrency: number = buildConcurrency(),
-): Promise<void> {
+export async function buildMfes(mfes: MfeInfo[], concurrency?: number): Promise<void> {
   if (mfes.length === 0) return;
 
-  const workers = Math.min(concurrency, mfes.length);
+  const limit = concurrency ?? buildConcurrency();
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new Error(`buildMfes: concurrency must be a positive integer, got ${limit}.`);
+  }
+  const workers = Math.min(limit, mfes.length);
   console.log(`📦 Building ${mfes.length} MFE package(s), ${workers} at a time...`);
 
   let next = 0;
   // An array rather than a `let`: TypeScript does not see a closure assign one.
   const failures: Error[] = [];
+  const running: RunningBuilds = new Map();
+
+  const onSignal = (signal: NodeJS.Signals): void => {
+    removeSignalHandlers();
+    for (const [proc, { name, output }] of running) {
+      proc.kill(signal);
+      console.log(`\n📦 ${name} stopped by ${signal}; its output so far:`);
+      for (const [stream, chunk] of output) stream.write(chunk);
+    }
+    // With this handler gone, the signal ends the process as it would have.
+    process.kill(process.pid, signal);
+  };
+  const removeSignalHandlers = (): void => {
+    process.off('SIGINT', onSignal);
+    process.off('SIGTERM', onSignal);
+  };
+  process.once('SIGINT', onSignal);
+  process.once('SIGTERM', onSignal);
 
   const worker = async (): Promise<void> => {
     while (failures.length === 0 && next < mfes.length) {
       const mfe = mfes[next++];
       const packageDir = join(MFE_PACKAGES_DIR, mfe.name);
-      const result = await buildMfe(packageDir);
+      console.log(`📦 started ${mfe.name}`);
+      const result = await buildMfe(mfe.name, packageDir, running);
       printBuildBlock(mfe.name, result);
       if (result.failure !== null) {
         failures.push(new Error(buildFailureMessage(mfe.name, packageDir, result.failure)));
@@ -459,7 +496,11 @@ export async function buildMfes(
     }
   };
 
-  await Promise.all(Array.from({ length: workers }, worker));
+  try {
+    await Promise.all(Array.from({ length: workers }, worker));
+  } finally {
+    removeSignalHandlers();
+  }
   if (failures.length > 0) throw failures[0];
 
   console.log('\n✅ All MFE packages built successfully.\n');

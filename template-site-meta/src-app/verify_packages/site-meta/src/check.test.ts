@@ -141,6 +141,20 @@ describe('check', () => {
     write(paths.config, { ...CONFIG, ogImage: '/og-image.png' });
     expect((await check({ paths })).errors).toEqual(['site.config.json: ogImage is set without ogImageAlt; the share image needs its alternative text']);
   });
+
+  it('reports malformed llms.txt sections against existing outputs instead of rendering them', async () => {
+    const paths = makeProject(roots);
+    await generate({ paths }, { SITE_ORIGIN: ORIGIN });
+    write(paths.config, { ...CONFIG, llmsSections: ['text', { heading: 'Build', items: 'a string' }] });
+    expect(await check({ paths })).toEqual({
+      errors: [
+        'site.config.json: llmsSections[0].heading must be one non-empty line',
+        'site.config.json: llmsSections[0].items must be a non-empty list of non-empty one-line strings',
+        'site.config.json: llmsSections[1].items must be a non-empty list of non-empty one-line strings',
+      ],
+      compared: true,
+    });
+  });
 }, 30000);
 
 describe('checkConfig', () => {

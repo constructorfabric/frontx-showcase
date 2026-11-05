@@ -22,7 +22,8 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
   'Content-Security-Policy': "base-uri 'self'; object-src 'none'; frame-ancestors 'self'",
 };
-const HASHED = /^\/(?:mfe\/[^/]+\/)?assets\//;
+// Exported so the tests hold it to the Caddyfile's.
+export const HASHED = /^\/(?:mfe\/[^/]+\/)?assets\//;
 
 /** Content types of the files a build writes; anything else is served as bytes. */
 const TYPES = {
@@ -93,7 +94,7 @@ export function resolveFile(root, pathname) {
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-resolve-path
 
 /**
- * br when the client takes it, otherwise gzip when it takes that, otherwise none. A coding the header names takes its own weight; one it does not name takes the weight of `*`, if any; a weight of 0 refuses.
+ * The accepted coding of the higher weight, br on a tie, or none. A coding the header names takes its own weight; one it does not name takes the weight of `*`, if any; a weight of 0 refuses.
  * @param {string | undefined} header - the request's Accept-Encoding
  * @returns {'br' | 'gzip' | null}
  */
@@ -106,9 +107,11 @@ export function chooseEncoding(header) {
     const q = params.find((p) => p.startsWith('q='));
     if (name) weights.set(name, q === undefined ? 1 : Number(q.slice(2)));
   }
-  const takes = (/** @type {string} */ name) => (weights.get(name) ?? weights.get('*') ?? 0) > 0;
-  if (takes('br')) return 'br';
-  if (takes('gzip')) return 'gzip';
+  const weight = (/** @type {string} */ name) => weights.get(name) ?? weights.get('*') ?? 0;
+  const br = weight('br');
+  const gz = weight('gzip');
+  if (br > 0 && br >= gz) return 'br';
+  if (gz > 0) return 'gzip';
   return null;
 }
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
@@ -123,6 +126,19 @@ export function chooseEncoding(header) {
 export function matchesEtag(header, etag) {
   const opaque = (/** @type {string} */ tag) => tag.trim().replace(/^W\//, '');
   return (header ?? '').split(',').some((tag) => tag.trim() === '*' || opaque(tag) === opaque(etag));
+}
+
+/**
+ * Whether a request's validators find the representation unchanged: If-None-Match decides when present, otherwise If-Modified-Since, compared in whole seconds as HTTP dates carry them (RFC 9110 section 13.2.2); a date that does not parse is ignored.
+ * @param {http.IncomingHttpHeaders} headers - the request's headers
+ * @param {string} etag - the tag of the representation this request would get
+ * @param {number} mtimeMs - the file's modification time
+ * @returns {boolean}
+ */
+export function notModified(headers, etag, mtimeMs) {
+  if (headers['if-none-match'] !== undefined) return matchesEtag(headers['if-none-match'], etag);
+  const since = Date.parse(headers['if-modified-since'] ?? '');
+  return !Number.isNaN(since) && Math.floor(mtimeMs / 1000) <= Math.floor(since / 1000);
 }
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
 
@@ -159,23 +175,17 @@ function sendError(res, status) {
 }
 
 /**
- * The file to send for a resolved path: the file itself, or a folder's `index.html` with no redirect to the slashed address (Caddy's `disable_canonical_uris`: the redirect would be written from the root and leave a sub-path mount). A file whose real path, symlinks followed, lies outside the build names nothing.
+ * The file to send for a resolved path: the file itself, or a folder's `index.html` with no redirect to the slashed address (Caddy's `disable_canonical_uris`: the redirect would be written from the root and leave a sub-path mount). A path that names nothing, or a file whose real path, symlinks followed, lies outside the build, names nothing.
  * @param {string} named
  * @param {string} realBase - the build folder's real path
- * @returns {{ file: string, stats: fs.Stats } | null}
+ * @returns {Promise<string | null>}
  */
 // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
-function locate(named, realBase) {
+async function locate(named, realBase) {
   try {
-    let file = named;
-    let stats = fs.statSync(file);
-    if (stats.isDirectory()) {
-      file = path.join(named, 'index.html');
-      stats = fs.statSync(file);
-    }
-    const real = fs.realpathSync(file);
-    if (real !== realBase && !real.startsWith(realBase + path.sep)) return null;
-    return stats.isFile() ? { file, stats } : null;
+    const file = (await fs.promises.stat(named)).isDirectory() ? path.join(named, 'index.html') : named;
+    const real = await fs.promises.realpath(file);
+    return real === realBase || real.startsWith(realBase + path.sep) ? file : null;
   } catch {
     // Missing, or a folder without an index: both are a 404.
     return null;
@@ -183,41 +193,95 @@ function locate(named, realBase) {
 }
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
 
+/**
+ * Logs a failure on the server's side, which the client sees only as a 500 or a cut body.
+ * @param {string} what - what failed
+ * @param {string} file
+ * @param {unknown} error
+ */
+function logFailure(what, file, error) {
+  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-error
+  console.error(`serve-dist: cannot ${what} ${file}: ${error instanceof Error ? error.message : String(error)}`);
+  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-error
+}
+
 // @cpt-dod:cpt-site-dod-production-build-layout-serve-dist:p2
 /**
  * The server over a build folder; `listen` is the caller's.
  * @param {string} [root] - the build folder, `site/dist` by default
+ * @param {{ cacheBytes?: number }} [options] - `cacheBytes`: the most the kept compressed bodies take together, 64 MB by default
  * @returns {http.Server}
  */
-export function createServer(root = DIST) {
+export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}) {
   const base = path.resolve(root);
   const realBase = fs.realpathSync(base);
   // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  // Compressed bodies, one per file and coding, each with the tag of the file it was made from: a build is compressed once, not on every request. A changed file gets a new tag and replaces its entry, so the cache stays within the size of the build.
-  /** @type {Map<string, { etag: string, body: Promise<Buffer> }>} */
+  // Compressed bodies, one per file and coding, each with the tag of the file it was made from: a build is compressed once, not on every request. The key is the file's identity (device and inode), not the request's spelling, so `/ASSETS/APP.JS` on a case-insensitive disk shares the entry of `/assets/app.js`. A changed file gets a new tag and replaces its entry; the least recently used entries go once the bodies pass `cacheBytes`, so in-place deploys do not grow it forever.
+  /** @type {Map<string, { etag: string, body: Promise<Buffer>, length?: number }>} */
   const compressed = new Map();
+  let keptBytes = 0;
+  /** @param {string} key */
+  const drop = (key) => {
+    keptBytes -= compressed.get(key)?.length ?? 0;
+    compressed.delete(key);
+  };
   /**
-   * @param {string} file
+   * The kept entry for a file and coding while its tag holds, moved to the most recently used end.
+   * @param {string} key
+   * @param {string} etag
+   */
+  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  const kept = (key, etag) => {
+    const entry = compressed.get(key);
+    if (entry?.etag !== etag) return undefined;
+    compressed.delete(key);
+    compressed.set(key, entry);
+    return entry;
+  };
+  /**
+   * @param {fs.promises.FileHandle} handle - the open file, read only when no body is kept for it
+   * @param {string} key
    * @param {string} etag - the encoded representation's tag
    * @param {'br' | 'gzip'} encoding
    * @returns {Promise<Buffer>}
    */
-  const compress = (file, etag, encoding) => {
-    const key = `${encoding}:${file}`;
-    const cached = compressed.get(key);
-    if (cached?.etag === etag) return cached.body;
-    const body = fs.promises
-      .readFile(file)
-      .then((source) => (encoding === 'br' ? brotliCompress(source, BROTLI_OPTIONS) : gzip(source)));
-    // A failed read is not kept, so the next request tries again.
-    body.catch(() => {
-      if (compressed.get(key)?.body === body) compressed.delete(key);
-    });
-    compressed.set(key, { etag, body });
-    return body;
+  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  const compress = (handle, key, etag, encoding) => {
+    const hit = kept(key, etag);
+    if (hit) return hit.body;
+    drop(key);
+    /** @type {{ etag: string, body: Promise<Buffer>, length?: number }} */
+    const entry = {
+      etag,
+      body: handle.readFile().then((source) => (encoding === 'br' ? brotliCompress(source, BROTLI_OPTIONS) : gzip(source))),
+    };
+    compressed.set(key, entry);
+    entry.body.then(
+      (body) => {
+        if (compressed.get(key) !== entry) return;
+        entry.length = body.length;
+        keptBytes += body.length;
+        for (const oldest of compressed.keys()) {
+          if (keptBytes <= cacheBytes) break;
+          drop(oldest);
+        }
+      },
+      // A failed read is not kept, so the next request tries again.
+      () => {
+        if (compressed.get(key) === entry) compressed.delete(key);
+      },
+    );
+    return entry.body;
   };
   // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  return http.createServer((req, res) => {
+
+  /**
+   * @param {http.IncomingMessage} req
+   * @param {http.ServerResponse} res
+   */
+  const respond = async (req, res) => {
     // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-method
     if (req.method !== 'GET' && req.method !== 'HEAD') return sendError(res, 405);
     // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-method
@@ -226,57 +290,102 @@ export function createServer(root = DIST) {
     const named = resolveFile(base, pathname);
     // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-resolve-path
     // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
-    const found = named === null ? null : locate(named, realBase);
-    if (found === null) return sendError(res, 404);
-    const { file, stats } = found;
+    const file = named === null ? null : await locate(named, realBase);
+    if (file === null) return sendError(res, 404);
+    // The file is opened before any header goes out, and everything after reads this handle: a file that cannot be opened is a 500 whatever the coding, and a file replaced meanwhile cannot slip in between.
+    let handle;
+    try {
+      handle = await fs.promises.open(file, 'r');
+    } catch (error) {
+      logFailure('open', file, error);
+      return sendError(res, 500);
+    }
     // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
+    let streaming = false;
+    try {
+      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
+      const stats = await handle.stat();
+      if (!stats.isFile()) return sendError(res, 404);
+      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
 
-    // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
-    const type = TYPES[path.extname(file).toLowerCase()] ?? 'application/octet-stream';
-    // The policy follows the file served, not the raw path: `/assets/..%2Fmf-manifest.json` names a root file.
-    const served = `/${path.relative(base, file).split(path.sep).join('/')}`;
-    const compressible = COMPRESSIBLE.test(type) && stats.size >= MIN_COMPRESS_BYTES;
-    const encoding = compressible ? chooseEncoding(req.headers['accept-encoding']) : null;
-    // A strong tag names one representation, so each content coding gets its own (RFC 9110 section 8.8.3).
-    const tag = `${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}`;
-    const etag = encoding ? `"${tag}-${encoding}"` : `"${tag}"`;
-    /** @type {http.OutgoingHttpHeaders} */
-    const headers = {
-      ...SECURITY_HEADERS,
-      'Content-Type': type,
-      'Cache-Control': HASHED.test(served) ? 'public, max-age=31536000, immutable' : 'no-cache',
-      ETag: etag,
-      'Last-Modified': stats.mtime.toUTCString(),
-    };
-    // A 304 carries the Vary its 200 would, so a cache keys both the same way.
-    if (compressible) headers.Vary = 'Accept-Encoding';
-    // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
-    // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
-    if (matchesEtag(req.headers['if-none-match'], etag)) {
-      res.writeHead(304, headers);
-      return res.end();
-    }
-    // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
+      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
+      const type = TYPES[path.extname(file).toLowerCase()] ?? 'application/octet-stream';
+      // The policy follows the file served, not the raw path: `/assets/..%2Fmf-manifest.json` names a root file.
+      const served = `/${path.relative(base, file).split(path.sep).join('/')}`;
+      const compressible = COMPRESSIBLE.test(type) && stats.size >= MIN_COMPRESS_BYTES;
+      const encoding = compressible ? chooseEncoding(req.headers['accept-encoding']) : null;
+      // A strong tag names one representation, so each content coding gets its own (RFC 9110 section 8.8.3).
+      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
+      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
+      const tag = `${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}`;
+      const etag = encoding ? `"${tag}-${encoding}"` : `"${tag}"`;
+      /** @type {http.OutgoingHttpHeaders} */
+      const headers = {
+        ...SECURITY_HEADERS,
+        'Content-Type': type,
+        'Cache-Control': HASHED.test(served) ? 'public, max-age=31536000, immutable' : 'no-cache',
+        ETag: etag,
+        'Last-Modified': stats.mtime.toUTCString(),
+      };
+      // A 304 carries the Vary its 200 would, so a cache keys both the same way.
+      if (compressible) headers.Vary = 'Accept-Encoding';
+      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
+      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
+      if (notModified(req.headers, etag, stats.mtimeMs)) {
+        res.writeHead(304, headers);
+        return res.end();
+      }
+      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
 
-    // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-    if (encoding) {
-      compress(file, etag, encoding).then(
-        (body) => {
-          headers['Content-Encoding'] = encoding;
-          headers['Content-Length'] = body.length;
+      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+      if (encoding) {
+        headers['Content-Encoding'] = encoding;
+        const key = `${encoding}:${stats.dev}:${stats.ino}`;
+        if (req.method === 'HEAD') {
+          // No compression just to count it: the length goes out only when the body is already kept.
+          const length = kept(key, etag)?.length;
+          if (length !== undefined) headers['Content-Length'] = length;
           res.writeHead(200, headers);
-          res.end(req.method === 'HEAD' ? undefined : body);
-        },
-        () => sendError(res, 500),
-      );
-      return;
+          return res.end();
+        }
+        // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+        // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+        let body;
+        try {
+          body = await compress(handle, key, etag, encoding);
+        } catch (error) {
+          logFailure('compress', file, error);
+          return sendError(res, 500);
+        }
+        headers['Content-Length'] = body.length;
+        res.writeHead(200, headers);
+        return res.end(body);
+      }
+      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+      headers['Content-Length'] = stats.size;
+      res.writeHead(200, headers);
+      if (req.method === 'HEAD' || stats.size === 0) return res.end();
+      // Exactly the bytes fstat counted, so the body keeps to its Content-Length if the file grows meanwhile; the stream owns the handle from here and closes it, and pipeline destroys both streams on an error or on a client that leaves mid-body, so no file stays open.
+      streaming = true;
+      pipeline(fs.createReadStream('', { fd: handle, start: 0, end: stats.size - 1 }), res, (error) => {
+        // A client that left is not a failure of the server's.
+        if (error && error.code !== 'ERR_STREAM_PREMATURE_CLOSE') logFailure('read', file, error);
+      });
+      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+    } finally {
+      if (!streaming) await handle.close().catch(() => {});
     }
-    headers['Content-Length'] = stats.size;
-    res.writeHead(200, headers);
-    if (req.method === 'HEAD' || stats.size === 0) return res.end();
-    // Exactly the bytes stat counted, so the body keeps to its Content-Length if the file grows meanwhile; pipeline destroys both streams on an error or on a client that leaves mid-body, so no file stays open.
-    pipeline(fs.createReadStream(file, { start: 0, end: stats.size - 1 }), res, () => {});
-    // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  };
+
+  return http.createServer((req, res) => {
+    // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-error
+    respond(req, res).catch((error) => {
+      logFailure('serve', req.url ?? '/', error);
+      if (!res.headersSent) sendError(res, 500);
+      else res.destroy();
+    });
+    // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-error
   });
 }
 
@@ -299,6 +408,9 @@ function main() {
   }
   const host = process.env.HOST || '0.0.0.0';
   const server = createServer(DIST);
+  // Longer than a platform load balancer's idle timeout, so it never reuses an upstream socket Node has just closed.
+  server.keepAliveTimeout = 65_000;
+  server.headersTimeout = 66_000;
   // A failed listen leaves nothing open, so the process ends on its own.
   server.on('error', (error) => {
     console.error(`serve-dist: cannot listen on ${host}:${port}: ${error.message}`);

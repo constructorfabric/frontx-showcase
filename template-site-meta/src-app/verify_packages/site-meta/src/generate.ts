@@ -284,7 +284,8 @@ export async function check(run: RunOptions): Promise<{ errors: string[]; compar
   const { config, extensions, map } = loadSite(paths, () => generatedOrigin ?? 'http://localhost');
   // @cpt-end:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-load-site
   // @cpt-begin:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-apply-rules
-  const errors = [...checkConfig(config), ...checkRules(extensions, map), ...checkRoutingVersion(paths), ...checkRasters(run.rasters)];
+  const configErrors = checkConfig(config);
+  const errors = [...configErrors, ...checkRules(extensions, map), ...checkRoutingVersion(paths), ...checkRasters(run.rasters)];
   // @cpt-end:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-apply-rules
   // @cpt-begin:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-if-outputs-exist
   if (generatedOrigin !== undefined) {
@@ -294,10 +295,13 @@ export async function check(run: RunOptions): Promise<{ errors: string[]; compar
     errors.push(...missingAssets(paths, map, current));
     // @cpt-end:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-check-assets
     // @cpt-begin:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-compare-outputs
-    const outputs = await renderOutputs(paths, config, map, current);
-    for (const [name, content] of Object.entries(outputs)) {
-      const file = path.join(paths.dist, name);
-      if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== content) errors.push(`${shown(paths, file)} differs from what the sources generate; run npm run seo:generate`);
+    // A config the rules refuse cannot be rendered (generate throws on it too), so its messages stand alone.
+    if (configErrors.length === 0) {
+      const outputs = await renderOutputs(paths, config, map, current);
+      for (const [name, content] of Object.entries(outputs)) {
+        const file = path.join(paths.dist, name);
+        if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== content) errors.push(`${shown(paths, file)} differs from what the sources generate; run npm run seo:generate`);
+      }
     }
     // @cpt-end:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-compare-outputs
   }
