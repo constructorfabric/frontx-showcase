@@ -1,21 +1,10 @@
 import { execFileSync } from 'node:child_process';
-import { randomBytes } from 'node:crypto';
 import fs, { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import zlib from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import {
-  chooseEncoding,
-  createServer,
-  HASHED,
-  MAX_COMPRESSIONS,
-  MAX_WAITING,
-  matchesEtag,
-  missingBuild,
-  parsePort,
-} from './serve-dist.mjs';
+import { createServer, HASHED, matchesEtag, missingBuild, parsePort } from './serve-dist.mjs';
 
 let root;
 let dist;
@@ -50,45 +39,10 @@ function caddySecurityHeaders() {
   );
 }
 
-/** Writes new content of the same size into a file and puts its mtime back, so its tag does not change. */
-function rewriteKeepingTag(file, content) {
-  // Seconds as numbers, not Dates: a Date rounds the time to a whole millisecond, which can move the tag.
-  const { atimeMs, mtimeMs } = fs.statSync(file);
-  writeFileSync(file, content);
-  fs.utimesSync(file, atimeMs / 1000, mtimeMs / 1000);
-}
-
-const brotliText = (res) => zlib.brotliDecompressSync(res.body).toString();
-
-const BR = { 'accept-encoding': 'br' };
-
-const brotliBytes = (res) => zlib.brotliDecompressSync(res.body);
-
-/** Bytes that do not compress: their br body is about their own size, so a cache bound counted in such bodies keeps the file itself too, which a file of SCRIPT, far larger than its body, would exceed. */
-const NOISE = randomBytes(2048);
-
-/** NOISE with its first byte changed: the same size, other content. */
-const flip = (/** @type {Buffer} */ bytes) => Buffer.from(bytes).fill(bytes[0] ^ 1, 0, 1);
-
-/** The length of NOISE's br body, at the server's quality, the unit the cache bounds of the small servers are counted in. */
-const noiseLength = () =>
-  zlib.brotliCompressSync(NOISE, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }).length;
-
-/** Runs `use` with the port of a second server over the build with its own options, then closes that server. */
-async function withServer(options, use) {
-  const other = createServer(dist, options);
-  await new Promise((resolve) => other.listen(0, '127.0.0.1', () => resolve(undefined)));
-  try {
-    return await use(/** @type {import('node:net').AddressInfo} */ (other.address()).port);
-  } finally {
-    await new Promise((resolve) => other.close(resolve));
-  }
-}
-
 /** A raw request: the path goes out as written, so `..` reaches the server instead of being resolved by the client. */
-function request(pathname, { method = 'GET', headers = {}, port: to = port } = {}) {
+function request(pathname, { method = 'GET', headers = {} } = {}) {
   return new Promise((resolve, reject) => {
-    const req = http.request({ host: '127.0.0.1', port: to, path: pathname, method, headers }, (res) => {
+    const req = http.request({ host: '127.0.0.1', port, path: pathname, method, headers }, (res) => {
       const chunks = [];
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks) }));
@@ -113,7 +67,6 @@ beforeAll(async () => {
   write('site.webmanifest', '{"name":"FrontX"}');
   write('blob.unknownext', 'bytes');
   write('empty.txt', '');
-  write('assets/cached-123abc.js', SCRIPT);
   // A file outside the build that a link inside it points at.
   writeFileSync(path.join(root, 'outside.js'), SCRIPT);
   try {
@@ -125,8 +78,6 @@ beforeAll(async () => {
   }
   // 16 MB: more than the send and receive buffers of a loopback socket hold together, so the body is still being read when the client leaves.
   write('assets/large-0a1b2c.js', Buffer.alloc(16 * 1024 * 1024, 'x'));
-  write('assets/head-1a2b3c.js', SCRIPT);
-  write('assets/case-abc123.js', SCRIPT);
   write('assets/locked-0f0f0f.js', SCRIPT);
   server = createServer(dist);
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -190,180 +141,6 @@ describe('serve-dist', () => {
     expect(HASHED.source.replaceAll('\\/', '/')).toBe(hashed);
   });
 
-  it('compresses text with br or gzip as the client asks', async () => {
-    const br = await request('/assets/index-abc123.js', { headers: { 'accept-encoding': 'gzip, br' } });
-    expect(br.headers['content-encoding']).toBe('br');
-    expect(br.headers.vary).toBe('Accept-Encoding');
-    expect(zlib.brotliDecompressSync(br.body).toString()).toBe(SCRIPT);
-
-    const gzip = await request('/assets/index-abc123.js', { headers: { 'accept-encoding': 'gzip, br;q=0' } });
-    expect(gzip.headers['content-encoding']).toBe('gzip');
-    expect(zlib.gunzipSync(gzip.body).toString()).toBe(SCRIPT);
-
-    const plain = await request('/assets/index-abc123.js');
-    expect(plain.headers['content-encoding']).toBeUndefined();
-    expect(plain.body.toString()).toBe(SCRIPT);
-
-    // One strong tag per content coding, each body with its own length.
-    expect(new Set([br.headers.etag, gzip.headers.etag, plain.headers.etag]).size).toBe(3);
-    for (const res of [br, gzip, plain]) expect(Number(res.headers['content-length'])).toBe(res.body.length);
-  });
-
-  it('chooses the accepted coding of the higher weight, br on a tie, honouring a refusal by q=0', () => {
-    expect(chooseEncoding('gzip, br')).toBe('br');
-    expect(chooseEncoding('gzip;q=1, br;q=0.1')).toBe('gzip');
-    expect(chooseEncoding('gzip;q=0.5, br ; q=0.8')).toBe('br');
-    expect(chooseEncoding('gzip;q=0.5, br;q=0.5')).toBe('br');
-    expect(chooseEncoding('gzip, *;q=0.5')).toBe('gzip');
-    expect(chooseEncoding('gzip')).toBe('gzip');
-    expect(chooseEncoding('*')).toBe('br');
-    expect(chooseEncoding('gzip;q=0, *')).toBe('br');
-    expect(chooseEncoding('br;q=0, *')).toBe('gzip');
-    expect(chooseEncoding('br;q=0, gzip;q=0, *')).toBeNull();
-    expect(chooseEncoding('br;q=0, gzip')).toBe('gzip');
-    expect(chooseEncoding('*;q=0')).toBeNull();
-    expect(chooseEncoding('br;q=0')).toBeNull();
-    expect(chooseEncoding('identity')).toBeNull();
-    expect(chooseEncoding(undefined)).toBeNull();
-  });
-
-  it('compresses a file once and sends the kept body until the file changes', async () => {
-    const address = '/assets/cached-123abc.js';
-    const headers = { 'accept-encoding': 'br' };
-    const first = await request(address, { headers });
-    expect(brotliText(first)).toBe(SCRIPT);
-
-    // Same size, mtime put back: the tag holds, so the kept body still goes out, not the new content.
-    rewriteKeepingTag(path.join(dist, 'assets/cached-123abc.js'), SCRIPT.replace('x', 'y'));
-    const second = await request(address, { headers });
-    expect(second.headers.etag).toBe(first.headers.etag);
-    expect(brotliText(second)).toBe(SCRIPT);
-
-    // A new mtime changes the tag, so the body is made again from the file.
-    fs.utimesSync(path.join(dist, 'assets/cached-123abc.js'), new Date(), new Date(Date.now() + 5000));
-    const third = await request(address, { headers });
-    expect(third.headers.etag).not.toBe(first.headers.etag);
-    expect(brotliText(third)).toBe(SCRIPT.replace('x', 'y'));
-  });
-
-  it('keeps one compressed body per file, whatever the spelling of its path on a case-insensitive disk', async (context) => {
-    if (!fs.existsSync(path.join(dist, 'ASSETS/CASE-ABC123.JS'))) return context.skip();
-    const headers = { 'accept-encoding': 'br' };
-    const lower = await request('/assets/case-abc123.js', { headers });
-    rewriteKeepingTag(path.join(dist, 'assets/case-abc123.js'), SCRIPT.replace('x', 'y'));
-    // A body made for this spelling would carry the new content; the one kept for the file carries the old.
-    const upper = await request('/ASSETS/CASE-ABC123.JS', { headers });
-    expect(upper.status).toBe(200);
-    expect(upper.headers.etag).toBe(lower.headers.etag);
-    expect(brotliText(upper)).toBe(SCRIPT);
-  });
-
-  it('drops the least recently used compressed body once the kept bodies pass their bound', async () => {
-    const names = ['a', 'b', 'c', 'd', 'e'];
-    for (const name of names) write(`evict/${name}.js`, NOISE);
-    // Room for four bodies of NOISE, not five; each, and the file itself, is a quarter of the bound, so each is kept.
-    await withServer({ cacheBytes: 4 * noiseLength() }, async (smallPort) => {
-      const get = (/** @type {string} */ name) => request(`/evict/${name}.js`, { headers: BR, port: smallPort });
-      for (const name of names.slice(0, 4)) await get(name);
-      // a is used again, so b is the least recently used when e's body arrives.
-      await get('a');
-      await get('e');
-      for (const name of ['a', 'b']) rewriteKeepingTag(path.join(dist, `evict/${name}.js`), flip(NOISE));
-      expect(brotliBytes(await get('a'))).toEqual(NOISE);
-      expect(brotliBytes(await get('b'))).toEqual(flip(NOISE));
-    });
-  });
-
-  it('streams a file larger than a quarter of the bound uncompressed, never compressing it', async () => {
-    write('oversized/big.js', SCRIPT);
-    const compressing = vi.spyOn(zlib, 'brotliCompress');
-    try {
-      // A quarter of this bound is smaller than SCRIPT itself.
-      await withServer({ cacheBytes: 2 * SCRIPT.length }, async (smallPort) => {
-        const res = await request('/oversized/big.js', { headers: BR, port: smallPort });
-        expect(res.headers['content-encoding']).toBeUndefined();
-        expect(res.headers.vary).toBeUndefined();
-        expect(res.headers['content-length']).toBe(String(SCRIPT.length));
-        expect(res.body.toString()).toBe(SCRIPT);
-        expect(compressing).not.toHaveBeenCalled();
-      });
-    } finally {
-      compressing.mockRestore();
-    }
-  });
-
-  it(`sends a file uncompressed once ${MAX_WAITING} requests wait for a compression slot`, async () => {
-    const files = Array.from({ length: MAX_COMPRESSIONS + MAX_WAITING + 1 }, (_, i) => `queue/${i}.js`);
-    for (const [i, file] of files.entries()) write(file, `${SCRIPT}// ${i}\n`);
-    const brotli = zlib.brotliCompress;
-    /** @type {Array<() => void>} */
-    const held = [];
-    let holding = true;
-    // Every compression waits until the test lets them go, so the slots stay taken.
-    const compressing = vi.spyOn(zlib, 'brotliCompress').mockImplementation((source, options, callback) => {
-      if (holding) held.push(() => brotli(source, options, callback));
-      else brotli(source, options, callback);
-    });
-    const opened = vi.spyOn(fs.promises, 'open');
-    try {
-      await withServer({}, async (otherPort) => {
-        const options = { headers: BR, port: otherPort };
-        const opens = opened.mock.calls.length;
-        const queued = files.slice(0, -1).map((file) => request(`/${file}`, options));
-        await vi.waitFor(() => expect(held).toHaveLength(MAX_COMPRESSIONS));
-        await vi.waitFor(() => expect(opened.mock.calls.length).toBe(opens + queued.length));
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        // The queue is full: the next file is streamed as it is, without waiting.
-        const overflow = await request(`/${files.at(-1)}`, options);
-        expect(overflow.headers['content-encoding']).toBeUndefined();
-        expect(overflow.headers.vary).toBe('Accept-Encoding');
-        expect(overflow.body.toString()).toBe(`${SCRIPT}// ${files.length - 1}\n`);
-        holding = false;
-        for (const go of held.splice(0)) go();
-        for (const [i, res] of (await Promise.all(queued)).entries()) expect(brotliText(res)).toBe(`${SCRIPT}// ${i}\n`);
-      });
-    } finally {
-      compressing.mockRestore();
-      opened.mockRestore();
-    }
-  });
-
-  it('shares a compression still running with the next request for the file, and keeps it while finished bodies are dropped', async () => {
-    const held = flip(NOISE);
-    write('pending/held.js', held);
-    const names = ['a', 'b', 'c', 'd', 'e'];
-    for (const name of names) write(`pending/${name}.js`, NOISE);
-    const brotli = zlib.brotliCompress;
-    /** @type {Array<() => void>} */
-    const waiting = [];
-    // The held file's compression waits until the test lets it go; every other one runs at once.
-    const compressing = vi.spyOn(zlib, 'brotliCompress').mockImplementation((source, options, callback) => {
-      if (held.equals(source)) waiting.push(() => brotli(source, options, callback));
-      else brotli(source, options, callback);
-    });
-    const opened = vi.spyOn(fs.promises, 'open');
-    try {
-      await withServer({ cacheBytes: 4 * noiseLength() }, async (smallPort) => {
-        const options = { headers: BR, port: smallPort };
-        const first = request('/pending/held.js', options);
-        await vi.waitFor(() => expect(waiting).toHaveLength(1));
-        // Five finished bodies pass the bound of four: finished ones are dropped, never the pending one.
-        for (const name of names) await request(`/pending/${name}.js`, options);
-        const opens = opened.mock.calls.length;
-        const second = request('/pending/held.js', options);
-        await vi.waitFor(() => expect(opened.mock.calls.length).toBe(opens + 1));
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        expect(waiting).toHaveLength(1);
-        waiting[0]();
-        for (const res of await Promise.all([first, second])) expect(brotliBytes(res)).toEqual(held);
-        expect(compressing.mock.calls.filter(([source]) => held.equals(/** @type {Buffer} */ (source)))).toHaveLength(1);
-      });
-    } finally {
-      compressing.mockRestore();
-      opened.mockRestore();
-    }
-  });
-
   it('answers 404 to a named pipe and never opens it', async (context) => {
     const fifo = path.join(dist, 'pipe.txt');
     try {
@@ -381,17 +158,6 @@ describe('serve-dist', () => {
     }
   });
 
-  it('matches If-None-Match against the tag of the coding this request gets', async () => {
-    const gzipped = { 'accept-encoding': 'gzip' };
-    const gzip = await request('/assets/index-abc123.js', { headers: gzipped });
-    const plain = await request('/assets/index-abc123.js');
-
-    expect((await request('/assets/index-abc123.js', { headers: { ...gzipped, 'if-none-match': gzip.headers.etag } })).status).toBe(304);
-    // A tag of the other coding names a different representation.
-    expect((await request('/assets/index-abc123.js', { headers: { 'if-none-match': gzip.headers.etag } })).status).toBe(200);
-    expect((await request('/assets/index-abc123.js', { headers: { ...gzipped, 'if-none-match': plain.headers.etag } })).status).toBe(200);
-  });
-
   it('sends an empty file with a zero length', async () => {
     const res = await request('/empty.txt');
     expect(res.status).toBe(200);
@@ -407,19 +173,24 @@ describe('serve-dist', () => {
     expect(res.headers['cache-control']).toBe('no-store');
   });
 
-  it('answers 304 when the validator matches, with the Vary the 200 carries', async () => {
+  it('sends a file as it is, whatever Accept-Encoding asks, with one tag per file', async () => {
+    const plain = await request('/assets/index-abc123.js');
+    const asked = await request('/assets/index-abc123.js', { headers: { 'accept-encoding': 'br, gzip' } });
+    for (const res of [plain, asked]) {
+      expect(res.headers['content-encoding']).toBeUndefined();
+      expect(res.headers.vary).toBeUndefined();
+      expect(res.headers['content-length']).toBe(String(SCRIPT.length));
+      expect(res.body.toString()).toBe(SCRIPT);
+    }
+    expect(asked.headers.etag).toBe(plain.headers.etag);
+  });
+
+  it('answers 304 when the validator matches', async () => {
     const first = await request('/');
     const again = await request('/', { headers: { 'if-none-match': first.headers.etag } });
     expect(again.status).toBe(304);
     expect(again.body.length).toBe(0);
-
-    const script = await request('/assets/index-abc123.js');
-    const unchanged = await request('/assets/index-abc123.js', { headers: { 'if-none-match': script.headers.etag } });
-    expect(unchanged.status).toBe(304);
-    expect(script.headers.vary).toBe('Accept-Encoding');
-    expect(unchanged.headers.vary).toBe('Accept-Encoding');
-    expect(first.headers.vary).toBeUndefined();
-    expect(again.headers.vary).toBeUndefined();
+    expect(again.headers.etag).toBe(first.headers.etag);
   });
 
   it('answers 304 to If-Modified-Since at or after the file time, in whole seconds, unless If-None-Match is sent', async () => {
@@ -436,34 +207,18 @@ describe('serve-dist', () => {
     expect((await request('/docs/get-started.md', { headers: { 'if-modified-since': 'not a date' } })).status).toBe(200);
   });
 
-  it('answers HEAD with the coding but compresses nothing for it: the length goes out only once the body is kept', async () => {
-    const headers = { 'accept-encoding': 'br' };
-    const cold = await request('/assets/head-1a2b3c.js', { method: 'HEAD', headers });
-    expect(cold.status).toBe(200);
-    expect(cold.headers['content-encoding']).toBe('br');
-    expect(cold.headers['content-length']).toBeUndefined();
-    expect(cold.body.length).toBe(0);
-
-    const get = await request('/assets/head-1a2b3c.js', { headers });
-    const warm = await request('/assets/head-1a2b3c.js', { method: 'HEAD', headers });
-    expect(warm.headers['content-length']).toBe(String(get.body.length));
-    expect(warm.headers.etag).toBe(get.headers.etag);
-  });
-
-  it('answers 500 to a file it cannot open, whatever the coding, and logs the path and the reason', async (context) => {
+  it('answers 500 to a file it cannot open and logs the path and the reason', async (context) => {
     // Permissions do not bind root, and Windows has no mode bits to clear.
     if (process.platform === 'win32' || process.getuid?.() === 0) return context.skip();
     const file = path.join(dist, 'assets/locked-0f0f0f.js');
     fs.chmodSync(file, 0o000);
     const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
     try {
-      for (const headers of [{}, { 'accept-encoding': 'br' }]) {
-        const res = await request('/assets/locked-0f0f0f.js', { headers });
-        expect(res.status).toBe(500);
-        expect(res.headers['cache-control']).toBe('no-store');
-        expect(res.body.toString()).toBe('500 Internal Server Error');
-      }
-      expect(logged).toHaveBeenCalledTimes(2);
+      const res = await request('/assets/locked-0f0f0f.js');
+      expect(res.status).toBe(500);
+      expect(res.headers['cache-control']).toBe('no-store');
+      expect(res.body.toString()).toBe('500 Internal Server Error');
+      expect(logged).toHaveBeenCalledTimes(1);
       expect(logged.mock.calls[0][0]).toContain(file);
       expect(logged.mock.calls[0][0]).toContain('EACCES');
     } finally {

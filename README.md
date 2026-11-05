@@ -61,7 +61,7 @@ Screens are addressed in the query string: `/?screen=<token>[;route=<path inside
 | `npm run verify:ui` | After `npm run build`: the design-defect checker of template-design-guardrails over every manifest page, block showcase route and the not-found screen at 1440 and 390 pixels against `npm run dev`; only a finding `scripts/design-verify-baseline.json` does not carry fails (`-- --no-baseline` for a full report) |
 | `npm run verify:ui:baseline` | `-- check`: every finding the baseline carries names its reason; `-- build <findings.json>`: rebuild the baseline from a run without it, refusing a finding no rule knows |
 | `npm run preview` | Serve `site/dist` at `http://localhost:4173`, the host and every MFE remote |
-| `npm start` | After `npm run build`: serve `site/dist` from Node on `$PORT` (8080 by default) and `$HOST` (`0.0.0.0` by default) with the headers, cache policy and content types of the image's server (`scripts/serve-dist.mjs`) |
+| `npm start` | After `npm run build`: serve `site/dist` from Node on `$PORT` (8080 by default) and `$HOST` (`0.0.0.0` by default) with the headers, cache policy and content types of the image's server, uncompressed (`scripts/serve-dist.mjs`) |
 
 See `CONTRIBUTING.md` for the development loop and `architecture/DESIGN.md` for the design.
 
@@ -74,7 +74,7 @@ docker build --build-arg SITE_ORIGIN=http://localhost:8080 -t frontx-site:local 
 docker run --rm -p 8080:8080 --read-only --tmpfs /data:uid=10001,gid=10001 --tmpfs /config:uid=10001,gid=10001 --cap-drop ALL --security-opt no-new-privileges frontx-site:local
 ```
 
-A Node host such as DigitalOcean App Platform runs the same build without the image: it builds with `npm ci && npm run setup && npm run build` with `SITE_ORIGIN` set and runs `npm start`, which serves `site/dist` on `$PORT` with the image's headers, cache policy and content types (`scripts/serve-dist.mjs`, Node's standard library only). The image stays the main deploy path.
+A Node host such as DigitalOcean App Platform runs the same build without the image: it builds with `npm ci && npm run setup && npm run build` with `SITE_ORIGIN` set and runs `npm start`, which serves `site/dist` on `$PORT` with the image's headers, cache policy and content types (`scripts/serve-dist.mjs`, Node's standard library only). `npm start` does not compress: the host's CDN or proxy in front does, as the image's Caddy does for the image. The image stays the main deploy path.
 
 The MFE packages build several at once, half the cores up to 6; `FRONTX_BUILD_CONCURRENCY=<n>` sets the number, and `1` builds them one after another, for a host with little memory. A value above the default trades memory for speed: each build is a full Vite run.
 

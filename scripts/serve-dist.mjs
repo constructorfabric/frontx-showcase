@@ -1,13 +1,11 @@
 #!/usr/bin/env node
-// `npm start`: serves the production build, site/dist, over plain HTTP on PORT (8080 by default) and HOST (0.0.0.0 by default), the way the image's Caddy serves it (deploy/site/Caddyfile): the same security headers, cache policy and content types, a folder address served without a redirect, br or gzip for text, GET and HEAD only, errors as plain text that is never cached. For a Node host that runs the built site; the container image stays the main deploy path. Node's standard library only, so it runs after `npm ci --omit=dev` too.
+// `npm start`: serves the production build, site/dist, over plain HTTP on PORT (8080 by default) and HOST (0.0.0.0 by default), the way the image's Caddy serves it (deploy/site/Caddyfile): the same security headers, cache policy and content types, a folder address served without a redirect, GET and HEAD only, errors as plain text that is never cached. It sends every file as it is, uncompressed: a CDN or proxy in front compresses, as the image's Caddy does. For a Node host that runs the built site; the container image stays the main deploy path. Node's standard library only, so it runs after `npm ci --omit=dev` too.
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import process from 'node:process';
 import { pipeline } from 'node:stream';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
-import zlib from 'node:zlib';
 import { isEntryPoint } from './entry-point.mjs';
 
 /** The production build, resolved from this file so the working directory does not matter. */
@@ -50,27 +48,7 @@ const TYPES = {
   '.ttf': 'font/ttf',
   '.wasm': 'application/wasm',
 };
-const COMPRESSIBLE = /^(?:text\/|application\/(?:json|manifest\+json|xml)|image\/svg\+xml)/;
-// Caddy's encode skips bodies this small: the encoding would cost more than it saves.
-const MIN_COMPRESS_BYTES = 512;
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
-
-// Quality 5 of 11 keeps the first request for a file quick; the result is kept, so later ones cost nothing.
-const BROTLI_OPTIONS = { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } };
-// Compressions running at once; the rest wait, so many large files cannot take every core and their memory together.
-export const MAX_COMPRESSIONS = 4;
-// Requests waiting for a compression slot, each holding its open file; one more is sent uncompressed instead, so a burst cannot run out of file handles.
-export const MAX_WAITING = 32;
-
-/**
- * A file's bytes in a coding; zlib is looked up on each call, so a test can watch it.
- * @param {Buffer} source
- * @param {'br' | 'gzip'} encoding
- * @returns {Promise<Buffer>}
- */
-function encode(source, encoding) {
-  return encoding === 'br' ? promisify(zlib.brotliCompress)(source, BROTLI_OPTIONS) : promisify(zlib.gzip)(source);
-}
 
 /**
  * The missing-build message, or null when `root` holds a build.
@@ -106,32 +84,9 @@ export function resolveFile(root, pathname) {
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-resolve-path
 
 /**
- * The accepted coding of the higher weight, br on a tie, or none. A coding the header names takes its own weight; one it does not name takes the weight of `*`, if any; a weight of 0 refuses.
- * @param {string | undefined} header - the request's Accept-Encoding
- * @returns {'br' | 'gzip' | null}
- */
-// @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-export function chooseEncoding(header) {
-  /** @type {Map<string, number>} */
-  const weights = new Map();
-  for (const part of (header ?? '').split(',')) {
-    const [name, ...params] = part.split(';').map((p) => p.trim().toLowerCase());
-    const q = params.find((p) => p.startsWith('q='));
-    if (name) weights.set(name, q === undefined ? 1 : Number(q.slice(2)));
-  }
-  const weight = (/** @type {string} */ name) => weights.get(name) ?? weights.get('*') ?? 0;
-  const br = weight('br');
-  const gz = weight('gzip');
-  if (br > 0 && br >= gz) return 'br';
-  if (gz > 0) return 'gzip';
-  return null;
-}
-// @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-
-/**
  * Whether an If-None-Match value names `etag`: `*`, or a comma-separated list of tags compared weakly (RFC 9110 section 13.1.2), so `W/"x"` matches `"x"`.
  * @param {string | undefined} header - the request's If-None-Match
- * @param {string} etag - the tag of the representation this request would get, its content coding included
+ * @param {string} etag - the file's tag
  * @returns {boolean}
  */
 // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
@@ -141,9 +96,9 @@ export function matchesEtag(header, etag) {
 }
 
 /**
- * Whether a request's validators find the representation unchanged: If-None-Match decides when present, otherwise If-Modified-Since, compared in whole seconds as HTTP dates carry them (RFC 9110 section 13.2.2); a date that does not parse is ignored.
+ * Whether a request's validators find the file unchanged: If-None-Match decides when present, otherwise If-Modified-Since, compared in whole seconds as HTTP dates carry them (RFC 9110 section 13.2.2); a date that does not parse is ignored.
  * @param {http.IncomingHttpHeaders} headers - the request's headers
- * @param {string} etag - the tag of the representation this request would get
+ * @param {string} etag - the file's tag
  * @param {number} mtimeMs - the file's modification time
  * @returns {boolean}
  */
@@ -222,106 +177,11 @@ function logFailure(what, file, error) {
 /**
  * The server over a build folder; `listen` is the caller's.
  * @param {string} [root] - the build folder, `site/dist` by default
- * @param {{ cacheBytes?: number }} [options] - `cacheBytes`: the most the kept compressed bodies take together, 64 MB by default
  * @returns {http.Server}
  */
-export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}) {
+export function createServer(root = DIST) {
   const base = path.resolve(root);
   const realBase = fs.realpathSync(base);
-  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  // Compressed bodies, one per file and coding, each with the tag of the file it was made from: a build is compressed once, not on every request. The key is the file's identity (device and inode), not the request's spelling, so `/ASSETS/APP.JS` on a case-insensitive disk shares the entry of `/assets/app.js`. A file rewritten in place keeps its inode, so its new tag replaces the kept body; a file replaced under a new inode gets a new key, and its old body ages out through the bound: the least recently used finished bodies go once they pass `cacheBytes`, so deploys do not grow it forever.
-  /** @type {Map<string, { etag: string, body: Promise<Buffer>, length?: number }>} */
-  const compressed = new Map();
-  let keptBytes = 0;
-  // A file larger than this is streamed uncompressed: it never takes a slot or a full read, and its body cannot push every other body out. A compressed body that still comes out larger is sent without being kept.
-  const maxKeptBody = cacheBytes / 4;
-  /** @param {string} key */
-  const drop = (key) => {
-    keptBytes -= compressed.get(key)?.length ?? 0;
-    compressed.delete(key);
-  };
-  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  let compressing = 0;
-  /** @type {Array<() => void>} */
-  const waiting = [];
-  /** Resolves once fewer than MAX_COMPRESSIONS run; `release` hands a freed slot straight to the next in line, so none slips in between. */
-  const slot = () => {
-    if (compressing < MAX_COMPRESSIONS) {
-      compressing++;
-      return Promise.resolve();
-    }
-    return new Promise((/** @type {(value?: unknown) => void} */ resolve) => waiting.push(resolve));
-  };
-  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  const release = () => {
-    const next = waiting.shift();
-    if (next) next();
-    else compressing--;
-  };
-  /**
-   * The kept or pending entry for a file and coding while its tag holds, moved to the most recently used end.
-   * @param {string} key
-   * @param {string} etag
-   */
-  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  const kept = (key, etag) => {
-    const entry = compressed.get(key);
-    if (entry?.etag !== etag) return undefined;
-    compressed.delete(key);
-    compressed.set(key, entry);
-    return entry;
-  };
-  /**
-   * The body in a coding: the kept one, the one still being made for another request (one compression, shared), or a new one made once a slot is free.
-   * @param {fs.promises.FileHandle} handle - the open file, read only when no body is kept or pending for it
-   * @param {string} key
-   * @param {string} etag - the encoded representation's tag
-   * @param {'br' | 'gzip'} encoding
-   * @returns {Promise<Buffer>}
-   */
-  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  const compress = (handle, key, etag, encoding) => {
-    const hit = kept(key, etag);
-    if (hit) return hit.body;
-    drop(key);
-    /** @type {{ etag: string, body: Promise<Buffer>, length?: number }} */
-    const entry = {
-      etag,
-      body: slot()
-        .then(() => handle.readFile())
-        .then((source) => encode(source, encoding))
-        .finally(release),
-    };
-    compressed.set(key, entry);
-    // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-    // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-    entry.body.then(
-      (body) => {
-        if (compressed.get(key) !== entry) return;
-        if (body.length > maxKeptBody) {
-          compressed.delete(key);
-          return;
-        }
-        entry.length = body.length;
-        keptBytes += body.length;
-        // A pending entry has no length yet and stays: dropping it would start a second compression of its file.
-        for (const [oldest, other] of compressed) {
-          if (keptBytes <= cacheBytes) break;
-          if (other.length !== undefined) drop(oldest);
-        }
-      },
-      // A failed read is not kept, so the next request tries again.
-      () => {
-        if (compressed.get(key) === entry) compressed.delete(key);
-      },
-    );
-    return entry.body;
-  };
-  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
 
   /**
    * @param {http.IncomingMessage} req
@@ -339,7 +199,7 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
     const found = named === null ? null : await locate(named, realBase);
     if (found === null) return sendError(res, 404);
     const { file, real } = found;
-    // The checked real path is opened, not the name, and with O_NOFOLLOW where the system has it, so a leaf swapped for a link meanwhile fails to open instead of leading out; a parent folder swapped meanwhile is still followed, which takes write access to the build. O_NONBLOCK keeps a FIFO put there meanwhile from blocking the open. Everything after reads this handle: a file that cannot be opened is a 500 whatever the coding.
+    // The checked real path is opened, not the name, and with O_NOFOLLOW where the system has it, so a leaf swapped for a link meanwhile fails to open instead of leading out; a parent folder swapped meanwhile is still followed, which takes write access to the build. O_NONBLOCK keeps a FIFO put there meanwhile from blocking the open. Everything after reads this handle: a file that cannot be opened is a 500.
     let handle;
     try {
       handle = await fs.promises.open(
@@ -362,17 +222,7 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
       const type = TYPES[path.extname(file).toLowerCase()] ?? 'application/octet-stream';
       // The policy follows the file served, not the raw path: `/assets/..%2Fmf-manifest.json` names a root file.
       const served = `/${path.relative(base, file).split(path.sep).join('/')}`;
-      // Decided from the file's size, so a file too large to keep never waits for a slot.
-      const compressible = COMPRESSIBLE.test(type) && stats.size >= MIN_COMPRESS_BYTES && stats.size <= maxKeptBody;
-      let encoding = compressible ? chooseEncoding(req.headers['accept-encoding']) : null;
-      // A strong tag names one representation, so each content coding gets its own (RFC 9110 section 8.8.3).
-      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
-      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
-      const tag = `${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}`;
-      const key = `${encoding}:${stats.dev}:${stats.ino}`;
-      // A full queue sends the file uncompressed rather than hold one more open file; a body kept or being made is still shared.
-      if (encoding && compressed.get(key)?.etag !== `"${tag}-${encoding}"` && waiting.length >= MAX_WAITING) encoding = null;
-      const etag = encoding ? `"${tag}-${encoding}"` : `"${tag}"`;
+      const etag = `"${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}"`;
       /** @type {http.OutgoingHttpHeaders} */
       const headers = {
         ...SECURITY_HEADERS,
@@ -381,8 +231,6 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
         ETag: etag,
         'Last-Modified': stats.mtime.toUTCString(),
       };
-      // A 304 carries the Vary its 200 would, so a cache keys both the same way.
-      if (compressible) headers.Vary = 'Accept-Encoding';
       // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
       // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
       if (notModified(req.headers, etag, stats.mtimeMs)) {
@@ -391,31 +239,7 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
       }
       // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-unchanged
 
-      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-      if (encoding) {
-        headers['Content-Encoding'] = encoding;
-        if (req.method === 'HEAD') {
-          // No compression just to count it: the length goes out only when the body is already kept.
-          const length = kept(key, etag)?.length;
-          if (length !== undefined) headers['Content-Length'] = length;
-          res.writeHead(200, headers);
-          return res.end();
-        }
-        // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-        // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-        let body;
-        try {
-          body = await compress(handle, key, etag, encoding);
-        } catch (error) {
-          logFailure('compress', file, error);
-          return sendError(res, 500);
-        }
-        headers['Content-Length'] = body.length;
-        res.writeHead(200, headers);
-        return res.end(body);
-      }
-      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+      // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-stream
       headers['Content-Length'] = stats.size;
       res.writeHead(200, headers);
       if (req.method === 'HEAD' || stats.size === 0) return res.end();
@@ -425,7 +249,7 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
         // A client that left is not a failure of the server's.
         if (error && error.code !== 'ERR_STREAM_PREMATURE_CLOSE') logFailure('read', file, error);
       });
-      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+      // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-stream
     } finally {
       if (!streaming) await handle.close().catch(() => {});
     }
