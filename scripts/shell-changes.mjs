@@ -51,6 +51,7 @@ export const SHELL_CHANGES = {
   ],
   added: [
     '__tests__/mfe-build-concurrency.test.ts',
+    '__tests__/mfe-build-pool.test.ts',
     'packages/react/src/mfe/__tests__/ThemeAwareReactLifecycle.font.test.tsx',
     'public/brand/apple-touch-icon.png',
     'public/brand/favicon-32.png',

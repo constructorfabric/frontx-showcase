@@ -5,12 +5,13 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { createServer, matchesEtag, missingBuild, parsePort } from './serve-dist.mjs';
+import { chooseEncoding, createServer, matchesEtag, missingBuild, parsePort } from './serve-dist.mjs';
 
 let root;
 let dist;
 let server;
 let port;
+let symlinked = false;
 
 const SCRIPT = `export const text = ${JSON.stringify('x'.repeat(2048))};\n`;
 
@@ -45,6 +46,17 @@ beforeAll(async () => {
   write('docs/get-started.md', '# Get started\n');
   write('site.webmanifest', '{"name":"FrontX"}');
   write('blob.unknownext', 'bytes');
+  write('empty.txt', '');
+  write('assets/cached-123abc.js', SCRIPT);
+  // A file outside the build that a link inside it points at.
+  writeFileSync(path.join(root, 'outside.js'), SCRIPT);
+  try {
+    fs.symlinkSync(path.join(root, 'outside.js'), path.join(dist, 'outside.js'));
+    symlinked = true;
+  } catch (error) {
+    // Windows without the privilege to create links.
+    if (process.platform !== 'win32') throw error;
+  }
   // Random text barely compresses, so neither body fits in the socket buffers before the client leaves.
   write('assets/large-0a1b2c.js', randomBytes(512 * 1024).toString('base64'));
   server = createServer(dist);
@@ -116,11 +128,80 @@ describe('serve-dist', () => {
     const plain = await request('/assets/index-abc123.js');
     expect(plain.headers['content-encoding']).toBeUndefined();
     expect(plain.body.toString()).toBe(SCRIPT);
+
+    // One strong tag per content coding, each body with its own length.
+    expect(br.headers.etag).toBe(plain.headers.etag.replace(/"$/, '-br"'));
+    expect(gzip.headers.etag).toBe(plain.headers.etag.replace(/"$/, '-gzip"'));
+    for (const res of [br, gzip, plain]) expect(Number(res.headers['content-length'])).toBe(res.body.length);
   });
 
   it('reads Accept-Encoding parameters with spaces around the semicolon', async () => {
     const res = await request('/assets/index-abc123.js', { headers: { 'accept-encoding': 'gzip;q=0.5, br ; q=0.8' } });
     expect(res.headers['content-encoding']).toBe('br');
+  });
+
+  it('chooses br, then gzip, from Accept-Encoding, honouring a refusal by q=0', () => {
+    expect(chooseEncoding('gzip, br')).toBe('br');
+    expect(chooseEncoding('gzip')).toBe('gzip');
+    expect(chooseEncoding('*')).toBe('br');
+    expect(chooseEncoding('gzip;q=0, *')).toBe('br');
+    expect(chooseEncoding('br;q=0, *')).toBe('gzip');
+    expect(chooseEncoding('br;q=0, gzip;q=0, *')).toBeNull();
+    expect(chooseEncoding('br;q=0, gzip')).toBe('gzip');
+    expect(chooseEncoding('*;q=0')).toBeNull();
+    expect(chooseEncoding('br;q=0')).toBeNull();
+    expect(chooseEncoding('identity')).toBeNull();
+    expect(chooseEncoding(undefined)).toBeNull();
+  });
+
+  it('compresses a file once and sends the kept body until the file changes', async () => {
+    const file = path.join(dist, 'assets/cached-123abc.js');
+    const read = vi.spyOn(fs.promises, 'readFile');
+    try {
+      const headers = { 'accept-encoding': 'br' };
+      const first = await request('/assets/cached-123abc.js', { headers });
+      const second = await request('/assets/cached-123abc.js', { headers });
+      expect(read).toHaveBeenCalledTimes(1);
+      expect(second.body.equals(first.body)).toBe(true);
+
+      // A changed file changes its tag, so the kept body is not sent for it.
+      const changed = SCRIPT.replace('x', 'y');
+      writeFileSync(file, changed);
+      fs.utimesSync(file, new Date(), new Date(Date.now() + 5000));
+      const third = await request('/assets/cached-123abc.js', { headers });
+      expect(read).toHaveBeenCalledTimes(2);
+      expect(third.headers.etag).not.toBe(first.headers.etag);
+      expect(zlib.brotliDecompressSync(third.body).toString()).toBe(changed);
+    } finally {
+      read.mockRestore();
+    }
+  });
+
+  it('matches If-None-Match against the tag of the coding this request gets', async () => {
+    const gzipped = { 'accept-encoding': 'gzip' };
+    const gzip = await request('/assets/index-abc123.js', { headers: gzipped });
+    const plain = await request('/assets/index-abc123.js');
+
+    expect((await request('/assets/index-abc123.js', { headers: { ...gzipped, 'if-none-match': gzip.headers.etag } })).status).toBe(304);
+    expect((await request('/assets/index-abc123.js', { headers: { 'if-none-match': plain.headers.etag } })).status).toBe(304);
+    // A tag of the other coding names a different representation.
+    expect((await request('/assets/index-abc123.js', { headers: { 'if-none-match': gzip.headers.etag } })).status).toBe(200);
+    expect((await request('/assets/index-abc123.js', { headers: { ...gzipped, 'if-none-match': plain.headers.etag } })).status).toBe(200);
+  });
+
+  it('sends an empty file with a zero length', async () => {
+    const res = await request('/empty.txt');
+    expect(res.status).toBe(200);
+    expect(res.headers['content-length']).toBe('0');
+    expect(res.body.length).toBe(0);
+  });
+
+  it('answers 404 to a link that leads out of the build', async (context) => {
+    // Only on Windows can the link be missing; beforeAll fails anywhere else.
+    if (!symlinked) return context.skip();
+    const res = await request('/outside.js');
+    expect(res.status).toBe(404);
+    expect(res.headers['cache-control']).toBe('no-store');
   });
 
   it('answers 304 when the validator matches, with the Vary the 200 carries', async () => {
@@ -167,6 +248,8 @@ describe('serve-dist', () => {
     const opened = vi.spyOn(fs, 'createReadStream');
     try {
       for (const headers of [{}, { 'accept-encoding': 'gzip' }]) {
+        // A compressed body is sent from memory: no file is open while it goes out.
+        const streamed = !headers['accept-encoding'];
         opened.mockClear();
         await new Promise((resolve) => {
           const req = http.request({ host: '127.0.0.1', port, path: '/assets/large-0a1b2c.js', headers }, (res) => {
@@ -179,7 +262,8 @@ describe('serve-dist', () => {
           req.on('close', () => resolve(undefined));
           req.end();
         });
-        await vi.waitFor(() => expect(opened.mock.results[0]?.value.destroyed).toBe(true));
+        if (streamed) await vi.waitFor(() => expect(opened.mock.results[0]?.value.destroyed).toBe(true));
+        else expect(opened).not.toHaveBeenCalled();
         expect((await request('/')).status).toBe(200);
       }
     } finally {

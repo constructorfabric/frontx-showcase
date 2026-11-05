@@ -9,16 +9,26 @@
 
 import { availableParallelism } from 'os';
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 import { BUILD_CONCURRENCY_ENV_VAR, buildConcurrency } from '../scripts/lib/mfe-tools';
 
-describe('buildConcurrency', () => {
-  it('defaults to half the cores, at least 1 and at most 6, when unset or empty', () => {
-    const expected = Math.max(1, Math.min(6, Math.floor(availableParallelism() / 2)));
+vi.mock('os', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('os')>();
+  return { ...actual, availableParallelism: vi.fn(actual.availableParallelism) };
+});
 
-    expect(buildConcurrency({})).toBe(expected);
-    expect(buildConcurrency({ [BUILD_CONCURRENCY_ENV_VAR]: '' })).toBe(expected);
+describe('buildConcurrency', () => {
+  it.each([
+    [1, 1],
+    [3, 1],
+    [8, 4],
+    [64, 6],
+  ])('defaults to %i cores -> %i builds when unset or empty', (cores, builds) => {
+    vi.mocked(availableParallelism).mockReturnValue(cores);
+
+    expect(buildConcurrency({})).toBe(builds);
+    expect(buildConcurrency({ [BUILD_CONCURRENCY_ENV_VAR]: '' })).toBe(builds);
   });
 
   it('takes a positive integer as given, above the default too', () => {
@@ -26,7 +36,7 @@ describe('buildConcurrency', () => {
     expect(buildConcurrency({ [BUILD_CONCURRENCY_ENV_VAR]: '8' })).toBe(8);
   });
 
-  it.each(['0', '-1', '2.5', 'abc'])('refuses %s, naming the variable', (value) => {
+  it.each(['0', '-1', '2.5', 'abc', ' 4 ', '0x10', '1e1'])('refuses %j, naming the variable', (value) => {
     expect(() => buildConcurrency({ [BUILD_CONCURRENCY_ENV_VAR]: value })).toThrow(
       BUILD_CONCURRENCY_ENV_VAR,
     );

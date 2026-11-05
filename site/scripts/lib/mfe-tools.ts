@@ -333,7 +333,8 @@ export function buildConcurrency(env: NodeJS.ProcessEnv = process.env): number {
   if (raw === undefined || raw === '') {
     return Math.max(1, Math.min(6, Math.floor(availableParallelism() / 2)));
   }
-  const value = Number(raw);
+  // Digits only: Number() alone would take ' 4 ', '0x10' and '1e1'.
+  const value = /^\d+$/.test(raw) ? Number(raw) : NaN;
   if (!Number.isInteger(value) || value < 1) {
     throw new Error(`${BUILD_CONCURRENCY_ENV_VAR} must be a positive integer, got "${raw}".`);
   }
