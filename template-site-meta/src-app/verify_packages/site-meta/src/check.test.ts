@@ -130,6 +130,23 @@ describe('check', () => {
     expect(llms).toContain('## Build\n\n- Run `npm run build`.\n- Serve site/dist.\n');
   });
 
+  it('puts the llmsSections last, after the generated sections and in config order, and treats an empty list as none', async () => {
+    const paths = makeProject(roots);
+    await generate({ paths }, { SITE_ORIGIN: ORIGIN });
+    const without = fs.readFileSync(path.join(paths.dist, 'llms.txt'), 'utf8');
+
+    write(paths.config, { ...CONFIG, llmsSections: [] });
+    await generate({ paths }, { SITE_ORIGIN: ORIGIN });
+    expect(fs.readFileSync(path.join(paths.dist, 'llms.txt'), 'utf8')).toBe(without);
+
+    write(paths.config, { ...CONFIG, llmsSections: [{ heading: 'Build', items: ['Run it.'] }, { heading: 'Serve', items: ['Open it.'] }] });
+    await generate({ paths }, { SITE_ORIGIN: ORIGIN });
+    const llms = fs.readFileSync(path.join(paths.dist, 'llms.txt'), 'utf8');
+    expect(llms.endsWith('## Build\n\n- Run it.\n\n## Serve\n\n- Open it.\n')).toBe(true);
+    expect(llms.indexOf('## Plain-text pages')).toBeGreaterThanOrEqual(0);
+    expect(llms.indexOf('## Plain-text pages')).toBeLessThan(llms.indexOf('## Build'));
+  });
+
   it('refuses to generate when the build lacks an icon the head links', async () => {
     const paths = makeProject(roots);
     fs.rmSync(path.join(paths.dist, SITE_ASSETS.appleTouchIcon));

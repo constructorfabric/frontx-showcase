@@ -290,12 +290,15 @@ describe('buildMfes', () => {
   });
 
   it('reads the concurrency from the environment and never states more workers than packages', async () => {
-    const { tools, mfes } = await fixture([{ name: 'pkg-a' }]);
+    const { tools, mfes } = await fixture([{ name: 'pkg-a' }, { name: 'pkg-b' }, { name: 'pkg-c' }]);
     vi.stubEnv(tools.BUILD_CONCURRENCY_ENV_VAR, '2');
     try {
-      const { writes, settled } = capture(() => tools.buildMfes(mfes));
-      expect(await settled).toBeUndefined();
-      expect(writes[0]).toContain('1 at a time');
+      const read = capture(() => tools.buildMfes(mfes));
+      expect(await read.settled).toBeUndefined();
+      expect(read.writes[0]).toContain('2 at a time');
+      const clamped = capture(() => tools.buildMfes(mfes.slice(0, 1)));
+      expect(await clamped.settled).toBeUndefined();
+      expect(clamped.writes[0]).toContain('1 at a time');
     } finally {
       vi.unstubAllEnvs();
     }

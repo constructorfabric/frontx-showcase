@@ -129,6 +129,8 @@ describe('serve-dist', () => {
     for (const address of ['/', '/missing.js']) {
       const { headers } = await request(address);
       for (const [name, value] of Object.entries(security)) expect(headers[name.toLowerCase()], `${address} ${name}`).toBe(value);
+      // deploy/site/Caddyfile strips Server (`header -Server`) and serve-dist keeps that policy.
+      expect(headers.server, `${address} server`).toBeUndefined();
     }
   });
 
