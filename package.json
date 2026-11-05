@@ -22,6 +22,7 @@
     "verify:ui:baseline": "node scripts/design-verify-baseline.mjs",
     "build": "npm run site:assemble && npm run build --prefix site && npm run site:dist && npm run seo:generate",
     "preview": "npm run preview --prefix site",
+    "start": "node scripts/serve-dist.mjs",
     "type-check": "tsc --noEmit && npm run type-check --prefix site",
     "lint": "eslint . --max-warnings 0 && npm run lint --prefix site && npm run policy:own-styles && npm run policy:text && npm run brand:check",
     "arch:deps": "npm run arch:deps --prefix site",

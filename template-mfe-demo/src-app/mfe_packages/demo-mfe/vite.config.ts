@@ -40,6 +40,8 @@ export default defineConfig({
       // mf-manifest.json must be generated alongside remoteEntry.js so that
       // MfeHandlerMF can discover expose chunk paths without regex-parsing the bundle.
       manifest: true,
+      // No federation types: nothing reads @mf-types, and generating them forks tsc in every package build.
+      dts: false,
       // The four screen entries share the package's blocks and the kit candidates, so Rollup puts their stylesheets in chunks shared across exposes, which the manifest attributes to no expose and the host would never inject. Every expose is attributed the package's whole CSS instead.
       bundleAllCSS: true,
     }),

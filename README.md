@@ -18,7 +18,7 @@ The site is itself a FrontX application: template-shell, template-mfe and templa
 | `template-site-brand/` | The site's brand as one package (`src-app/verify_packages/site-brand/`): the brand values over the kit's tokens from one source (`brand.json`), the typeface, the brand assets, the generated theme variables and the brand check (`brand:check`), delivered to the document through the shell's document-entry convention. |
 | `template-kit-candidates/` | The primitives the kit lacks, as one package (`src-app/verify_packages/kit-candidates/`) in the kit's own layout and APIs, proposed to `@gears-frontx/ui-kit` and deleted when the kit releases them. |
 | `template-site-blocks/` | The site's blocks as one package (`src-app/verify_packages/site-blocks/`): section-level compositions of kit components, kit candidates, brand art and the layout tokens, with layout-only styles and content-only props, plus a showcase screen (`/?screen=blocks`, kept out of the search index) that renders each block's fixture on its own route. |
-| `scripts/` | Repository guards, the composition step (`site:assemble`), the generated site data (`site:data`) and the shell change list (`shell:changes`). |
+| `scripts/` | Repository guards, the composition step (`site:assemble`), the generated site data (`site:data`), the shell change list (`shell:changes`) and the Node server of the built site (`npm start`). |
 | `deploy/` | The deploy stack of the container image built by `Dockerfile`: the image's server config, its smoke check, the compose file with the edge proxy and the signed deploy webhook (section "Deploy"). |
 | `assets/` | The SVG source of the share image and `rasters.json`, the record that pins `site/public/og-image.png` to it (`seo:check` reads it). |
 | `architecture/` | PRD and DESIGN of this repository. |
@@ -61,6 +61,7 @@ Screens are addressed in the query string: `/?screen=<token>[;route=<path inside
 | `npm run verify:ui` | After `npm run build`: the design-defect checker of template-design-guardrails over every manifest page, block showcase route and the not-found screen at 1440 and 390 pixels against `npm run dev`; only a finding `scripts/design-verify-baseline.json` does not carry fails (`-- --no-baseline` for a full report) |
 | `npm run verify:ui:baseline` | `-- check`: every finding the baseline carries names its reason; `-- build <findings.json>`: rebuild the baseline from a run without it, refusing a finding no rule knows |
 | `npm run preview` | Serve `site/dist` at `http://localhost:4173`, the host and every MFE remote |
+| `npm start` | After `npm run build`: serve `site/dist` from Node on `$PORT` (8080 by default) and `$HOST` (`0.0.0.0` by default) with the headers, cache policy and content types of the image's server (`scripts/serve-dist.mjs`) |
 
 See `CONTRIBUTING.md` for the development loop and `architecture/DESIGN.md` for the design.
 
@@ -72,6 +73,10 @@ The site ships as one container image: `Dockerfile` builds `site/dist` on Node 2
 docker build --build-arg SITE_ORIGIN=http://localhost:8080 -t frontx-site:local .
 docker run --rm -p 8080:8080 --read-only --tmpfs /data:uid=10001,gid=10001 --tmpfs /config:uid=10001,gid=10001 --cap-drop ALL --security-opt no-new-privileges frontx-site:local
 ```
+
+A Node host such as DigitalOcean App Platform runs the same build without the image: it builds with `npm ci && npm run setup && npm run build` with `SITE_ORIGIN` set and runs `npm start`, which serves `site/dist` on `$PORT` with the image's headers, cache policy and content types (`scripts/serve-dist.mjs`, Node's standard library only). The image stays the main deploy path.
+
+The MFE packages build several at once, half the cores up to 6; `FRONTX_BUILD_CONCURRENCY=<n>` sets the number, and `1` builds them one after another, for a host with little memory.
 
 `deploy/` holds the stack for a host: `docker-compose.yml` runs the image behind an edge Caddy (`deploy/Caddyfile`) and, later, the deploy webhook (`deploy/webhook/`), which takes GitHub's signed `workflow_run` delivery of a successful push run of the image workflow for a version tag and pulls and restarts the site. Without a domain the stack runs locally: `docker compose -f deploy/docker-compose.yml up -d --build` serves `http://localhost:8080/` and the sub-path `http://localhost:8080/frontx/` (with `SITE_ORIGIN=http://localhost:8080/frontx` the canonical addresses match the sub-path). `.github/workflows/docker.yml` builds the image on every pull request to `main`, every push to `main` and every version tag, and checks it with `deploy/smoke.sh <image> <origin>`, which also runs locally. Only a version tag publishes the image.
 

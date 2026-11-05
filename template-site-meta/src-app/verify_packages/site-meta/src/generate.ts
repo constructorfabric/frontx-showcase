@@ -71,8 +71,21 @@ export function documentedPackages(paths: SitePaths): PackageLlms[] {
 /** The rules on `site.config.json` itself, as messages. */
 // @cpt-begin:cpt-template-site-meta-algo-generate-and-check-rules:p1:inst-config-rule
 export function checkConfig(config: SiteConfig): string[] {
+  const errors: string[] = [];
   // A share image without alternative text publishes an image that screen readers and link previews cannot describe.
-  return config.ogImage && !config.ogImageAlt?.trim() ? ['site.config.json: ogImage is set without ogImageAlt; the share image needs its alternative text'] : [];
+  if (config.ogImage && !config.ogImageAlt?.trim()) errors.push('site.config.json: ogImage is set without ogImageAlt; the share image needs its alternative text');
+  // The file is read as JSON without a schema, so each llms.txt section is checked for the shape the renderer writes: one line of heading, one line per item.
+  const line = (value: unknown) => typeof value === 'string' && value.trim() !== '' && !/[\r\n]/.test(value);
+  const sections: unknown = config.llmsSections;
+  if (sections !== undefined && !Array.isArray(sections)) errors.push('site.config.json: llmsSections must be a list of { "heading", "items" } sections');
+  if (Array.isArray(sections)) {
+    sections.forEach((section: unknown, index) => {
+      const fields = typeof section === 'object' && section !== null ? (section as { heading?: unknown; items?: unknown }) : {};
+      if (!line(fields.heading)) errors.push(`site.config.json: llmsSections[${index}].heading must be one non-empty line`);
+      if (!Array.isArray(fields.items) || fields.items.length === 0 || !fields.items.every(line)) errors.push(`site.config.json: llmsSections[${index}].items must be a non-empty list of non-empty one-line strings`);
+    });
+  }
+  return errors;
 }
 // @cpt-end:cpt-template-site-meta-algo-generate-and-check-rules:p1:inst-config-rule
 
@@ -159,7 +172,7 @@ export async function renderOutputs(paths: SitePaths, config: SiteConfig, map: S
     'seo-manifest.json': renderSeoManifest(map),
     'sitemap.xml': renderSitemap(map),
     'robots.txt': renderRobots(map),
-    'llms.txt': renderLlms(map, config.defaultDescription, documentedPackages(paths), twins),
+    'llms.txt': renderLlms(map, config.defaultDescription, documentedPackages(paths), twins, config.llmsSections),
     'site.webmanifest': renderWebManifest(map, config),
     ...Object.fromEntries(twins.map((twin) => [twin.file, twin.content])),
   };

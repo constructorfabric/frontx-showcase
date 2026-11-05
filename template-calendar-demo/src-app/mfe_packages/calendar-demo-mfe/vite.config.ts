@@ -34,6 +34,8 @@ export default defineConfig({
       shared: {},
       // mf-manifest.json is what the host's MFE handler reads to find the expose chunks and their CSS.
       manifest: true,
+      // No federation types: nothing reads @mf-types, and generating them forks tsc in every package build.
+      dts: false,
     }),
     frontxMfGts(),
   ],

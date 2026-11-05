@@ -29,6 +29,18 @@ describe('generated outputs', () => {
     expect(renderLlms(MAP, CONFIG.defaultDescription, PACKAGES)).toMatchSnapshot();
   });
 
+  it('llms.txt ends with the sections the site config adds, and is unchanged without them', () => {
+    const plain = renderLlms(MAP, CONFIG.defaultDescription, PACKAGES);
+    expect(renderLlms(MAP, CONFIG.defaultDescription, PACKAGES, [], [])).toBe(plain);
+    const sections = [
+      { heading: 'Build and run this site', items: ['Install: `npm ci`.', 'Build: `npm run build`.'] },
+      { heading: 'Contact', items: ['Open an issue.'] },
+    ];
+    expect(renderLlms(MAP, CONFIG.defaultDescription, PACKAGES, [], sections)).toBe(
+      `${plain}\n## Build and run this site\n\n- Install: \`npm ci\`.\n- Build: \`npm run build\`.\n\n## Contact\n\n- Open an issue.\n`,
+    );
+  });
+
   it('robots.txt points at the sitemap on the origin', () => {
     expect(renderRobots(MAP)).toBe(`User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`);
   });

@@ -24,6 +24,14 @@ export interface SiteConfig {
   readonly themeColor?: string;
   /** The web manifest's `background_color`. */
   readonly backgroundColor?: string;
+  /** Sections the site adds to `llms.txt` after the packages, each a heading and its list items (how to build and run the site, for example). */
+  readonly llmsSections?: readonly LlmsSection[];
+}
+
+/** A section of `llms.txt` the site config adds: `## <heading>`, then each item as a list line. */
+export interface LlmsSection {
+  readonly heading: string;
+  readonly items: readonly string[];
 }
 
 /** The `seo` block of a screen extension, and of each of its routes. */

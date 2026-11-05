@@ -14,7 +14,7 @@ import { spawn } from 'child_process';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import {
-  buildMfesSequentially,
+  buildMfes,
   getMFEPackages,
   noDiscoveredPackagesNotice,
   type MfeInfo,
@@ -45,7 +45,7 @@ function buildPreviewCommands(mfes: MfeInfo[]): string[] {
   // Add main app
   commands.push(getMainAppCommand());
 
-  // MFE preview only (build already done in the sequential step). `--strictPort`
+  // MFE preview only (build already done in the build step). `--strictPort`
   // makes a busy port fail the run naming it: the generated manifests point at
   // each package's declared port, and a preview Vite moved to another port
   // would leave its screens unreachable without any error.
@@ -102,7 +102,7 @@ async function main() {
 
   // Step 1: Build all MFEs (produces dist/ with mf-manifest.json)
   // @cpt-begin:cpt-site-flow-dev-run-start:p3:inst-build-packages
-  await buildMfesSequentially(packages);
+  await buildMfes(packages);
   // @cpt-end:cpt-site-flow-dev-run-start:p3:inst-build-packages
 
   // Step 2: Generate manifests (reads dist/mf-manifest.json, produces generated-mfe-manifests.ts).
@@ -142,7 +142,7 @@ async function main() {
   // @cpt-end:cpt-site-flow-dev-run-start:p3:inst-run-concurrently
 }
 
-// The rejection is already phrased as a full report - `buildMfesSequentially`
+// The rejection is already phrased as a full report - `buildMfes`
 // names the package, how it failed and the command that shows the real error -
 // so it is printed as its message rather than as a value. `console.error` with
 // an Error object prints a stack trace, which buries a multi-line hint in frames

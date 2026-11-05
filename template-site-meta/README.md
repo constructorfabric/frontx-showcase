@@ -20,7 +20,7 @@ None. The package contributes no screen and no route; it reads the screens other
 
 ## SEO metadata
 
-This template is the SEO pipeline. Each screen declares its pages once, in the `seo` block of its screen extension in `mfe.json`; site-level values come from the site config (`site.config.json` in the project, or the file `--config` names). Rules `check` holds: every screen extension has a `seo` block with a title and a 50 to 160 character description, route keys are paths inside the screen, no two pages share a title or a canonical URL, a share image has its alternative text, and head-sync bundles the project's routing version.
+This template is the SEO pipeline. Each screen declares its pages once, in the `seo` block of its screen extension in `mfe.json`; site-level values come from the site config (`site.config.json` in the project, or the file `--config` names); its optional `llmsSections` (`[{ "heading": "...", "items": ["..."] }]`) adds sections at the end of `llms.txt`, each a `## heading` and one list line per item, for notes such as how to build and run the site. Rules `check` holds: every screen extension has a `seo` block with a title and a 50 to 160 character description, route keys are paths inside the screen, no two pages share a title or a canonical URL, a share image has its alternative text, each `llmsSections` entry has a one-line heading and a non-empty list of one-line items, and head-sync bundles the project's routing version.
 
 ## Develop
 

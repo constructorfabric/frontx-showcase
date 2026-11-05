@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * Build all MFE packages sequentially.
+ * Build all MFE packages, several at a time (FRONTX_BUILD_CONCURRENCY).
  * Called by the build and dev scripts before generate:mfe-manifests.
  */
 
 import {
-  buildMfesSequentially,
+  buildMfes,
   getMFEPackages,
   noDiscoveredPackagesNotice,
 } from './lib/mfe-tools.js';
@@ -23,10 +23,10 @@ async function main() {
   packages.forEach((mfe) => console.log(`  - ${mfe.name}`));
   console.log();
 
-  await buildMfesSequentially(packages);
+  await buildMfes(packages);
 }
 
-// `buildMfesSequentially` already phrases its rejection as a full report (which
+// `buildMfes` already phrases its rejection as a full report (which
 // package, which exit code, which command shows the underlying type error), so
 // it is printed as-is. Prefixing it would only restate its first line.
 main().catch((err) => {

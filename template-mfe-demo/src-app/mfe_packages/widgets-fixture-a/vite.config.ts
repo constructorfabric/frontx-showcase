@@ -32,6 +32,8 @@ export default defineConfig({
       },
       shared: {},
       manifest: true,
+      // No federation types: nothing reads @mf-types, and generating them forks tsc in every package build.
+      dts: false,
     }),
     frontxMfGts(),
   ],

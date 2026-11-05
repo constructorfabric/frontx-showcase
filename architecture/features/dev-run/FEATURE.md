@@ -81,7 +81,7 @@ A page can also break in ways only a browser sees (contrast, a missing heading, 
 
 **Steps**:
 1. [x] - `p3` - Discover the composed packages and the port each declares; **IF** there is none, start the host only - `inst-discover`
-2. [x] - `p3` - Build every package, one after another - `inst-build-packages`
+2. [x] - `p3` - Build every package, several at once (`FRONTX_BUILD_CONCURRENCY`, by default half the cores up to 6), each package's output printed whole when it finishes; **IF** one fails, start no more, let the running ones finish and stop the run with the failed package's report - `inst-build-packages`
 3. [x] - `p3` - Generate the manifest aggregate from the builds; **IF** the generation fails, stop the run - `inst-generate-manifests`
 4. [x] - `p3` - Compose the commands: the host's development server, then a preview of every package with a strict port - `inst-compose-commands`
 5. [x] - `p3` - Run every command at once through the site's own `concurrently`, stopping all when one stops, and exit with its exit code - `inst-run-concurrently`

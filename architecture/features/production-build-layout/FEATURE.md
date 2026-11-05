@@ -11,6 +11,7 @@
 - [2. Actor Flows (CDSL)](#2-actor-flows-cdsl)
   - [Lay out the production build](#lay-out-the-production-build)
   - [Load the screens at any mount point](#load-the-screens-at-any-mount-point)
+  - [Serve the build from Node](#serve-the-build-from-node)
 - [3. Processes / Business Logic (CDSL)](#3-processes--business-logic-cdsl)
   - [Report a failed screen mount](#report-a-failed-screen-mount)
   - [Resolve the remote addresses](#resolve-the-remote-addresses)
@@ -20,6 +21,7 @@
   - [Self-contained, relative dist layout](#self-contained-relative-dist-layout)
   - [Mount-independent registration](#mount-independent-registration)
   - [Failed mounts reported to the page](#failed-mounts-reported-to-the-page)
+  - [The build served as the image serves it](#the-build-served-as-the-image-serves-it)
 - [6. Acceptance Criteria](#6-acceptance-criteria)
 
 <!-- /toc -->
@@ -46,7 +48,7 @@ Hosting is not chosen yet, and the shell's build fetches the aggregate from a fi
 
 | Actor | Role in Feature |
 |-------|-----------------|
-| `cpt-site-actor-site-developer` | Runs the production build and the layout step, previews `site/dist/` |
+| `cpt-site-actor-site-developer` | Runs the production build and the layout step, previews `site/dist/`, serves it with `npm start` on a Node host |
 | `cpt-site-actor-visitor` | Opens a page of the built site at whatever mount point it is served from |
 
 ### 1.4 References
@@ -55,7 +57,7 @@ Hosting is not chosen yet, and the shell's build fetches the aggregate from a fi
 - **Design**: [DESIGN.md](../../DESIGN.md), section 3.2 (deploy layout component), section 3.6 (compose and build the site, crawl the site), section 3.8 (deployment topology), section 4.3.4 (mount-independent addresses)
 - **Decomposition**: [DECOMPOSITION.md](../../DECOMPOSITION.md), entry 2.6
 - **Dependencies**: `cpt-site-feature-template-composition`, `cpt-site-feature-shell-layout-navigation`
-- **Code**: `scripts/site-dist.mjs`, `site/src-app/app/mfe/bootstrap.ts`
+- **Code**: `scripts/site-dist.mjs`, `site/src-app/app/mfe/bootstrap.ts`, `scripts/serve-dist.mjs`
 
 ## 2. Actor Flows (CDSL)
 
@@ -112,6 +114,32 @@ Hosting is not chosen yet, and the shell's build fetches the aggregate from a fi
    1. [x] - `p2` - Register the package's schemas whose id is an action its entries declare (a screen's show action among them) - `inst-register-action-schemas`
    2. [x] - `p2` - Register the package's manifest, its domains and its entries on the type system - `inst-register-declarations`
    3. [x] - `p2` - Register each extension of a domain the host owns with the registry, and put an extension of a domain another runtime owns only on the type system, which every runtime of the page shares - `inst-register-extensions`
+
+### Serve the build from Node
+
+- [x] `p2` - **ID**: `cpt-site-flow-production-build-layout-serve-dist`
+
+**Actor**: `cpt-site-actor-site-developer`
+
+**Use case**: `cpt-site-usecase-change-screen`
+
+**Success Scenarios**:
+- The developer, or a Node host such as DigitalOcean App Platform, runs `npm start` after `npm run build`; `site/dist/` answers on `PORT` (8080 by default) with the headers, cache policy and content types of the image's server (`deploy/site/Caddyfile`).
+
+**Error Scenarios**:
+- `site/dist/index.html` is missing: the command exits with a failure that names `npm run build`.
+- A request names no file under `site/dist/`, or a path that leaves it: the answer is `404 Not Found` as plain text that is never cached.
+
+**Steps**:
+1. [x] - `p2` - **IF** `site/dist/index.html` is missing, exit with a failure that names `npm run build` - `inst-if-no-build`
+2. [x] - `p2` - Listen on `HOST` (`0.0.0.0` by default) and `PORT` (8080 by default) and print the address - `inst-listen`
+3. [x] - `p2` - **IF** the method is not GET or HEAD, answer 405 - `inst-if-method`
+4. [x] - `p2` - Decode the path without its query string; **IF** it does not decode, carries a NUL byte or resolves outside `site/dist/`, it names nothing - `inst-resolve-path`
+5. [x] - `p2` - **IF** the path names a folder, serve its `index.html` without a redirect; **IF** it names nothing, answer 404 - `inst-folder-index`
+6. [x] - `p2` - Set the security headers, `Cache-Control` immutable under an `assets/` folder and `no-cache` elsewhere, the content type by extension (`*.md` as `text/plain; charset=utf-8`, `*.webmanifest` as `application/manifest+json`) and the validators - `inst-headers`
+7. [x] - `p2` - **IF** the request's `If-None-Match` matches, answer 304 - `inst-if-unchanged`
+8. [x] - `p2` - Compress a text body with br or gzip as `Accept-Encoding` allows and send it; a HEAD request gets the headers only - `inst-compress`
+9. [x] - `p2` - Answer an error as plain text `<code> <status>` with `Cache-Control: no-store` - `inst-error`
 
 ## 3. Processes / Business Logic (CDSL)
 
@@ -189,6 +217,19 @@ The system **MUST** report every failed load or mount of a screen to the shell l
 - API: `mount_ext` on the screen domain
 - Entities: Screen extension
 
+### The build served as the image serves it
+
+- [x] `p2` - **ID**: `cpt-site-dod-production-build-layout-serve-dist`
+
+The system **MUST** serve `site/dist/` from Node's standard library with the security headers, cache policy, content types and folder handling of `deploy/site/Caddyfile`, **MUST** refuse a path outside `site/dist/` and any method other than GET and HEAD, and **MUST** refuse to start without a build.
+
+**Implements**:
+- `cpt-site-flow-production-build-layout-serve-dist`
+
+**Touches**:
+- API: `npm start`, `GET /`, `GET /mfe/<package>/remoteEntry.js`
+- Entities: Site config
+
 ## 6. Acceptance Criteria
 
 - [x] `npm run site:dist` copies every aggregated remote without the build leftovers, leaves out a built package the aggregate does not carry, rewrites every `publicPath` to the remote folder, replaces a previous layout and refuses an unknown manifest or a missing aggregate (`scripts/site-dist.test.mjs`).
@@ -196,3 +237,4 @@ The system **MUST** report every failed load or mount of a screen to the shell l
 - [x] The bootstrap registers the four base domains before fetching, throws when the fetch fails and registers schemas, manifest, entries and the host's extensions per package (`bootstrap.test.ts`).
 - [x] A failed screen mount is reported with its screen and still fails the action; the report clears once a screen mounts (`bootstrap.test.ts`, "screen load failures").
 - [x] `npm run build` followed by `npm run preview` serves every address of DESIGN section 4.5 from `site/dist/`, with the generated discovery files beside the host.
+- [x] `npm start` serves the document at `/` and `/?screen=docs`, a folder's index without a trailing slash, hashed assets as immutable and every other file with `no-cache`, the twins as plain text and the web manifest with its type, the security headers without a `Server` header, br or gzip on request; it answers 404 to a missing file and to `/../package.json` and `/%2e%2e/package.json`, sends no body to HEAD, answers 405 to POST and refuses to start without a build (`scripts/serve-dist.test.mjs`).

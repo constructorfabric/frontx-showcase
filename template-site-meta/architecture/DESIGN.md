@@ -51,7 +51,7 @@ The boundary is the project the template applies into: the package reads the pro
 | `cpt-template-site-meta-fr-canonical-addresses` | Addresses are written with the routing package's `serializeGrammar` from the screen domain key, the token and the `route` parameter; a pattern page takes the concrete address it is shown at; duplicate tokens fail the map |
 | `cpt-template-site-meta-fr-required-origin` | The source reader resolves the origin from `SITE_ORIGIN`, then the configuration, with no default, and refuses a non-http address or one with a query or fragment |
 | `cpt-template-site-meta-fr-site-head` | The output renderers write the delimited head block after the document title and replace it on every generation (`cpt-template-site-meta-component-output-renderers`) |
-| `cpt-template-site-meta-fr-discovery-files` | The output renderers produce the sitemap, robots file, `llms.txt` and page map manifest from the page map; the generator adds the documented packages' published `llms.txt` at installed versions |
+| `cpt-template-site-meta-fr-discovery-files` | The output renderers produce the sitemap, robots file, `llms.txt` and page map manifest from the page map; the generator adds the documented packages' published `llms.txt` at installed versions and the sections the site configuration adds |
 | `cpt-template-site-meta-fr-web-manifest` | The output renderers produce the web manifest with a start address relative to the manifest |
 | `cpt-template-site-meta-fr-linked-assets` | The generator lists the icon set, the icons the built document links and a same-origin share image, and fails on each missing file before writing (`cpt-template-site-meta-component-generator`) |
 | `cpt-template-site-meta-fr-plain-text-twins` | The twin renderer reads every composed outline and renders each declared page and each agent task copy (`cpt-template-site-meta-component-twin-renderer`) |
@@ -664,7 +664,7 @@ The template's manifest claims two subtrees, the package and the AI bundle, and 
 
 | Level | Source | Fields |
 |---|---|---|
-| Site | site configuration (`site.config.json` in the project unless `--config` names another file) | `origin` (required for generate; `SITE_ORIGIN` overrides it), `siteName`, `shortName`, `titleTemplate` (with `%s`), `defaultDescription`, `locale`, `homeScreen`, `ogImage` (absolute, or a path resolved under the origin) with `ogImageAlt`, `twitterCard`, `themeColor`, `backgroundColor` |
+| Site | site configuration (`site.config.json` in the project unless `--config` names another file) | `origin` (required for generate; `SITE_ORIGIN` overrides it), `siteName`, `shortName`, `titleTemplate` (with `%s`), `defaultDescription`, `locale`, `homeScreen`, `ogImage` (absolute, or a path resolved under the origin) with `ogImageAlt`, `twitterCard`, `themeColor`, `backgroundColor`, `llmsSections` (optional sections `llms.txt` ends with, each a `heading` and its `items`) |
 | Screen | `seo` on the screen extension in its package manifest | `title`, `description`, `indexable` (default true), `ogImage` |
 | Route inside a screen | `seo.routes["<inner path>"]` on the same extension | the same fields; a path with a `$` segment is a pattern, not indexable by default; a route takes the screen's share image when it declares none, its title falls back to the screen's label and its description to the site default |
 
@@ -672,7 +672,7 @@ The screen domain key is not configured: it is the `route` of the shell's screen
 
 ### 4.3 Rules
 
-Both commands apply: a share image in the configuration has its alternative text; every screen extension has a `seo` block with a title and a description; a description is 50 to 160 characters; a route key starts with `/` and is not `/`; every declared route has a title; a static route that is not marked non-indexable has a description; no two static pages share a document title or a canonical address; no two screens share a token; the home screen exists; the routing package head-sync bundles has the project's version; the raster record holds. Generate also requires the built document and every linked asset.
+Both commands apply: a share image in the configuration has its alternative text; each `llmsSections` entry has a one-line heading and a non-empty list of one-line items; every screen extension has a `seo` block with a title and a description; a description is 50 to 160 characters; a route key starts with `/` and is not `/`; every declared route has a title; a static route that is not marked non-indexable has a description; no two static pages share a document title or a canonical address; no two screens share a token; the home screen exists; the routing package head-sync bundles has the project's version; the raster record holds. Generate also requires the built document and every linked asset.
 
 ### 4.4 Verification
 

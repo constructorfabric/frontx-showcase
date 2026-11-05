@@ -181,7 +181,7 @@ Published metadata must never go stale silently. Generation refuses to write any
 **Output**: One message per broken rule; none when the sources hold the rules.
 
 **Steps**:
-1. [x] - `p1` - **IF** a share image is configured without alternative text, report it - `inst-config-rule`
+1. [x] - `p1` - **IF** a share image is configured without alternative text, or an `llmsSections` entry lacks a one-line heading or a non-empty list of one-line items, report it - `inst-config-rule`
 2. [x] - `p1` - Check a place's fields: a title is required; a description is required where asked and, when present, is 50 to 160 characters - `inst-describe-rule`
 3. [x] - `p1` - **FOR EACH** screen extension - `inst-foreach-extension`
    1. [x] - `p1` - Name it by its package and route - `inst-name-place`

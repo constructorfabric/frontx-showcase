@@ -7,12 +7,9 @@
 
 import { spawn } from 'child_process';
 import { existsSync, readdirSync, readFileSync } from 'fs';
+import { createRequire } from 'module';
+import { availableParallelism } from 'os';
 import { dirname, join } from 'path';
-
-// Resolve sibling CLIs from Node's own bin directory rather than relying on
-// PATH lookup. This avoids CWE-427 (attacker-controllable PATH shadowing a
-// trusted executable), even though these scripts are dev-only.
-export const NODE_BIN_DIR = dirname(process.execPath);
 
 export const MFE_PACKAGES_DIR = join(process.cwd(), 'src-app/mfe_packages');
 
@@ -106,7 +103,7 @@ export function isTemplateExamplePackage(packagePath: string): boolean {
   } catch {
     // An `mfe.json` that does not parse is the build's failure to report: the
     // `frontxMfGts` plugin parses this same file, and its throw surfaces through
-    // `buildMfesSequentially` as "MFE build failed for <name>". (Manifest
+    // `buildMfes` as "MFE build failed for <name>". (Manifest
     // generation never sees it - that reads `dist/mfe-manifest.json`.) Answering
     // "not an example" leaves the package in discovery so it reaches that build,
     // rather than disappearing here under a flag it was never shown to carry.
@@ -259,10 +256,10 @@ export type MfeBuildFailure =
 /**
  * The message a failed `vite build` rejects with.
  *
- * The child runs on inherited stdio, so this function is deliberately not in
- * the business of reproducing its output - everything Vite and the Module
- * Federation plugin printed is already on the terminal above this line, and
- * re-printing a captured copy would only duplicate it.
+ * `buildMfes` prints the failed package's buffered output before it rejects,
+ * so this function is deliberately not in the business of reproducing that
+ * output - everything Vite and the Module Federation plugin printed is already
+ * on the terminal above this line, and re-printing it would only duplicate it.
  *
  * What is missing there is a next step. The federation plugin reports a failed
  * type generation as a bare `TYPE-001` code: it says the DTS build gave up but
@@ -317,39 +314,152 @@ export function buildFailureMessage(
   ].join('\n');
 }
 
-/** Build MFE packages sequentially using vite build in each package directory. */
-export async function buildMfesSequentially(mfes: MfeInfo[]): Promise<void> {
+/**
+ * Environment variable that sets how many `vite build` children run at once.
+ * A positive integer; `1` builds the packages one after another.
+ */
+export const BUILD_CONCURRENCY_ENV_VAR = 'FRONTX_BUILD_CONCURRENCY';
+
+/**
+ * How many MFE builds run at once: the positive integer in
+ * `FRONTX_BUILD_CONCURRENCY` when it is set, otherwise half the available
+ * cores, at least 1 and at most 6. Each build is a full Vite and Rollup run, so
+ * one per core starves them; past six the gain on a 14-package site is gone.
+ *
+ * @param env - Environment to read; defaults to the process environment
+ */
+export function buildConcurrency(env: NodeJS.ProcessEnv = process.env): number {
+  const raw = env[BUILD_CONCURRENCY_ENV_VAR];
+  if (raw === undefined || raw === '') {
+    return Math.max(1, Math.min(6, Math.floor(availableParallelism() / 2)));
+  }
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 1) {
+    throw new Error(`${BUILD_CONCURRENCY_ENV_VAR} must be a positive integer, got "${raw}".`);
+  }
+  return value;
+}
+
+interface MfeBuildResult {
+  /** What the child wrote, in order, each chunk with the stream it came on. */
+  readonly output: ReadonlyArray<readonly [NodeJS.WriteStream, Buffer]>;
+  readonly seconds: number;
+  readonly failure: MfeBuildFailure | null;
+}
+
+/**
+ * The path of Vite's CLI script as `npx vite` run in `packageDir` would find
+ * it: resolved from the package directory up through the site's install.
+ */
+function resolveViteCli(packageDir: string): string {
+  const require = createRequire(join(packageDir, 'package.json'));
+  const packageJsonPath = require.resolve('vite/package.json');
+  const { bin } = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as {
+    bin: string | Record<string, string>;
+  };
+  return join(dirname(packageJsonPath), typeof bin === 'string' ? bin : bin.vite);
+}
+
+/**
+ * Run `vite build` in one package directory with its output captured.
+ *
+ * Vite's CLI script runs on this same Node binary: no PATH lookup (CWE-427, a
+ * PATH entry shadowing a trusted executable), no `npx` start-up per package and
+ * no `/bin/sh -c`, which is non-portable on Windows and fragile when a package
+ * path contains shell-special characters.
+ */
+function buildMfe(packageDir: string): Promise<MfeBuildResult> {
+  const started = performance.now();
+  const output: Array<readonly [NodeJS.WriteStream, Buffer]> = [];
+  const finish = (failure: MfeBuildFailure | null): MfeBuildResult => ({
+    output,
+    seconds: (performance.now() - started) / 1000,
+    failure,
+  });
+
+  return new Promise((resolve) => {
+    let viteCli: string;
+    try {
+      viteCli = resolveViteCli(packageDir);
+    } catch (cause) {
+      resolve(finish({ kind: 'spawn', cause }));
+      return;
+    }
+
+    // Piped output is not a terminal, so keep Vite's colours when ours is one.
+    const env =
+      process.stdout.isTTY && process.env.FORCE_COLOR === undefined
+        ? { ...process.env, FORCE_COLOR: '1' }
+        : process.env;
+    const proc = spawn(process.execPath, [viteCli, 'build'], {
+      cwd: packageDir,
+      env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    proc.stdout.on('data', (chunk: Buffer) => output.push([process.stdout, chunk]));
+    proc.stderr.on('data', (chunk: Buffer) => output.push([process.stderr, chunk]));
+
+    let settled = false;
+    proc.on('error', (cause) => {
+      if (settled) return;
+      settled = true;
+      resolve(finish({ kind: 'spawn', cause }));
+    });
+    // `close`, not `exit`: it waits for the pipes to drain, so the captured
+    // output is complete when it is printed.
+    proc.on('close', (code, signal) => {
+      if (settled) return;
+      settled = true;
+      resolve(finish(code === 0 ? null : { kind: 'exit', code, signal }));
+    });
+  });
+}
+
+/** Print one package's captured output as a block headed by its name and time. */
+function printBuildBlock(name: string, result: MfeBuildResult): void {
+  const status = result.failure === null ? 'built' : 'failed';
+  console.log(`\n📦 ${name} ${status} in ${result.seconds.toFixed(1)}s`);
+  for (const [stream, chunk] of result.output) stream.write(chunk);
+}
+
+/**
+ * Build MFE packages with `vite build` in each package directory, up to
+ * `concurrency` at a time.
+ *
+ * Each child's output is buffered and printed as one block when it finishes,
+ * so parallel builds never interleave. On the first failure no new build
+ * starts; the running ones finish, and the promise rejects with that package's
+ * `buildFailureMessage`.
+ *
+ * @param concurrency - Builds at once; defaults to `buildConcurrency()`
+ */
+export async function buildMfes(
+  mfes: MfeInfo[],
+  concurrency: number = buildConcurrency(),
+): Promise<void> {
   if (mfes.length === 0) return;
 
-  console.log('📦 Building MFE packages...\n');
+  const workers = Math.min(concurrency, mfes.length);
+  console.log(`📦 Building ${mfes.length} MFE package(s), ${workers} at a time...`);
 
-  // Spawn `vite build` per package with `cwd` set to that package - avoids
-  // `/bin/sh -c` concatenation (which is non-portable on Windows and fragile
-  // when a package path contains shell-special characters).
-  for (const mfe of mfes) {
-    await new Promise<void>((resolve, reject) => {
-      const npxPath = join(
-        NODE_BIN_DIR,
-        process.platform === 'win32' ? 'npx.cmd' : 'npx',
-      );
+  let next = 0;
+  // An array rather than a `let`: TypeScript does not see a closure assign one.
+  const failures: Error[] = [];
+
+  const worker = async (): Promise<void> => {
+    while (failures.length === 0 && next < mfes.length) {
+      const mfe = mfes[next++];
       const packageDir = join(MFE_PACKAGES_DIR, mfe.name);
-      const proc = spawn(npxPath, ['vite', 'build'], {
-        stdio: 'inherit',
-        cwd: packageDir,
-      });
-      proc.on('error', (cause) => {
-        reject(new Error(buildFailureMessage(mfe.name, packageDir, { kind: 'spawn', cause })));
-      });
-      proc.on('exit', (code, signal) => {
-        if (code === 0) resolve();
-        else {
-          reject(
-            new Error(buildFailureMessage(mfe.name, packageDir, { kind: 'exit', code, signal })),
-          );
-        }
-      });
-    });
-  }
+      const result = await buildMfe(packageDir);
+      printBuildBlock(mfe.name, result);
+      if (result.failure !== null) {
+        failures.push(new Error(buildFailureMessage(mfe.name, packageDir, result.failure)));
+      }
+    }
+  };
+
+  await Promise.all(Array.from({ length: workers }, worker));
+  if (failures.length > 0) throw failures[0];
 
   console.log('\n✅ All MFE packages built successfully.\n');
 }

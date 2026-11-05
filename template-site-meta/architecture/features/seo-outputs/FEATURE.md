@@ -99,7 +99,7 @@ The crawl is a series of reads of static files from the host; the renderers run 
 
 - [x] `p1` - **ID**: `cpt-template-site-meta-algo-seo-outputs-llms`
 
-**Input**: The page map, the site summary, the documented packages' published `llms.txt` and the twins.
+**Input**: The page map, the site summary, the documented packages' published `llms.txt`, the twins and the site configuration's `llmsSections`.
 
 **Output**: `llms.txt` in the llmstxt.org shape.
 
@@ -116,7 +116,8 @@ The crawl is a series of reads of static files from the host; the renderers run 
    5. [x] - `p1` - Write each group, in name order, as a subsection with its pages - `inst-grouped-sections`
 6. [x] - `p1` - **IF** there are twins, write a plain-text pages section with each twin's address, its title (the task title for a task copy) and its page's description - `inst-twins-section`
 7. [x] - `p1` - **IF** there are documented packages, write a packages section linking each published `llms.txt` - `inst-packages-section`
-8. [x] - `p1` - **RETURN** the text with one closing newline - `inst-return-llms`
+8. [x] - `p1` - Write each section of the site configuration's `llmsSections`, in its order, headed by its heading with one list line per item; none when the field is absent or empty, so the text stays as without it - `inst-config-sections`
+9. [x] - `p1` - **RETURN** the text with one closing newline - `inst-return-llms`
 
 ### Page Map Manifest
 
@@ -180,7 +181,7 @@ Not applicable because every renderer is a pure function of its inputs; generati
 
 - [x] `p1` - **ID**: `cpt-template-site-meta-dod-seo-outputs-discovery-files`
 
-The system **MUST** render the sitemap of every indexable static page in menu order, a robots file that allows crawling and names the sitemap, `llms.txt` with a section per screen, grouped pages, the twins and the documented packages, and the page map manifest keyed by canonical address with the pattern pages apart, each as a pure function of its inputs.
+The system **MUST** render the sitemap of every indexable static page in menu order, a robots file that allows crawling and names the sitemap, `llms.txt` with a section per screen, grouped pages, the twins, the documented packages and the sections the site configuration adds, and the page map manifest keyed by canonical address with the pattern pages apart, each as a pure function of its inputs.
 
 **Implements**:
 - `cpt-template-site-meta-algo-seo-outputs-sitemap-robots`
@@ -225,6 +226,7 @@ The system **MUST** render a web manifest with the site's name, short name, desc
 
 - [x] `sitemap.xml` lists every indexable page and no pattern route.
 - [x] `llms.txt` has a section per screen in menu order, routes grouped by their first segment, and the package links.
+- [x] `llms.txt` ends with the sections the site configuration adds, and is unchanged without them.
 - [x] `robots.txt` points at the sitemap on the origin.
 - [x] `seo-manifest.json` keys pages by canonical address and lists pattern routes apart.
 - [x] `index.html` gets the site-level head, the page map and the script once, however often it is generated.
@@ -234,5 +236,5 @@ The system **MUST** render a web manifest with the site's name, short name, desc
 - [x] The web manifest starts at the home page with the site colours and icons.
 
 **Test scenarios** (all in `template-site-meta/src-app/verify_packages/site-meta/src/`):
-- `outputs.test.ts` with its snapshot `__snapshots__/outputs.test.ts.snap`: "sitemap.xml lists every indexable page, no pattern route"; "llms.txt has a section per screen in menu order, routes grouped by their first segment, and the package links"; "robots.txt points at the sitemap on the origin"; "seo-manifest.json keys pages by canonical URL and lists pattern routes apart"; "index.html gets the site-level head, the page map and the script once, however often it is generated"; "index.html never lets inlined text close its script element, and keeps the script valid"; "resolves a share image path on the origin and gives it its alternative text in the head"; "links the icons and the web manifest relative to the document, so the head works at any mount point"; "writes a web manifest that starts at the home page with the site colors and icons".
+- `outputs.test.ts` with its snapshot `__snapshots__/outputs.test.ts.snap`: "sitemap.xml lists every indexable page, no pattern route"; "llms.txt has a section per screen in menu order, routes grouped by their first segment, and the package links"; "llms.txt ends with the sections the site config adds, and is unchanged without them"; "robots.txt points at the sitemap on the origin"; "seo-manifest.json keys pages by canonical URL and lists pattern routes apart"; "index.html gets the site-level head, the page map and the script once, however often it is generated"; "index.html never lets inlined text close its script element, and keeps the script valid"; "resolves a share image path on the origin and gives it its alternative text in the head"; "links the icons and the web manifest relative to the document, so the head works at any mount point"; "writes a web manifest that starts at the home page with the site colors and icons".
 - `bundle.test.ts`: the generated document with the real bundle, run in jsdom, applies the page of its address and follows a history step.

@@ -149,6 +149,20 @@ describe('checkConfig', () => {
     expect(checkConfig({ ...CONFIG, ogImage: '/og.png', ogImageAlt: 'FrontX' })).toEqual([]);
     expect(checkConfig({ ...CONFIG, ogImage: '/og.png', ogImageAlt: '  ' })).toHaveLength(1);
   });
+
+  it('accepts llms.txt sections of a one-line heading and one-line items, and names every malformed one', () => {
+    expect(checkConfig({ ...CONFIG, llmsSections: [] })).toEqual([]);
+    expect(checkConfig({ ...CONFIG, llmsSections: [{ heading: 'Build', items: ['Run `npm run build`.'] }] })).toEqual([]);
+    expect(checkConfig({ ...CONFIG, llmsSections: { heading: 'Build' } } as never)).toEqual(['site.config.json: llmsSections must be a list of { "heading", "items" } sections']);
+    expect(checkConfig({ ...CONFIG, llmsSections: [{ heading: ' ', items: [] }, { heading: 'Two\nlines', items: ['ok', 3] }, 'text'] } as never)).toEqual([
+      'site.config.json: llmsSections[0].heading must be one non-empty line',
+      'site.config.json: llmsSections[0].items must be a non-empty list of non-empty one-line strings',
+      'site.config.json: llmsSections[1].heading must be one non-empty line',
+      'site.config.json: llmsSections[1].items must be a non-empty list of non-empty one-line strings',
+      'site.config.json: llmsSections[2].heading must be one non-empty line',
+      'site.config.json: llmsSections[2].items must be a non-empty list of non-empty one-line strings',
+    ]);
+  });
 });
 
 describe('linkedIcons', () => {

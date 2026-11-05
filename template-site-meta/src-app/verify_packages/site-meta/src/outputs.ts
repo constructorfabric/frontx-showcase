@@ -3,7 +3,7 @@
  */
 import { headTagsFor, MAP_ELEMENT_ID } from './head-sync.ts';
 import type { PageMeta, SiteMetaMap } from './page-map.ts';
-import { staticPages, type SiteConfig } from './site.ts';
+import { staticPages, type LlmsSection, type SiteConfig } from './site.ts';
 import type { Twin } from './twins.ts';
 
 /** The site-level icon files the head and the web manifest link: the Constructor Fabric brand set under the shell's `public/brand/`, which the build ships into `dist/`. The paths are relative: the document and the web manifest sit at the top of `dist/`, and screens are addressed in the query string, so they resolve wherever the site is mounted. */
@@ -76,13 +76,15 @@ function linkLine(page: PageMeta): string {
 // @cpt-end:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-page-line
 
 /**
- * `llms.txt` (the llmstxt.org shape): the site name, its summary, one section per screen in menu order with each indexable page linked by its canonical URL and described; a screen's pages under a common first path segment (`/components/...`) are grouped under that segment; then the plain-text twins of the outline pages, then the published `llms.txt` of the packages the site documents.
+ * `llms.txt` (the llmstxt.org shape): the site name, its summary, one section per screen in menu order with each indexable page linked by its canonical URL and described; a screen's pages under a common first path segment (`/components/...`) are grouped under that segment; then the plain-text twins of the outline pages, then the published `llms.txt` of the packages the site documents, then the sections the site config adds.
  * @param map - the site's page map
  * @param summary - the site summary (`defaultDescription`)
  * @param packages - published package `llms.txt` files to link
+ * @param twins - the plain-text twins of the outline pages
+ * @param sections - the site config's `llmsSections`
  */
 // @cpt-algo:cpt-template-site-meta-algo-seo-outputs-llms:p1
-export function renderLlms(map: SiteMetaMap, summary: string, packages: readonly PackageLlms[], twins: readonly Twin[] = []): string {
+export function renderLlms(map: SiteMetaMap, summary: string, packages: readonly PackageLlms[], twins: readonly Twin[] = [], sections: readonly LlmsSection[] = []): string {
   // @cpt-begin:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-header
   const lines = [`# ${map.siteName}`, '', `> ${summary}`, ''];
   // @cpt-end:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-header
@@ -137,6 +139,11 @@ export function renderLlms(map: SiteMetaMap, summary: string, packages: readonly
     lines.push('## Packages', '', ...packages.map((pkg) => `- [${pkg.name}](${pkg.url}): ${pkg.description}`), '');
   }
   // @cpt-end:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-packages-section
+  // @cpt-begin:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-config-sections
+  for (const section of sections) {
+    lines.push(`## ${section.heading}`, '', ...section.items.map((item) => `- ${item}`), '');
+  }
+  // @cpt-end:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-config-sections
   // @cpt-begin:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-return-llms
   return `${lines.join('\n').replace(/\n+$/, '')}\n`;
   // @cpt-end:cpt-template-site-meta-algo-seo-outputs-llms:p1:inst-return-llms
