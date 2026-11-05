@@ -55,10 +55,20 @@ const COMPRESSIBLE = /^(?:text\/|application\/(?:json|manifest\+json|xml)|image\
 const MIN_COMPRESS_BYTES = 512;
 // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
 
-const brotliCompress = promisify(zlib.brotliCompress);
-const gzip = promisify(zlib.gzip);
 // Quality 5 of 11 keeps the first request for a file quick; the result is kept, so later ones cost nothing.
 const BROTLI_OPTIONS = { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } };
+// Compressions running at once; the rest wait, so many large files cannot take every core and their memory together.
+const MAX_COMPRESSIONS = 4;
+
+/**
+ * A file's bytes in a coding; zlib is looked up on each call, so a test can watch it.
+ * @param {Buffer} source
+ * @param {'br' | 'gzip'} encoding
+ * @returns {Promise<Buffer>}
+ */
+function encode(source, encoding) {
+  return encoding === 'br' ? promisify(zlib.brotliCompress)(source, BROTLI_OPTIONS) : promisify(zlib.gzip)(source);
+}
 
 /**
  * The missing-build message, or null when `root` holds a build.
@@ -175,17 +185,18 @@ function sendError(res, status) {
 }
 
 /**
- * The file to send for a resolved path: the file itself, or a folder's `index.html` with no redirect to the slashed address (Caddy's `disable_canonical_uris`: the redirect would be written from the root and leave a sub-path mount). A path that names nothing, or a file whose real path, symlinks followed, lies outside the build, names nothing.
+ * The file to send for a resolved path: the file itself, or a folder's `index.html` with no redirect to the slashed address (Caddy's `disable_canonical_uris`: the redirect would be written from the root and leave a sub-path mount). A path that names nothing, anything but a regular file (a FIFO would block the open), or a file whose real path, symlinks followed, lies outside the build, names nothing.
  * @param {string} named
  * @param {string} realBase - the build folder's real path
- * @returns {Promise<string | null>}
+ * @returns {Promise<{ file: string, real: string } | null>} `file` as named, for its type and cache policy; `real`, the checked path, to open
  */
 // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
 async function locate(named, realBase) {
   try {
     const file = (await fs.promises.stat(named)).isDirectory() ? path.join(named, 'index.html') : named;
     const real = await fs.promises.realpath(file);
-    return real === realBase || real.startsWith(realBase + path.sep) ? file : null;
+    if (real !== realBase && !real.startsWith(realBase + path.sep)) return null;
+    return (await fs.promises.stat(real)).isFile() ? { file, real } : null;
   } catch {
     // Missing, or a folder without an index: both are a 404.
     return null;
@@ -216,17 +227,39 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
   const base = path.resolve(root);
   const realBase = fs.realpathSync(base);
   // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
-  // Compressed bodies, one per file and coding, each with the tag of the file it was made from: a build is compressed once, not on every request. The key is the file's identity (device and inode), not the request's spelling, so `/ASSETS/APP.JS` on a case-insensitive disk shares the entry of `/assets/app.js`. A changed file gets a new tag and replaces its entry; the least recently used entries go once the bodies pass `cacheBytes`, so in-place deploys do not grow it forever.
+  // Compressed bodies, one per file and coding, each with the tag of the file it was made from: a build is compressed once, not on every request. The key is the file's identity (device and inode), not the request's spelling, so `/ASSETS/APP.JS` on a case-insensitive disk shares the entry of `/assets/app.js`. A file rewritten in place keeps its inode, so its new tag replaces the kept body; a file replaced under a new inode gets a new key, and its old body ages out through the bound: the least recently used finished bodies go once they pass `cacheBytes`, so deploys do not grow it forever.
   /** @type {Map<string, { etag: string, body: Promise<Buffer>, length?: number }>} */
   const compressed = new Map();
   let keptBytes = 0;
+  // A body larger than this is sent without being kept, so it cannot push every other body out, or itself.
+  const maxKeptBody = cacheBytes / 4;
   /** @param {string} key */
   const drop = (key) => {
     keptBytes -= compressed.get(key)?.length ?? 0;
     compressed.delete(key);
   };
+  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  let compressing = 0;
+  /** @type {Array<() => void>} */
+  const waiting = [];
+  /** Resolves once fewer than MAX_COMPRESSIONS run; `release` hands a freed slot straight to the next in line, so none slips in between. */
+  const slot = () => {
+    if (compressing < MAX_COMPRESSIONS) {
+      compressing++;
+      return Promise.resolve();
+    }
+    return new Promise((/** @type {(value?: unknown) => void} */ resolve) => waiting.push(resolve));
+  };
+  // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+  const release = () => {
+    const next = waiting.shift();
+    if (next) next();
+    else compressing--;
+  };
   /**
-   * The kept entry for a file and coding while its tag holds, moved to the most recently used end.
+   * The kept or pending entry for a file and coding while its tag holds, moved to the most recently used end.
    * @param {string} key
    * @param {string} etag
    */
@@ -240,7 +273,8 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
     return entry;
   };
   /**
-   * @param {fs.promises.FileHandle} handle - the open file, read only when no body is kept for it
+   * The body in a coding: the kept one, the one still being made for another request (one compression, shared), or a new one made once a slot is free.
+   * @param {fs.promises.FileHandle} handle - the open file, read only when no body is kept or pending for it
    * @param {string} key
    * @param {string} etag - the encoded representation's tag
    * @param {'br' | 'gzip'} encoding
@@ -255,17 +289,27 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
     /** @type {{ etag: string, body: Promise<Buffer>, length?: number }} */
     const entry = {
       etag,
-      body: handle.readFile().then((source) => (encoding === 'br' ? brotliCompress(source, BROTLI_OPTIONS) : gzip(source))),
+      body: slot()
+        .then(() => handle.readFile())
+        .then((source) => encode(source, encoding))
+        .finally(release),
     };
     compressed.set(key, entry);
+    // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
+    // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
     entry.body.then(
       (body) => {
         if (compressed.get(key) !== entry) return;
+        if (body.length > maxKeptBody) {
+          compressed.delete(key);
+          return;
+        }
         entry.length = body.length;
         keptBytes += body.length;
-        for (const oldest of compressed.keys()) {
+        // A pending entry has no length yet and stays: dropping it would start a second compression of its file.
+        for (const [oldest, other] of compressed) {
           if (keptBytes <= cacheBytes) break;
-          drop(oldest);
+          if (other.length !== undefined) drop(oldest);
         }
       },
       // A failed read is not kept, so the next request tries again.
@@ -290,12 +334,13 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
     const named = resolveFile(base, pathname);
     // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-resolve-path
     // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-folder-index
-    const file = named === null ? null : await locate(named, realBase);
-    if (file === null) return sendError(res, 404);
-    // The file is opened before any header goes out, and everything after reads this handle: a file that cannot be opened is a 500 whatever the coding, and a file replaced meanwhile cannot slip in between.
+    const found = named === null ? null : await locate(named, realBase);
+    if (found === null) return sendError(res, 404);
+    const { file, real } = found;
+    // The checked real path is opened, not the name, so a link swapped meanwhile cannot lead out; O_NONBLOCK keeps a FIFO put there meanwhile from blocking the open. Everything after reads this handle: a file that cannot be opened is a 500 whatever the coding.
     let handle;
     try {
-      handle = await fs.promises.open(file, 'r');
+      handle = await fs.promises.open(real, fs.constants.O_RDONLY | (fs.constants.O_NONBLOCK ?? 0));
     } catch (error) {
       logFailure('open', file, error);
       return sendError(res, 500);

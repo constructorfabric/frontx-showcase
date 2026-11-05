@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import fs, { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
@@ -21,16 +22,19 @@ function write(file, content) {
 
 const CADDYFILE = new URL('../deploy/site/Caddyfile', import.meta.url);
 
-/** The headers of the Caddyfile's `header { ... }` block, comments skipped and quotes removed. */
+/** The Caddyfile with LF line ends, whatever the checkout wrote. */
+const readCaddyfile = () => fs.readFileSync(CADDYFILE, 'utf8').replace(/\r\n/g, '\n');
+
+/** The headers of the Caddyfile's `header { ... }` block, comments skipped and quotes removed; indented with tabs or spaces. */
 function caddySecurityHeaders() {
-  const block = fs.readFileSync(CADDYFILE, 'utf8').match(/^\theader \{\n([\s\S]*?)\n\t\}$/m)?.[1] ?? '';
+  const block = readCaddyfile().match(/^[ \t]+header \{\n([\s\S]*?)\n[ \t]+\}$/m)?.[1] ?? '';
   return Object.fromEntries(
     block
       .split('\n')
       .map((line) => line.trim())
       .filter((line) => line && !line.startsWith('#'))
       .map((line) => {
-        const [, name, quoted, bare] = /** @type {RegExpMatchArray} */ (line.match(/^(\S+) (?:"(.*)"|(\S+))$/));
+        const [, name, quoted, bare] = /** @type {RegExpMatchArray} */ (line.match(/^(\S+)[ \t]+(?:"(.*)"|(\S+))$/));
         return [name, quoted ?? bare];
       }),
   );
@@ -45,6 +49,22 @@ function rewriteKeepingTag(file, content) {
 }
 
 const brotliText = (res) => zlib.brotliDecompressSync(res.body).toString();
+
+const BR = { 'accept-encoding': 'br' };
+
+/** The length of SCRIPT's br body, the unit the cache bounds of the small servers are counted in. */
+const brotliLength = async () => (await request('/assets/index-abc123.js', { headers: BR })).body.length;
+
+/** Runs `use` with the port of a second server over the build with its own options, then closes that server. */
+async function withServer(options, use) {
+  const other = createServer(dist, options);
+  await new Promise((resolve) => other.listen(0, '127.0.0.1', () => resolve(undefined)));
+  try {
+    return await use(/** @type {import('node:net').AddressInfo} */ (other.address()).port);
+  } finally {
+    await new Promise((resolve) => other.close(resolve));
+  }
+}
 
 /** A raw request: the path goes out as written, so `..` reaches the server instead of being resolved by the client. */
 function request(pathname, { method = 'GET', headers = {}, port: to = port } = {}) {
@@ -144,7 +164,7 @@ describe('serve-dist', () => {
   });
 
   it("keeps the image's hashed-asset pattern", () => {
-    const caddyfile = fs.readFileSync(CADDYFILE, 'utf8');
+    const caddyfile = readCaddyfile();
     const hashed = caddyfile.match(/^\s*@hashed path_regexp (\S+)$/m)?.[1];
     expect(hashed).toBeDefined();
     expect(caddyfile).toContain(`@named not path_regexp ${hashed}\n`);
@@ -220,25 +240,84 @@ describe('serve-dist', () => {
   });
 
   it('drops the least recently used compressed body once the kept bodies pass their bound', async () => {
-    const headers = { 'accept-encoding': 'br' };
-    for (const name of ['a', 'b', 'c']) write(`evict/${name}.js`, SCRIPT);
-    // Room for two bodies of SCRIPT, not three.
-    const length = (await request('/assets/index-abc123.js', { headers })).body.length;
-    const small = createServer(dist, { cacheBytes: 2 * length });
-    await new Promise((resolve) => small.listen(0, '127.0.0.1', () => resolve(undefined)));
-    const smallPort = /** @type {import('node:net').AddressInfo} */ (small.address()).port;
-    const get = (/** @type {string} */ name) => request(`/evict/${name}.js`, { headers, port: smallPort });
-    try {
+    const names = ['a', 'b', 'c', 'd', 'e'];
+    for (const name of names) write(`evict/${name}.js`, SCRIPT);
+    // Room for four bodies of SCRIPT, not five; each is a quarter of the bound, so each is kept.
+    await withServer({ cacheBytes: 4 * (await brotliLength()) }, async (smallPort) => {
+      const get = (/** @type {string} */ name) => request(`/evict/${name}.js`, { headers: BR, port: smallPort });
+      for (const name of names.slice(0, 4)) await get(name);
+      // a is used again, so b is the least recently used when e's body arrives.
       await get('a');
-      await get('b');
-      // a is used again, so b is the least recently used when c's body arrives.
-      await get('a');
-      await get('c');
+      await get('e');
       for (const name of ['a', 'b']) rewriteKeepingTag(path.join(dist, `evict/${name}.js`), SCRIPT.replace('x', 'y'));
       expect(brotliText(await get('a'))).toBe(SCRIPT);
       expect(brotliText(await get('b'))).toBe(SCRIPT.replace('x', 'y'));
+    });
+  });
+
+  it('sends a compressed body larger than a quarter of the bound without keeping it', async () => {
+    const file = path.join(dist, 'oversized/big.js');
+    write('oversized/big.js', SCRIPT);
+    await withServer({ cacheBytes: 2 * (await brotliLength()) }, async (smallPort) => {
+      const options = { headers: BR, port: smallPort };
+      expect(brotliText(await request('/oversized/big.js', options))).toBe(SCRIPT);
+      // Not kept: HEAD has no length to send, and the next GET makes the body again from the file.
+      expect((await request('/oversized/big.js', { ...options, method: 'HEAD' })).headers['content-length']).toBeUndefined();
+      rewriteKeepingTag(file, SCRIPT.replace('x', 'y'));
+      expect(brotliText(await request('/oversized/big.js', options))).toBe(SCRIPT.replace('x', 'y'));
+    });
+  });
+
+  it('shares a compression still running with the next request for the file, and keeps it while finished bodies are dropped', async () => {
+    const held = SCRIPT.replaceAll('x', 'z');
+    write('pending/held.js', held);
+    const names = ['a', 'b', 'c', 'd', 'e'];
+    for (const name of names) write(`pending/${name}.js`, SCRIPT);
+    const brotli = zlib.brotliCompress;
+    /** @type {Array<() => void>} */
+    const waiting = [];
+    // The held file's compression waits until the test lets it go; every other one runs at once.
+    const compressing = vi.spyOn(zlib, 'brotliCompress').mockImplementation((source, options, callback) => {
+      if (String(source) === held) waiting.push(() => brotli(source, options, callback));
+      else brotli(source, options, callback);
+    });
+    const opened = vi.spyOn(fs.promises, 'open');
+    try {
+      await withServer({ cacheBytes: 4 * (await brotliLength()) }, async (smallPort) => {
+        const options = { headers: BR, port: smallPort };
+        const first = request('/pending/held.js', options);
+        await vi.waitFor(() => expect(waiting).toHaveLength(1));
+        // Five finished bodies pass the bound of four: finished ones are dropped, never the pending one.
+        for (const name of names) await request(`/pending/${name}.js`, options);
+        const opens = opened.mock.calls.length;
+        const second = request('/pending/held.js', options);
+        await vi.waitFor(() => expect(opened.mock.calls.length).toBe(opens + 1));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(waiting).toHaveLength(1);
+        waiting[0]();
+        for (const res of await Promise.all([first, second])) expect(brotliText(res)).toBe(held);
+        expect(compressing.mock.calls.filter(([source]) => String(source) === held)).toHaveLength(1);
+      });
     } finally {
-      await new Promise((resolve) => small.close(resolve));
+      compressing.mockRestore();
+      opened.mockRestore();
+    }
+  });
+
+  it('answers 404 to a named pipe and never opens it', async (context) => {
+    const fifo = path.join(dist, 'pipe.txt');
+    try {
+      execFileSync('mkfifo', [fifo]);
+    } catch {
+      // Windows, or a system without mkfifo.
+      return context.skip();
+    }
+    try {
+      // Opening the pipe would block until a writer comes, and the request would time out.
+      const res = await request('/pipe.txt');
+      expect(res.status).toBe(404);
+    } finally {
+      rmSync(fifo);
     }
   });
 

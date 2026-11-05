@@ -446,7 +446,9 @@ function printBuildBlock(name: string, result: MfeBuildResult): void {
  *
  * A one-line notice marks each start, so a build that hangs can be named. On
  * SIGINT or SIGTERM the live builds are killed, the output each had written so
- * far is printed, and the signal is raised again to end the process.
+ * far is printed once, and the signal is raised again to end the process; a
+ * killed build counts as no failure, and if the process outlives the signal
+ * the promise rejects as stopped by it.
  *
  * @param concurrency - Builds at once, a positive integer; defaults to
  *   `buildConcurrency()`, read only when there is something to build
@@ -465,8 +467,11 @@ export async function buildMfes(mfes: MfeInfo[], concurrency?: number): Promise<
   // An array rather than a `let`: TypeScript does not see a closure assign one.
   const failures: Error[] = [];
   const running: RunningBuilds = new Map();
+  // Set by a signal: a build it killed is neither printed again nor counted as a failure, and no new one starts.
+  const stopped: NodeJS.Signals[] = [];
 
   const onSignal = (signal: NodeJS.Signals): void => {
+    stopped.push(signal);
     removeSignalHandlers();
     for (const [proc, { name, output }] of running) {
       proc.kill(signal);
@@ -484,11 +489,13 @@ export async function buildMfes(mfes: MfeInfo[], concurrency?: number): Promise<
   process.once('SIGTERM', onSignal);
 
   const worker = async (): Promise<void> => {
-    while (failures.length === 0 && next < mfes.length) {
+    while (stopped.length === 0 && failures.length === 0 && next < mfes.length) {
       const mfe = mfes[next++];
       const packageDir = join(MFE_PACKAGES_DIR, mfe.name);
       console.log(`📦 started ${mfe.name}`);
       const result = await buildMfe(mfe.name, packageDir, running);
+      // The signal handler has printed this build's output already.
+      if (stopped.length > 0) return;
       printBuildBlock(mfe.name, result);
       if (result.failure !== null) {
         failures.push(new Error(buildFailureMessage(mfe.name, packageDir, result.failure)));
@@ -501,6 +508,8 @@ export async function buildMfes(mfes: MfeInfo[], concurrency?: number): Promise<
   } finally {
     removeSignalHandlers();
   }
+  // Reached only when the process outlives the raised signal, as under a caller's own listener.
+  if (stopped.length > 0) throw new Error(`buildMfes: stopped by ${stopped[0]}.`);
   if (failures.length > 0) throw failures[0];
 
   console.log('\n✅ All MFE packages built successfully.\n');

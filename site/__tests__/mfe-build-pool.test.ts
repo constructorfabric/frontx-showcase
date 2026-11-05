@@ -18,7 +18,7 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { format } from 'util';
 
-import { afterAll, beforeAll, describe, it, expect, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, it, expect, vi } from 'vitest';
 
 type MfeTools = typeof import('../scripts/lib/mfe-tools');
 
@@ -41,7 +41,10 @@ const finish = () => {
 };
 if (!fs.existsSync(path.join(dir, 'wait'))) finish();
 else {
+  // A hard limit, so a stub the test never releases cannot outlive it.
+  const deadline = Date.now() + 10000;
   const poll = setInterval(() => {
+    if (Date.now() > deadline) process.exit(2);
     if (!fs.existsSync(path.join(dir, 'release'))) return;
     clearInterval(poll);
     finish();
@@ -51,6 +54,8 @@ else {
 
 let root: string;
 let fixtures = 0;
+// Every package folder a fixture made, so afterEach can release a stub a failed test left waiting.
+const packageDirs: string[] = [];
 
 interface Fixture {
   readonly tools: MfeTools;
@@ -83,6 +88,7 @@ async function fixture(packages: ReadonlyArray<{ name: string; wait?: boolean; f
   for (const { name, wait, fail } of packages) {
     const vite = join(dir(name), 'node_modules', 'vite');
     mkdirSync(vite, { recursive: true });
+    packageDirs.push(dir(name));
     writeFileSync(join(dir(name), 'package.json'), JSON.stringify({ name, private: true }));
     if (wait) writeFileSync(join(dir(name), 'wait'), '');
     if (fail) writeFileSync(join(dir(name), 'fail'), '');
@@ -149,6 +155,10 @@ function expectBlock(writes: readonly string[], name: string, status: 'built' | 
 
 beforeAll(() => {
   root = mkdtempSync(join(tmpdir(), 'mfe-build-pool-'));
+});
+
+afterEach(() => {
+  for (const dir of packageDirs.splice(0)) writeFileSync(join(dir, 'release'), '');
 });
 
 afterAll(() => {
@@ -262,9 +272,16 @@ describe('buildMfes', () => {
 
       const error = await settled;
       expect(raise).toHaveBeenCalledWith(process.pid, 'SIGINT');
+      // Stopped, not failed: the killed builds record no build failure.
       expect(error).toBeInstanceOf(Error);
-      expect(lineIndex(writes, '📦 pkg-x stopped by SIGINT')).toBeGreaterThanOrEqual(0);
-      expect(lineIndex(writes, '📦 pkg-y stopped by SIGINT')).toBeGreaterThanOrEqual(0);
+      expect((error as Error).message).toBe('buildMfes: stopped by SIGINT.');
+      for (const name of ['pkg-x', 'pkg-y']) {
+        // Printed once, by the handler; the worker the kill ends prints no block of its own.
+        const headers = writes.filter((write) => write.replace(/^\n+/, '').startsWith(`📦 ${name} stopped by SIGINT`));
+        expect(headers, name).toHaveLength(1);
+        expect(lineIndex(writes, `📦 ${name} failed in `), name).toBe(-1);
+        expect(lineIndex(writes, `📦 ${name} built in `), name).toBe(-1);
+      }
       expect(existsSync(join(dir('pkg-x'), 'finished'))).toBe(false);
       expect(existsSync(join(dir('pkg-y'), 'finished'))).toBe(false);
       // The pool leaves no handler behind.

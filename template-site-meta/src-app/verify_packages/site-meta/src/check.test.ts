@@ -152,7 +152,8 @@ describe('check', () => {
         'site.config.json: llmsSections[0].items must be a non-empty list of non-empty one-line strings',
         'site.config.json: llmsSections[1].items must be a non-empty list of non-empty one-line strings',
       ],
-      compared: true,
+      // The refused config is never rendered, so no output was compared.
+      compared: false,
     });
   });
 }, 30000);

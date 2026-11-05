@@ -286,6 +286,8 @@ export async function check(run: RunOptions): Promise<{ errors: string[]; compar
   // @cpt-begin:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-apply-rules
   const configErrors = checkConfig(config);
   const errors = [...configErrors, ...checkRules(extensions, map), ...checkRoutingVersion(paths), ...checkRasters(run.rasters)];
+  // True only once the outputs were rendered and compared.
+  let compared = false;
   // @cpt-end:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-apply-rules
   // @cpt-begin:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-if-outputs-exist
   if (generatedOrigin !== undefined) {
@@ -298,6 +300,7 @@ export async function check(run: RunOptions): Promise<{ errors: string[]; compar
     // A config the rules refuse cannot be rendered (generate throws on it too), so its messages stand alone.
     if (configErrors.length === 0) {
       const outputs = await renderOutputs(paths, config, map, current);
+      compared = true;
       for (const [name, content] of Object.entries(outputs)) {
         const file = path.join(paths.dist, name);
         if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== content) errors.push(`${shown(paths, file)} differs from what the sources generate; run npm run seo:generate`);
@@ -307,6 +310,6 @@ export async function check(run: RunOptions): Promise<{ errors: string[]; compar
   }
   // @cpt-end:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-if-outputs-exist
   // @cpt-begin:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-return-result
-  return { errors, compared: generatedOrigin !== undefined };
+  return { errors, compared };
   // @cpt-end:cpt-template-site-meta-flow-generate-and-check-check:p1:inst-return-result
 }
