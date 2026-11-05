@@ -58,7 +58,9 @@ const MIN_COMPRESS_BYTES = 512;
 // Quality 5 of 11 keeps the first request for a file quick; the result is kept, so later ones cost nothing.
 const BROTLI_OPTIONS = { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } };
 // Compressions running at once; the rest wait, so many large files cannot take every core and their memory together.
-const MAX_COMPRESSIONS = 4;
+export const MAX_COMPRESSIONS = 4;
+// Requests waiting for a compression slot, each holding its open file; one more is sent uncompressed instead, so a burst cannot run out of file handles.
+export const MAX_WAITING = 32;
 
 /**
  * A file's bytes in a coding; zlib is looked up on each call, so a test can watch it.
@@ -231,7 +233,7 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
   /** @type {Map<string, { etag: string, body: Promise<Buffer>, length?: number }>} */
   const compressed = new Map();
   let keptBytes = 0;
-  // A body larger than this is sent without being kept, so it cannot push every other body out, or itself.
+  // A file larger than this is streamed uncompressed: it never takes a slot or a full read, and its body cannot push every other body out. A compressed body that still comes out larger is sent without being kept.
   const maxKeptBody = cacheBytes / 4;
   /** @param {string} key */
   const drop = (key) => {
@@ -337,10 +339,13 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
     const found = named === null ? null : await locate(named, realBase);
     if (found === null) return sendError(res, 404);
     const { file, real } = found;
-    // The checked real path is opened, not the name, so a link swapped meanwhile cannot lead out; O_NONBLOCK keeps a FIFO put there meanwhile from blocking the open. Everything after reads this handle: a file that cannot be opened is a 500 whatever the coding.
+    // The checked real path is opened, not the name, and with O_NOFOLLOW where the system has it, so a leaf swapped for a link meanwhile fails to open instead of leading out; a parent folder swapped meanwhile is still followed, which takes write access to the build. O_NONBLOCK keeps a FIFO put there meanwhile from blocking the open. Everything after reads this handle: a file that cannot be opened is a 500 whatever the coding.
     let handle;
     try {
-      handle = await fs.promises.open(real, fs.constants.O_RDONLY | (fs.constants.O_NONBLOCK ?? 0));
+      handle = await fs.promises.open(
+        real,
+        fs.constants.O_RDONLY | (fs.constants.O_NONBLOCK ?? 0) | (fs.constants.O_NOFOLLOW ?? 0),
+      );
     } catch (error) {
       logFailure('open', file, error);
       return sendError(res, 500);
@@ -357,12 +362,16 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
       const type = TYPES[path.extname(file).toLowerCase()] ?? 'application/octet-stream';
       // The policy follows the file served, not the raw path: `/assets/..%2Fmf-manifest.json` names a root file.
       const served = `/${path.relative(base, file).split(path.sep).join('/')}`;
-      const compressible = COMPRESSIBLE.test(type) && stats.size >= MIN_COMPRESS_BYTES;
-      const encoding = compressible ? chooseEncoding(req.headers['accept-encoding']) : null;
+      // Decided from the file's size, so a file too large to keep never waits for a slot.
+      const compressible = COMPRESSIBLE.test(type) && stats.size >= MIN_COMPRESS_BYTES && stats.size <= maxKeptBody;
+      let encoding = compressible ? chooseEncoding(req.headers['accept-encoding']) : null;
       // A strong tag names one representation, so each content coding gets its own (RFC 9110 section 8.8.3).
       // @cpt-end:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
       // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-headers
       const tag = `${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}`;
+      const key = `${encoding}:${stats.dev}:${stats.ino}`;
+      // A full queue sends the file uncompressed rather than hold one more open file; a body kept or being made is still shared.
+      if (encoding && compressed.get(key)?.etag !== `"${tag}-${encoding}"` && waiting.length >= MAX_WAITING) encoding = null;
       const etag = encoding ? `"${tag}-${encoding}"` : `"${tag}"`;
       /** @type {http.OutgoingHttpHeaders} */
       const headers = {
@@ -385,7 +394,6 @@ export function createServer(root = DIST, { cacheBytes = 64 * 1024 * 1024 } = {}
       // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-compress
       if (encoding) {
         headers['Content-Encoding'] = encoding;
-        const key = `${encoding}:${stats.dev}:${stats.ino}`;
         if (req.method === 'HEAD') {
           // No compression just to count it: the length goes out only when the body is already kept.
           const length = kept(key, etag)?.length;

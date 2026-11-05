@@ -1,11 +1,21 @@
 import { execFileSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import fs, { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { chooseEncoding, createServer, HASHED, matchesEtag, missingBuild, parsePort } from './serve-dist.mjs';
+import {
+  chooseEncoding,
+  createServer,
+  HASHED,
+  MAX_COMPRESSIONS,
+  MAX_WAITING,
+  matchesEtag,
+  missingBuild,
+  parsePort,
+} from './serve-dist.mjs';
 
 let root;
 let dist;
@@ -52,8 +62,17 @@ const brotliText = (res) => zlib.brotliDecompressSync(res.body).toString();
 
 const BR = { 'accept-encoding': 'br' };
 
-/** The length of SCRIPT's br body, the unit the cache bounds of the small servers are counted in. */
-const brotliLength = async () => (await request('/assets/index-abc123.js', { headers: BR })).body.length;
+const brotliBytes = (res) => zlib.brotliDecompressSync(res.body);
+
+/** Bytes that do not compress: their br body is about their own size, so a cache bound counted in such bodies keeps the file itself too, which a file of SCRIPT, far larger than its body, would exceed. */
+const NOISE = randomBytes(2048);
+
+/** NOISE with its first byte changed: the same size, other content. */
+const flip = (/** @type {Buffer} */ bytes) => Buffer.from(bytes).fill(bytes[0] ^ 1, 0, 1);
+
+/** The length of NOISE's br body, at the server's quality, the unit the cache bounds of the small servers are counted in. */
+const noiseLength = () =>
+  zlib.brotliCompressSync(NOISE, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }).length;
 
 /** Runs `use` with the port of a second server over the build with its own options, then closes that server. */
 async function withServer(options, use) {
@@ -241,49 +260,90 @@ describe('serve-dist', () => {
 
   it('drops the least recently used compressed body once the kept bodies pass their bound', async () => {
     const names = ['a', 'b', 'c', 'd', 'e'];
-    for (const name of names) write(`evict/${name}.js`, SCRIPT);
-    // Room for four bodies of SCRIPT, not five; each is a quarter of the bound, so each is kept.
-    await withServer({ cacheBytes: 4 * (await brotliLength()) }, async (smallPort) => {
+    for (const name of names) write(`evict/${name}.js`, NOISE);
+    // Room for four bodies of NOISE, not five; each, and the file itself, is a quarter of the bound, so each is kept.
+    await withServer({ cacheBytes: 4 * noiseLength() }, async (smallPort) => {
       const get = (/** @type {string} */ name) => request(`/evict/${name}.js`, { headers: BR, port: smallPort });
       for (const name of names.slice(0, 4)) await get(name);
       // a is used again, so b is the least recently used when e's body arrives.
       await get('a');
       await get('e');
-      for (const name of ['a', 'b']) rewriteKeepingTag(path.join(dist, `evict/${name}.js`), SCRIPT.replace('x', 'y'));
-      expect(brotliText(await get('a'))).toBe(SCRIPT);
-      expect(brotliText(await get('b'))).toBe(SCRIPT.replace('x', 'y'));
+      for (const name of ['a', 'b']) rewriteKeepingTag(path.join(dist, `evict/${name}.js`), flip(NOISE));
+      expect(brotliBytes(await get('a'))).toEqual(NOISE);
+      expect(brotliBytes(await get('b'))).toEqual(flip(NOISE));
     });
   });
 
-  it('sends a compressed body larger than a quarter of the bound without keeping it', async () => {
-    const file = path.join(dist, 'oversized/big.js');
+  it('streams a file larger than a quarter of the bound uncompressed, never compressing it', async () => {
     write('oversized/big.js', SCRIPT);
-    await withServer({ cacheBytes: 2 * (await brotliLength()) }, async (smallPort) => {
-      const options = { headers: BR, port: smallPort };
-      expect(brotliText(await request('/oversized/big.js', options))).toBe(SCRIPT);
-      // Not kept: HEAD has no length to send, and the next GET makes the body again from the file.
-      expect((await request('/oversized/big.js', { ...options, method: 'HEAD' })).headers['content-length']).toBeUndefined();
-      rewriteKeepingTag(file, SCRIPT.replace('x', 'y'));
-      expect(brotliText(await request('/oversized/big.js', options))).toBe(SCRIPT.replace('x', 'y'));
+    const compressing = vi.spyOn(zlib, 'brotliCompress');
+    try {
+      // A quarter of this bound is smaller than SCRIPT itself.
+      await withServer({ cacheBytes: 2 * SCRIPT.length }, async (smallPort) => {
+        const res = await request('/oversized/big.js', { headers: BR, port: smallPort });
+        expect(res.headers['content-encoding']).toBeUndefined();
+        expect(res.headers.vary).toBeUndefined();
+        expect(res.headers['content-length']).toBe(String(SCRIPT.length));
+        expect(res.body.toString()).toBe(SCRIPT);
+        expect(compressing).not.toHaveBeenCalled();
+      });
+    } finally {
+      compressing.mockRestore();
+    }
+  });
+
+  it(`sends a file uncompressed once ${MAX_WAITING} requests wait for a compression slot`, async () => {
+    const files = Array.from({ length: MAX_COMPRESSIONS + MAX_WAITING + 1 }, (_, i) => `queue/${i}.js`);
+    for (const [i, file] of files.entries()) write(file, `${SCRIPT}// ${i}\n`);
+    const brotli = zlib.brotliCompress;
+    /** @type {Array<() => void>} */
+    const held = [];
+    let holding = true;
+    // Every compression waits until the test lets them go, so the slots stay taken.
+    const compressing = vi.spyOn(zlib, 'brotliCompress').mockImplementation((source, options, callback) => {
+      if (holding) held.push(() => brotli(source, options, callback));
+      else brotli(source, options, callback);
     });
+    const opened = vi.spyOn(fs.promises, 'open');
+    try {
+      await withServer({}, async (otherPort) => {
+        const options = { headers: BR, port: otherPort };
+        const opens = opened.mock.calls.length;
+        const queued = files.slice(0, -1).map((file) => request(`/${file}`, options));
+        await vi.waitFor(() => expect(held).toHaveLength(MAX_COMPRESSIONS));
+        await vi.waitFor(() => expect(opened.mock.calls.length).toBe(opens + queued.length));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        // The queue is full: the next file is streamed as it is, without waiting.
+        const overflow = await request(`/${files.at(-1)}`, options);
+        expect(overflow.headers['content-encoding']).toBeUndefined();
+        expect(overflow.headers.vary).toBe('Accept-Encoding');
+        expect(overflow.body.toString()).toBe(`${SCRIPT}// ${files.length - 1}\n`);
+        holding = false;
+        for (const go of held.splice(0)) go();
+        for (const [i, res] of (await Promise.all(queued)).entries()) expect(brotliText(res)).toBe(`${SCRIPT}// ${i}\n`);
+      });
+    } finally {
+      compressing.mockRestore();
+      opened.mockRestore();
+    }
   });
 
   it('shares a compression still running with the next request for the file, and keeps it while finished bodies are dropped', async () => {
-    const held = SCRIPT.replaceAll('x', 'z');
+    const held = flip(NOISE);
     write('pending/held.js', held);
     const names = ['a', 'b', 'c', 'd', 'e'];
-    for (const name of names) write(`pending/${name}.js`, SCRIPT);
+    for (const name of names) write(`pending/${name}.js`, NOISE);
     const brotli = zlib.brotliCompress;
     /** @type {Array<() => void>} */
     const waiting = [];
     // The held file's compression waits until the test lets it go; every other one runs at once.
     const compressing = vi.spyOn(zlib, 'brotliCompress').mockImplementation((source, options, callback) => {
-      if (String(source) === held) waiting.push(() => brotli(source, options, callback));
+      if (held.equals(source)) waiting.push(() => brotli(source, options, callback));
       else brotli(source, options, callback);
     });
     const opened = vi.spyOn(fs.promises, 'open');
     try {
-      await withServer({ cacheBytes: 4 * (await brotliLength()) }, async (smallPort) => {
+      await withServer({ cacheBytes: 4 * noiseLength() }, async (smallPort) => {
         const options = { headers: BR, port: smallPort };
         const first = request('/pending/held.js', options);
         await vi.waitFor(() => expect(waiting).toHaveLength(1));
@@ -295,8 +355,8 @@ describe('serve-dist', () => {
         await new Promise((resolve) => setTimeout(resolve, 50));
         expect(waiting).toHaveLength(1);
         waiting[0]();
-        for (const res of await Promise.all([first, second])) expect(brotliText(res)).toBe(held);
-        expect(compressing.mock.calls.filter(([source]) => String(source) === held)).toHaveLength(1);
+        for (const res of await Promise.all([first, second])) expect(brotliBytes(res)).toEqual(held);
+        expect(compressing.mock.calls.filter(([source]) => held.equals(/** @type {Buffer} */ (source)))).toHaveLength(1);
       });
     } finally {
       compressing.mockRestore();
