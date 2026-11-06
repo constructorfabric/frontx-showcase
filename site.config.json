@@ -28,7 +28,7 @@
         "Install: `npm ci`, then `npm run setup` (composes the templates into `site/` and installs the site).",
         "Develop: `npm run dev` serves the site at http://localhost:5173/.",
         "Build: `SITE_ORIGIN=https://<domain> npm run build` writes the static site to `site/dist/`.",
-        "Run the build: `npm start` serves `site/dist/` on `$PORT` (default 8080), as a Node host such as DigitalOcean App Platform runs it; `Dockerfile` builds the same site into a Caddy image."
+        "Run the site: `npm start` installs and builds it when `site/dist/` is missing or out of date, then serves `site/dist/` on `$PORT` (default 8080), as a Node host such as DigitalOcean App Platform or Virtuozzo Application Platform runs it; `Dockerfile` builds the same site into a Caddy image."
       ]
     }
   ]

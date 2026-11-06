@@ -2,6 +2,9 @@
 node_modules/
 dist/
 coverage/
+# Stamp of the last finished `npm run build` (its origin and input digest, dated at the build's start) and of one in progress, which `npm start` checks the build against (scripts/start.mjs)
+/site/.dist-stamp
+/site/.dist-stamp.pending
 *.tsbuildinfo
 .vite
 *.log

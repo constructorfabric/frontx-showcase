@@ -267,7 +267,7 @@ export function createServer(root = DIST) {
 }
 
 // @cpt-flow:cpt-site-flow-production-build-layout-serve-dist:p2
-function main() {
+export function main() {
   // @cpt-begin:cpt-site-flow-production-build-layout-serve-dist:p2:inst-if-no-build
   const missing = missingBuild(DIST);
   if (missing) {

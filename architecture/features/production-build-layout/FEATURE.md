@@ -12,9 +12,11 @@
   - [Lay out the production build](#lay-out-the-production-build)
   - [Load the screens at any mount point](#load-the-screens-at-any-mount-point)
   - [Serve the build from Node](#serve-the-build-from-node)
+  - [Build when needed, then serve](#build-when-needed-then-serve)
 - [3. Processes / Business Logic (CDSL)](#3-processes--business-logic-cdsl)
   - [Report a failed screen mount](#report-a-failed-screen-mount)
   - [Resolve the remote addresses](#resolve-the-remote-addresses)
+  - [Decide whether the build is fresh](#decide-whether-the-build-is-fresh)
 - [4. States (CDSL)](#4-states-cdsl)
   - [No Lifecycle to Model](#no-lifecycle-to-model)
 - [5. Definitions of Done](#5-definitions-of-done)
@@ -22,6 +24,7 @@
   - [Mount-independent registration](#mount-independent-registration)
   - [Failed mounts reported to the page](#failed-mounts-reported-to-the-page)
   - [The build served as the image serves it](#the-build-served-as-the-image-serves-it)
+  - [A start that builds when needed](#a-start-that-builds-when-needed)
 - [6. Acceptance Criteria](#6-acceptance-criteria)
 
 <!-- /toc -->
@@ -57,7 +60,7 @@ Hosting is not chosen yet, and the shell's build fetches the aggregate from a fi
 - **Design**: [DESIGN.md](../../DESIGN.md), section 3.2 (deploy layout component), section 3.6 (compose and build the site, crawl the site), section 3.8 (deployment topology), section 4.3.4 (mount-independent addresses)
 - **Decomposition**: [DECOMPOSITION.md](../../DECOMPOSITION.md), entry 2.6
 - **Dependencies**: `cpt-site-feature-template-composition`, `cpt-site-feature-shell-layout-navigation`
-- **Code**: `scripts/site-dist.mjs`, `site/src-app/app/mfe/bootstrap.ts`, `scripts/serve-dist.mjs`
+- **Code**: `scripts/site-dist.mjs`, `site/src-app/app/mfe/bootstrap.ts`, `scripts/serve-dist.mjs`, `scripts/start.mjs`
 
 ## 2. Actor Flows (CDSL)
 
@@ -143,6 +146,32 @@ Hosting is not chosen yet, and the shell's build fetches the aggregate from a fi
 8. [x] - `p2` - Send the file as it is, uncompressed whatever `Accept-Encoding` asks (a CDN or proxy in front compresses), with its length: stream exactly the size the file was found with from the open handle, closing the file when the client leaves mid-body; a HEAD request gets the headers only - `inst-stream`
 9. [x] - `p2` - Answer an error as plain text `<code> <status>` with `Cache-Control: no-store`; log a failure on the server's side (open, read) to stderr with the file and the reason, a client that left mid-body excepted - `inst-error`
 
+### Build when needed, then serve
+
+- [x] `p2` - **ID**: `cpt-site-flow-production-build-layout-start`
+
+Temporary: remove once FrontX templates share the UI kit across MFEs and the build fits the default heap. A Node host such as Virtuozzo Application Platform installs the dependencies and runs only `npm start`, with no build phase, on as little as 0.4 of a core and 1 GB; a first start there installs and builds in about 12 to 13 minutes with this workaround, while with Node's default heap the build runs out of memory.
+
+**Actor**: `cpt-site-actor-site-developer`
+
+**Use case**: `cpt-site-usecase-change-screen`
+
+**Success Scenarios**:
+- The first `npm start` installs the site when it has no finished install from its current lockfile, builds it, then serves `site/dist/` as `cpt-site-flow-production-build-layout-serve-dist` does; a later start with no input changed and the same origin serves at once.
+
+**Error Scenarios**:
+- `PORT` is not an integer from 0 to 65535: the command says so and exits with a failure before installing or building anything.
+- `npm run setup` or `npm run build` fails or is stopped by a signal: the command prints which one and why and exits with its failure; a setup leaves no mark and a build that started leaves no stamp, so the next start runs it again; a build refused at its stamp step keeps the last stamp (step 1), as nothing the stamp describes changed.
+
+**Steps**:
+1. [x] - `p2` - **IF** started with `--stamp-begin` (the step of `npm run build` after the composition), refuse a `site.config.json` it cannot read or a `PORT` step 2 refuses, keeping the last stamp, then remove `site/.dist-stamp`, so a build that stops midway is never fresh, and write a pending stamp with the origin the build bakes in, by the rule of step 5, and the digest of the input files; **IF** started with `--stamp` (its last step), refuse without a pending stamp or `site/dist/index.html`, and otherwise rename the pending stamp to `site/.dist-stamp`, keeping its time, the build's start; both live outside `site/dist/`, so they are never served; **IF** started with `--setup-done` (the last step of `npm run setup`), write the digest of `site/package-lock.json` into `site/node_modules`; then stop - `inst-stamp`
+2. [x] - `p2` - **IF** `PORT` is not an integer from 0 to 65535, exit with a failure - `inst-port`
+3. [x] - `p2` - **IF** started with `--no-build` or `START_SKIP_BUILD=1`, go to step 7 - `inst-if-skip`
+4. [x] - `p2` - **IF** `site/node_modules` carries no mark of a finished setup, or one from another lockfile, run `npm run setup`, whose `npm ci --include=dev` installs the site's devDependencies (its build tools) under `NODE_ENV=production` too - `inst-setup`
+5. [x] - `p2` - **IF** `site/dist/` is not fresh (`cpt-site-algo-production-build-layout-dist-fresh`) for the origin, `SITE_ORIGIN`, else `site.config.json`'s, else `http://localhost:$PORT` with a warning, run `npm run build` with that origin and, when `NODE_OPTIONS` sets no heap (`--max-old-space-size` or `--max_old_space_size`), a heap of 75% of the memory limit, the smaller of `process.constrainedMemory()` and `os.totalmem()` (`os.totalmem()` alone when the constrained reading is 0), and `FRONTX_BUILD_CONCURRENCY=1` unless the environment sets it, as a heap cap, this one or the host's, is per process - `inst-build`
+6. [x] - `p2` - Run each `npm` step with its output on the terminal, on POSIX in its own process group, passing SIGINT, SIGTERM and SIGHUP on to the whole group, with SIGKILL to what is left of the group after 10 seconds, also when `npm` has ended first (settling a second later even if unreaped members still answer), at once on a second signal, and when the script itself exits first (a fatal signal the script does not pass on, SIGKILL among them, ends it without that and leaves the group running) (on Windows, where only a console Ctrl+C reaches a handler, ending the process tree with `taskkill`); **IF** it fails, exit with its code, **IF** a signal stopped it, or one was passed on, exit with 128 plus the signal's number, without serving - `inst-run`
+7. [x] - `p2` - Serve `site/dist/` (`cpt-site-flow-production-build-layout-serve-dist`) - `inst-serve`
+
 ## 3. Processes / Business Logic (CDSL)
 
 ### Report a failed screen mount
@@ -169,6 +198,19 @@ Hosting is not chosen yet, and the shell's build fetches the aggregate from a fi
 **Steps**:
 1. [x] - `p2` - Join the build base, given a trailing slash, with the aggregate's file name and resolve the result against the document's address - `inst-aggregate-address`
 2. [x] - `p2` - Write each remote's production `publicPath` as its folder under `mfe/`, relative to the aggregate, with a trailing slash - `inst-relative-public-path`
+
+### Decide whether the build is fresh
+
+- [x] `p2` - **ID**: `cpt-site-algo-production-build-layout-dist-fresh`
+
+**Input**: `site/dist/`, the stamp `site/.dist-stamp`, the origin the build is for, and the build inputs: every template (a folder with `frontx-template.json`), `site.config.json`, the root `package.json`, `package-lock.json`, `scripts/` and `assets/`, and the whole of `site/`.
+
+**Output**: Whether `site/dist/` can be served without a build.
+
+**Steps**:
+1. [x] - `p2` - **IF** `site/dist/index.html` is missing, it is not fresh - `inst-if-no-index`
+2. [x] - `p2` - Walk the inputs' files, counting a link below an input as a file without following it, skipping `node_modules`, `dist`, `dist-lib`, `@mf-types`, `coverage`, dot entries and `generated-mfe-manifests.json`, which the build writes, for their newest modification time and a digest of their paths with forward slashes; an unreadable folder counts as changed - `inst-scan`
+3. [x] - `p2` - It is fresh when the stamp is a record this script wrote, names the same origin and the same digest (no input file added, deleted or renamed), and no input file is newer than the stamp, the build's start - `inst-compare-stamp`
 
 ## 4. States (CDSL)
 
@@ -232,6 +274,20 @@ The system **MUST** serve `site/dist/` from Node's standard library with the sec
 - API: `npm start`, `GET /`, `GET /mfe/<package>/remoteEntry.js`
 - Entities: Production build (`site/dist/`)
 
+### A start that builds when needed
+
+- [x] `p2` - **ID**: `cpt-site-dod-production-build-layout-start`
+
+Temporary: remove once FrontX templates share the UI kit across MFEs and the build fits the default heap. The system **MUST** install the site on `npm start` when it has no finished install from its current lockfile, **MUST** build it when the build is missing, for another origin, or older than its inputs, **MUST** serve an up-to-date build without building it again, **MUST** size the build's heap from the memory limit (measured: 1 GB builds at 0.4 of a core, 768 MB does not), and **MUST** serve only when told to skip the build.
+
+**Implements**:
+- `cpt-site-flow-production-build-layout-start`
+- `cpt-site-algo-production-build-layout-dist-fresh`
+
+**Touches**:
+- API: `npm start`, `npm start -- --no-build`, `START_SKIP_BUILD`, `SITE_ORIGIN`, `PORT`, `NODE_OPTIONS`, `FRONTX_BUILD_CONCURRENCY`
+- Entities: Production build (`site/dist/`), build stamp (`site/.dist-stamp`, `site/.dist-stamp.pending`), setup mark (`site/node_modules/.frontx-setup`)
+
 ## 6. Acceptance Criteria
 
 - [x] `npm run site:dist` copies every aggregated remote without the build leftovers, leaves out a built package the aggregate does not carry, rewrites every `publicPath` to the remote folder, replaces a previous layout and refuses an unknown manifest or a missing aggregate (`scripts/site-dist.test.mjs`).
@@ -240,3 +296,5 @@ The system **MUST** serve `site/dist/` from Node's standard library with the sec
 - [x] A failed screen mount is reported with its screen and still fails the action; the report clears once a screen mounts (`bootstrap.test.ts`, "screen load failures").
 - [x] `npm run build` followed by `npm run preview` serves every address of DESIGN section 4.5 from `site/dist/`, with the generated discovery files beside the host.
 - [x] `npm start` serves the document at `/` and `/?screen=docs`, a folder's index without a trailing slash, hashed assets as immutable and every other file with `no-cache`, decided by the resolved file rather than the raw path, the twins as plain text and the web manifest with its type, the security headers without a `Server` header, both they and the hashed-asset pattern held to `deploy/site/Caddyfile`, every file as it is with one tag and no `Content-Encoding` or `Vary` whatever `Accept-Encoding` asks; it answers 304 to a matching, listed, weak or `*` `If-None-Match`, and to an `If-Modified-Since` at or after the file's time when no `If-None-Match` is sent, answers 500 to a file it cannot open and logs it, sends an empty file with a zero length, closes the file when a client leaves mid-body and keeps answering, refuses a `PORT` outside 0 to 65535; it answers 404 to a missing file and to a named pipe, resolves `/../package.json` and `/%2e%2e/package.json` inside the build root (never a file outside it) and answers 404 to a link that leads out of the build, sends no body to HEAD, answers 405 to POST and refuses to start without a build (`scripts/serve-dist.test.mjs`).
+- [x] `npm start` treats the build as stale without `site/dist/index.html`, without a stamp or with one it did not write, for another origin, when an input file is deleted, or when a template, `site.config.json`, the root manifest, lockfile, scripts or assets, or a file of `site/` is newer than the stamp, an input as old as the stamp counting as fresh, and ignores installs, outputs, dot entries and the manifests file the build writes; it runs setup without a mark of a finished setup or with one from another lockfile; it sizes the build's heap to 75% of the smaller of the constrained and the total memory, falls back to the total when the constrained reading is 0 or larger than the total, keeps a heap `NODE_OPTIONS` already sets in either spelling, builds the MFEs one at a time unless the environment sets `FRONTX_BUILD_CONCURRENCY`, records the origin it checks with in the stamp, refuses to close a stamp without a build in progress or without `site/dist/index.html`, and defaults `SITE_ORIGIN` to the local server with a warning only when neither the environment nor `site.config.json` names an origin; `npm run build` opens the stamp after the composition and closes it last, and `npm run setup` marks the install last (`scripts/start.test.mjs`).
+- [x] At 0.4 of a core and 1 GB with `NODE_ENV=production`, a clean `npm install && npm start` answers with the site, a restart without changes serves without building, and a start after an MFE edit rebuilds (manual check in a container, 2026-11-06).
